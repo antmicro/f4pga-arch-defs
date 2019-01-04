@@ -189,7 +189,7 @@ def make_pb_content(yj, mod, xml_parent, mod_pname, is_submode=False):
             else:
                 pb_type_path = "{}/pb_type.xml".format(module_path)
             xmlinc.include_xml(
-                parent=xml_parent, href=pb_type_path, outfile='.')
+                parent=xml_parent, href=pb_type_path, outfile=outfile)
             # In order to avoid overspecifying interconnect, there are two directions we currently
             # consider. All interconnect going INTO a cell, and interconnect going out of a cell
             # into a top level output - or all outputs if "mode" is used.
