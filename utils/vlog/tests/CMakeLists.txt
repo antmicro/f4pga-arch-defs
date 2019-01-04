@@ -2,7 +2,7 @@ include(v2x_tests.cmake)
 
 add_subdirectory(dsp_combinational)
 add_subdirectory(dsp_inout_registered)
-#add_subdirectory(dsp_inout_registered_dualclk)
+add_subdirectory(dsp_inout_registered_dualclk)
 #add_subdirectory(dsp_in_registered)
 #add_subdirectory(dsp_modes)
 #add_subdirectory(dsp_out_registered)
