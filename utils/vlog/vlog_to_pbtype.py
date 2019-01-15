@@ -258,7 +258,7 @@ def make_pb_content(yj, mod, xml_parent, mod_pname, is_submode=False):
             ET.SubElement(xml_parent, xmltype, attrs)
 
     # Process timing
-    for name, width, iodir in mod.ports:
+    for name, width, bits, iodir in mod.ports:
         port = "{}.{}".format(mod_pname, name)
         # Clocked timing
         Tsetup = mod.net_attr(name, "SETUP")
@@ -339,7 +339,7 @@ def make_pb_type(yj, mod):
 
     # Process IOs
     clocks = yosys.run.list_clocks(args.infiles, mod.name)
-    for name, width, iodir in mod.ports:
+    for name, width, bits, iodir in mod.ports:
         ioattrs = {"name": name, "num_pins": str(width)}
         pclass = mod.net_attr(name, "PORT_CLASS")
         if pclass is not None:
@@ -420,7 +420,6 @@ def main(args):
             sys.exit(1)
 
     tmod = yj.module(top)
-    print("cells", tmod.cells)
 
     pb_type_xml = make_pb_type(yj, tmod)
 
