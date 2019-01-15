@@ -26,11 +26,18 @@ from yosys.json import YosysJSON
 import xmlinc
 
 def is_registered(tmod, bits, iodir, clk):
+    """Checks if a specific i/o port is registered
+
+    Returns a boolean value
+    -------
+    is_reg: bool
+    """
     is_reg = False
     for cell, ctype in tmod.all_cells:
         if ctype != "$dff":
             continue
 
+        # The clock is not related to the given port
         if tmod.cell_clk_conn(cell) != tmod.port_conns(clk):
             continue
 
@@ -42,6 +49,22 @@ def is_registered(tmod, bits, iodir, clk):
             continue
 
     return is_reg
+
+def is_registered_path(tmod, pin, pout):
+    """Checks if a i/o path is sequential. If that is the case
+    no combinational_sink_port is needed
+
+    Returns a boolean value
+    """
+
+    for cell, ctype in tmod.all_cells:
+        if ctype != "$dff":
+            continue
+
+        if tmod.port_conns(pin) == tmod.cell_conn_list(cell, "D") and tmod.port_conns(pout) == tmod.cell_conn_list(cell, "Q"):
+                return True
+
+    return False
 
 parser = argparse.ArgumentParser(description=__doc__.strip())
 parser.add_argument(
@@ -155,6 +178,12 @@ if True:
         for name, width, bits, iodir in ports:
             attrs = dict(name=name)
             sinks = yosys.run.get_combinational_sinks(args.infiles, top, name)
+
+            # Removes comb sinks if path from in to out goes through a dff
+            for sink in sinks:
+                if is_registered_path(tmod, name, sink):
+                    sinks.remove(sink)
+
             # FIXME: Check if ignoring clock for "combination_sink_ports" is a
             # valid thing to do.
             if name in clocks:
