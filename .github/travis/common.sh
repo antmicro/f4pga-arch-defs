@@ -97,5 +97,5 @@ function end_section() {
 }
 
 export PATH=$PWD/env/conda/bin:$PATH
-export CC=gcc-6
-export CXX=g++-6
+export CC=gcc-8
+export CXX=g++-8
