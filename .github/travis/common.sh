@@ -63,13 +63,17 @@ function make_target() {
 
   start_section "symbiflow.$target" "$2"
   make_status=0
-  make -k -j${MAKE_JOBS} $target || make_status=$?
+  make -j${MAKE_JOBS} $target || make_status=$?
+  echo "check make status b4: $make_status, make jobs ${MAKE_JOBS}"
   end_section "symbiflow.$target"
+  echo "check make status after: $make_status, make jobs ${MAKE_JOBS}"
 
   # When the build fails, produce the failure output in a clear way
   if [ ${MAKE_JOBS} -ne 1 -a $make_status -ne 0 ]; then
     start_section "symbiflow.failure" "${RED}Build failure output..${NC}"
-    make -j1 $target
+    make -j1 $target -k 0 | grep FAILED > failed_targets.log
+    echo "Failed targets:"
+    cat failed_targets.log
     end_section "symbiflow.failure"
     exit 1
   else
