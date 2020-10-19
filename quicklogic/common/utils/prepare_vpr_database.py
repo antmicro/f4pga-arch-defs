@@ -1377,9 +1377,10 @@ def main():
         "switches": list(vpr_switches.values()),
     }
 
-    with open(args.vpr_db, "wb") as fp:
+    with open("{}.tmp".format(args.vpr_db), "wb") as fp:
         pickle.dump(db_root, fp, protocol=3)
 
+    os.rename("{}.tmp".format(args.vpr_db), args.vpr_db)
 
 # =============================================================================
 
