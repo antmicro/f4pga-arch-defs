@@ -44,7 +44,7 @@ jobs:
           curl -L https://github.com/ninja-build/ninja/releases/download/v1.10.0/ninja-linux.zip -o .tmp/ninja-linux.zip
           unzip .tmp/ninja-linux.zip -d .tmp
           export PATH=$PATH:$PWD/.tmp
-          stdbuf -i0 -o0 -e0 ./.github/travis/architecture_install.sh
+          stdbuf -i0 -o0 -e0 ./.github/travis/architectures_install.sh
       - uses: actions/upload-artifact@v2
         with:
           name: Architecture definition
