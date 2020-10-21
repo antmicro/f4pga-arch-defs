@@ -7,6 +7,7 @@ $SPACER
 
 mkdir install
 export INSTALL_DIR=$(pwd)/install
+export ROOT_DIR=$(pwd)
 export CMAKE_FLAGS="-DCMAKE_INSTALL_PREFIX=${INSTALL_DIR}"
 
 start_section "symbiflow.configure_cmake" "Configuring CMake (make env)"
@@ -37,7 +38,7 @@ $SPACER
 echo "----------------------------------------"
 (
     make_target install "Installing architecture definitions"
-    tar -acf install.tar.gz ${INSTALL_DIR}/*
+    tar -acf ${ROOT_DIR}/install.tar.gz ${INSTALL_DIR}/*
 )
 echo "----------------------------------------"
 
