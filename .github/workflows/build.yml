@@ -35,7 +35,7 @@ jobs:
         with:
           submodules: true
       - name: Architectures definitions installation
-        run:
+        run: |
           sudo apt update
           sudo apt install -y g++-8 gcc-8 colordiff coreutils graphviz inkscape make git unzip cmake
           source ./.github/travis/common.sh
