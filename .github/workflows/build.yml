@@ -28,4 +28,25 @@ jobs:
           unzip .tmp/ninja-linux.zip -d .tmp
           export PATH=$PATH:$PWD/.tmp
           stdbuf -i0 -o0 -e0 ./.github/travis/script.sh
-
+  install:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Architectures definitions installation
+      - run:
+          sudo apt update
+          sudo apt install -y g++-8 gcc-8 colordiff coreutils graphviz inkscape make git unzip cmake
+          source ./.github/travis/common.sh
+          stdbuf -i0 -o0 -e0 ./.github/travis/install.sh
+          mkdir .tmp
+          curl -L https://github.com/ninja-build/ninja/releases/download/v1.10.0/ninja-linux.zip -o .tmp/ninja-linux.zip
+          unzip .tmp/ninja-linux.zip -d .tmp
+          export PATH=$PATH:$PWD/.tmp
+          stdbuf -i0 -o0 -e0 ./.github/travis/install.sh
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Architecture definition
+          path: |
+              install.tar.gz
