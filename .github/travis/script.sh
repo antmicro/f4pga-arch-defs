@@ -15,10 +15,6 @@ $SPACER
 make_target all_conda "Setting up basic ${YELLOW}conda environment${NC}"
 
 $SPACER
-
-cp -r env/conda/share/yosys/* env/conda/share
-
-$SPACER
 # Output some useful info
 start_section "info.conda.env" "Info on ${YELLOW}conda environment${NC}"
 env/conda/bin/conda info
