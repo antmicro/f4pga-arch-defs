@@ -28,7 +28,7 @@ $SPACER
 
 echo "----------------------------------------"
 (
-    make_target all_quick_tests "Building all quick targets"
+    make_target all_ql_tests "Building all quick targets"
 )
 echo "----------------------------------------"
 
