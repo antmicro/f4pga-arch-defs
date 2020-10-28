@@ -48,22 +48,22 @@ add_dependencies(all_ql_tests btn_counter-ql-quickfeather_bit)
 add_dependencies(all_ql_tests btn_counter-ql-quickfeather_jlink)
 add_dependencies(all_ql_tests btn_counter-ql-quickfeather_openocd)
 
-add_fpga_target(
-  NAME btn_counter-ql-jimbob4
-  BOARD jimbob4
-  SOURCES btn_counter.v
-  INPUT_IO_FILE jimbob4.pcf
-  EXPLICIT_ADD_FILE_TARGET
-  )
+# add_fpga_target(
+#  NAME btn_counter-ql-jimbob4
+#  BOARD jimbob4
+#  SOURCES btn_counter.v
+#  INPUT_IO_FILE jimbob4.pcf
+#  EXPLICIT_ADD_FILE_TARGET
+#  )
 
-add_jlink_output(
-  PARENT btn_counter-ql-jimbob4
-)
+# add_jlink_output(
+#  PARENT btn_counter-ql-jimbob4
+#)
 
-add_openocd_output(
-  PARENT btn_counter-ql-jimbob4
-)
+# add_openocd_output(
+#  PARENT btn_counter-ql-jimbob4
+#)
 
-add_dependencies(all_ql_tests btn_counter-ql-jimbob4_bit)
-add_dependencies(all_ql_tests btn_counter-ql-jimbob4_jlink)
-add_dependencies(all_ql_tests btn_counter-ql-jimbob4_openocd)
+# add_dependencies(all_ql_tests btn_counter-ql-jimbob4_bit)
+# add_dependencies(all_ql_tests btn_counter-ql-jimbob4_jlink)
+# add_dependencies(all_ql_tests btn_counter-ql-jimbob4_openocd)
