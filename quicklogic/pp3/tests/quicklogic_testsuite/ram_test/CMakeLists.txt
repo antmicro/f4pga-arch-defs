@@ -39,7 +39,7 @@ add_openocd_output(
   PARENT ram_test-ql-chandalar
 )
 
-add_dependencies(all_ql_tests ram_test-ql-chandalar_bit)
+#add_dependencies(all_ql_tests ram_test-ql-chandalar_bit)
 add_dependencies(all_ql_tests ram_test-ql-chandalar_jlink)
 add_dependencies(all_ql_tests ram_test-ql-chandalar_openocd)
 
