@@ -49,4 +49,18 @@ jobs:
         with:
           name: Architecture definition
           path: |
-              install.tar.gz
+              quicklogic-arch-defs-*.tar.gz
+
+  upload-architectures:
+    runs-on: ubuntu-18.04
+    needs: install
+    steps:
+
+      - uses: actions/download-artifact@v2
+      - name: Upload achitectures to bucket
+
+        uses: weslenng/gcp-storage-sync@master
+        env:
+          GCP_SERVICE_ACCOUNT_KEY_FILE: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY_FILE }}
+          GCP_STORAGE_BUCKET: ${{ secrets.GCP_STORAGE_BUCKET }}
+          SOURCE_DIR: "install"

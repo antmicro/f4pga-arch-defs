@@ -5,10 +5,12 @@ set -e
 
 $SPACER
 
-mkdir install
-export INSTALL_DIR=$(pwd)/install
+export INSTALL_DIR=quicklogic-arch-defs
+mkdir ${INSTALL_DIR}
+export ABS_INSTALL_DIR=$(pwd)/install
 export ROOT_DIR=$(pwd)
-export CMAKE_FLAGS="-DCMAKE_INSTALL_PREFIX=${INSTALL_DIR}"
+export CMAKE_FLAGS="-DCMAKE_INSTALL_PREFIX=${ABS_INSTALL_DIR}"
+export GITHASH=$(git rev-parse --short HEAD)
 
 start_section "symbiflow.configure_cmake" "Configuring CMake (make env)"
 make env
@@ -38,7 +40,8 @@ $SPACER
 echo "----------------------------------------"
 (
     make_target install "Installing architecture definitions"
-    tar -acf ${ROOT_DIR}/install.tar.gz ${INSTALL_DIR}/*
+    cd ${ROOT_DIR}
+    tar -acf quicklogic-arch-defs-${GITHASH}.tar.gz ${INSTALL_DIR}/*
 )
 echo "----------------------------------------"
 
