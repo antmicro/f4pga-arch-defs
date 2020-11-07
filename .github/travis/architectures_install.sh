@@ -7,7 +7,7 @@ $SPACER
 
 export INSTALL_DIR=quicklogic-arch-defs
 mkdir ${INSTALL_DIR}
-export ABS_INSTALL_DIR=$(pwd)/install
+export ABS_INSTALL_DIR=$(pwd)/${INSTALL_DIR}
 export ROOT_DIR=$(pwd)
 export CMAKE_FLAGS="-DCMAKE_INSTALL_PREFIX=${ABS_INSTALL_DIR}"
 export GITHASH=$(git rev-parse --short HEAD)
