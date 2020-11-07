@@ -64,3 +64,28 @@ jobs:
           GCP_SERVICE_ACCOUNT_KEY_FILE: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY_FILE }}
           GCP_STORAGE_BUCKET: ${{ secrets.GCP_STORAGE_BUCKET }}
           SOURCE_DIR: "ql-arch-definitions"
+
+      - name: Generate latest file
+        run: |
+          export GITHASH=$(git rev-parse --short HEAD)
+          echo "https://storage.googleapis.com/symbiflow-arch-defs-install/quicklogic-arch-defs-${GITHASH}" > latest
+      - uses: actions/upload-artifact@v2
+        with:
+          name: latest-package
+          path: |
+            latest
+
+  upload-latest:
+    runs-on: ubuntu-18.04
+    needs: [build, upload-architectures]
+    steps:
+
+      - uses: actions/download-artifact@v2
+      - name: Upload achitectures to bucket
+
+        uses: weslenng/gcp-storage-sync@master
+        env:
+          GCP_SERVICE_ACCOUNT_KEY_FILE: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY_FILE }}
+          GCP_STORAGE_BUCKET: ${{ secrets.GCP_STORAGE_BUCKET }}
+          SOURCE_DIR: "latest-package"
+
