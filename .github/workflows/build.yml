@@ -47,7 +47,7 @@ jobs:
           stdbuf -i0 -o0 -e0 ./.github/travis/architectures_install.sh
       - uses: actions/upload-artifact@v2
         with:
-          name: Architecture definition
+          name: ql-arch-definitions
           path: |
               quicklogic-arch-defs-*.tar.gz
 
@@ -63,4 +63,4 @@ jobs:
         env:
           GCP_SERVICE_ACCOUNT_KEY_FILE: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY_FILE }}
           GCP_STORAGE_BUCKET: ${{ secrets.GCP_STORAGE_BUCKET }}
-          SOURCE_DIR: "install"
+          SOURCE_DIR: "ql-arch-definitions"
