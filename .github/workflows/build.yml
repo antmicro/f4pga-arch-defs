@@ -67,9 +67,8 @@ jobs:
 
       - name: Generate latest file
         run: |
-          git init
-          export GITHASH=$(git rev-parse --short ${GITHUB_SHA})
-          echo "https://storage.googleapis.com/symbiflow-arch-defs-install/quicklogic-arch-defs-${GITHASH}.tar.gz" > latest
+          export FILE=$(ls ql-arch-definitions)
+          echo "https://storage.googleapis.com/symbiflow-arch-defs-install/${FILE}" > latest
       - uses: actions/upload-artifact@v2
         with:
           name: latest-package
