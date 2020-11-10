@@ -389,7 +389,7 @@ all: \${BUILDDIR}/\${TOP}.bit\n\
 \${BUILDDIR}/\${TOP}.net: \${BUILDDIR}/\${TOP}.eblif\n\
 	cd \${BUILDDIR} && symbiflow_pack -e \${TOP}.eblif -d \${DEVICE} -s \${SDC} 2>&1 > $LOG_FILE\n\
 \n\
-\${BUILDDIR}/\${TOP}.place: \${BUILDDIR}/\${TOP}.net\n\
+\${BUILDDIR}/\${TOP}.place: \${BUILDDIR}/\${TOP}.net \${PCF}\n\
 	cd \${BUILDDIR} && symbiflow_place -e \${TOP}.eblif -d \${DEVICE} -p \${PCF} -n \${TOP}.net -P \${PARTNAME} -s \${SDC} 2>&1 > $LOG_FILE\n\
 \n\
 \${BUILDDIR}/\${TOP}.route: \${BUILDDIR}/\${TOP}.place\n\
