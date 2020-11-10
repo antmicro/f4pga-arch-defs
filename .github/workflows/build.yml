@@ -82,6 +82,7 @@ jobs:
 
       - uses: actions/download-artifact@v2
       - name: Upload latest file to bucket
+        if: github.event_name == 'push'
 
         uses: weslenng/gcp-storage-sync@master
         env:
