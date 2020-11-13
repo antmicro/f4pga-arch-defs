@@ -17,7 +17,7 @@ add_file_target(FILE chandalar.pcf)
 add_fpga_target(
   NAME design3-ql-chandalar
   BOARD chandalar
-  SOURCES AL4S3B_FPGA_Top.v AL4S3B_FPGA_IP.v AL4S3B_FPGA_Registers.v i2s_slave_w_DMA.v i2s_slave_rx.v i2s_slave_w_DMA_registers.v i2s_slave_w_DMA_StateMachine.v i2s_slave_Rx_FIFOs.v deci_filter_fir128coeff.v fll_acslip.v r512x16_512x16.v af512x16_512x16.v fifo_blk.v ram_blk.v 
+  SOURCES AL4S3B_FPGA_Top.v AL4S3B_FPGA_IP.v AL4S3B_FPGA_Registers.v i2s_slave_w_DMA.v i2s_slave_rx.v i2s_slave_w_DMA_registers.v i2s_slave_w_DMA_StateMachine.v i2s_slave_Rx_FIFOs.v deci_filter_fir128coeff.v fll_acslip.v r512x16_512x16.v af512x16_512x16.v fifo_blk.v ram_blk.v
   INPUT_IO_FILE chandalar.pcf
   EXPLICIT_ADD_FILE_TARGET
   )
@@ -30,6 +30,6 @@ add_openocd_output(
   PARENT design3-ql-chandalar
 )
 
-add_dependencies(all_ql_tests design3-ql-chandalar_bit)
-add_dependencies(all_ql_tests design3-ql-chandalar_jlink)
-add_dependencies(all_ql_tests design3-ql-chandalar_openocd)
+add_dependencies(all_ql_tests_bit  design3-ql-chandalar_bit)
+add_dependencies(all_ql_tests_prog design3-ql-chandalar_jlink)
+add_dependencies(all_ql_tests_prog design3-ql-chandalar_openocd)

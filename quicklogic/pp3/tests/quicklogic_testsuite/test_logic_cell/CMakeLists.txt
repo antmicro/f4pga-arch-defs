@@ -17,6 +17,6 @@ add_openocd_output(
   PARENT test_logic_cell-ql-chandalar
 )
 
-add_dependencies(all_ql_tests test_logic_cell-ql-chandalar_bit)
-add_dependencies(all_ql_tests test_logic_cell-ql-chandalar_jlink)
-add_dependencies(all_ql_tests test_logic_cell-ql-chandalar_openocd)
+add_dependencies(all_ql_tests_bit  test_logic_cell-ql-chandalar_bit)
+add_dependencies(all_ql_tests_prog test_logic_cell-ql-chandalar_jlink)
+add_dependencies(all_ql_tests_prog test_logic_cell-ql-chandalar_openocd)

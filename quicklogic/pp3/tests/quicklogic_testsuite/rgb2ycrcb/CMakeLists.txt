@@ -17,9 +17,9 @@ add_openocd_output(
   PARENT rgb2ycrcb-ql-chandalar
 )
 
-add_dependencies(all_ql_tests rgb2ycrcb-ql-chandalar_bit)
-add_dependencies(all_ql_tests rgb2ycrcb-ql-chandalar_jlink)
-add_dependencies(all_ql_tests rgb2ycrcb-ql-chandalar_openocd)
+add_dependencies(all_ql_tests_bit  rgb2ycrcb-ql-chandalar_bit)
+add_dependencies(all_ql_tests_prog rgb2ycrcb-ql-chandalar_jlink)
+add_dependencies(all_ql_tests_prog rgb2ycrcb-ql-chandalar_openocd)
 
 add_file_target(FILE quickfeather.pcf)
 
@@ -39,7 +39,7 @@ add_openocd_output(
   PARENT rgb2ycrcb-ql-quickfeather
 )
 
-add_dependencies(all_ql_tests rgb2ycrcb-ql-quickfeather_bit)
-add_dependencies(all_ql_tests rgb2ycrcb-ql-quickfeather_jlink)
-add_dependencies(all_ql_tests rgb2ycrcb-ql-quickfeather_openocd)
+add_dependencies(all_ql_tests_bit  rgb2ycrcb-ql-quickfeather_bit)
+add_dependencies(all_ql_tests_prog rgb2ycrcb-ql-quickfeather_jlink)
+add_dependencies(all_ql_tests_prog rgb2ycrcb-ql-quickfeather_openocd)
 

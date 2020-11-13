@@ -19,8 +19,8 @@ add_openocd_output(
   PARENT gclk_counter-ql-chandalar
 )
 
-add_dependencies(all_ql_tests gclk_counter-ql-chandalar_bit)
-add_dependencies(all_ql_tests gclk_counter-ql-chandalar_jlink)
-add_dependencies(all_ql_tests gclk_counter-ql-chandalar_openocd)
+add_dependencies(all_ql_tests_bit gclk_counter-ql-chandalar_bit)
+add_dependencies(all_ql_tests_prog gclk_counter-ql-chandalar_jlink)
+add_dependencies(all_ql_tests_prog gclk_counter-ql-chandalar_openocd)
 add_dependencies(all_quick_tests gclk_counter-ql-chandalar_analysis)
 add_dependencies(gclk_counter-ql-chandalar_analysis gclk_counter-ql-chandalar_bit_v)

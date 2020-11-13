@@ -21,9 +21,9 @@ add_openocd_output(
   PARENT wbqspiflash-ql-chandalar
 )
 
-add_dependencies(all_ql_tests wbqspiflash-ql-chandalar_bit)
-add_dependencies(all_ql_tests wbqspiflash-ql-chandalar_jlink)
-add_dependencies(all_ql_tests wbqspiflash-ql-chandalar_openocd)
+add_dependencies(all_ql_tests_bit  wbqspiflash-ql-chandalar_bit)
+add_dependencies(all_ql_tests_prog wbqspiflash-ql-chandalar_jlink)
+add_dependencies(all_ql_tests_prog wbqspiflash-ql-chandalar_openocd)
 
 add_file_target(FILE quickfeather.pcf)
 
@@ -43,7 +43,7 @@ add_openocd_output(
   PARENT wbqspiflash-ql-quickfeather
 )
 
-add_dependencies(all_ql_tests wbqspiflash-ql-quickfeather_bit)
-add_dependencies(all_ql_tests wbqspiflash-ql-quickfeather_jlink)
-add_dependencies(all_ql_tests wbqspiflash-ql-quickfeather_openocd)
+add_dependencies(all_ql_tests_bit  wbqspiflash-ql-quickfeather_bit)
+add_dependencies(all_ql_tests_prog wbqspiflash-ql-quickfeather_jlink)
+add_dependencies(all_ql_tests_prog wbqspiflash-ql-quickfeather_openocd)
 

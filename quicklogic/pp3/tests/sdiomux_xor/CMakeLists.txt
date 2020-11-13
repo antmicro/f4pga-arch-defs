@@ -21,7 +21,7 @@ add_dependencies(all_quick_tests sdiomux_xor-ql-chandalar_bit)
 add_dependencies(all_quick_tests sdiomux_xor-ql-chandalar_jlink)
 add_dependencies(all_quick_tests sdiomux_xor-ql-chandalar_openocd)
 
-add_dependencies(all_ql_tests sdiomux_xor-ql-chandalar_bit)
-add_dependencies(all_ql_tests sdiomux_xor-ql-chandalar_jlink)
-add_dependencies(all_ql_tests sdiomux_xor-ql-chandalar_openocd)
+add_dependencies(all_ql_tests_bit sdiomux_xor-ql-chandalar_bit)
+add_dependencies(all_ql_tests_prog sdiomux_xor-ql-chandalar_jlink)
+add_dependencies(all_ql_tests_prog sdiomux_xor-ql-chandalar_openocd)
 

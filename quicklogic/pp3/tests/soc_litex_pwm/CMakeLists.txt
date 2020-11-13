@@ -18,9 +18,9 @@ add_openocd_output(
   PARENT soc_litex_pwm-ql-chandalar
 )
 
-add_dependencies(all_ql_tests soc_litex_pwm-ql-chandalar_bit)
-add_dependencies(all_ql_tests soc_litex_pwm-ql-chandalar_jlink)
-add_dependencies(all_ql_tests soc_litex_pwm-ql-chandalar_openocd)
+add_dependencies(all_ql_tests_bit  soc_litex_pwm-ql-chandalar_bit)
+add_dependencies(all_ql_tests_prog soc_litex_pwm-ql-chandalar_jlink)
+add_dependencies(all_ql_tests_prog soc_litex_pwm-ql-chandalar_openocd)
 
 add_file_target(FILE quickfeather.pcf)
 
@@ -40,7 +40,7 @@ add_openocd_output(
   PARENT soc_litex_pwm-ql-quickfeather
 )
 
-add_dependencies(all_ql_tests soc_litex_pwm-ql-quickfeather_bit)
-add_dependencies(all_ql_tests soc_litex_pwm-ql-quickfeather_jlink)
-add_dependencies(all_ql_tests soc_litex_pwm-ql-quickfeather_openocd)
+add_dependencies(all_ql_tests_bit  soc_litex_pwm-ql-quickfeather_bit)
+add_dependencies(all_ql_tests_prog soc_litex_pwm-ql-quickfeather_jlink)
+add_dependencies(all_ql_tests_prog soc_litex_pwm-ql-quickfeather_openocd)
 

@@ -21,9 +21,9 @@ add_dependencies(all_quick_tests ext_counter-ql-chandalar_bit)
 add_dependencies(all_quick_tests ext_counter-ql-chandalar_jlink)
 add_dependencies(all_quick_tests ext_counter-ql-chandalar_openocd)
 
-add_dependencies(all_ql_tests ext_counter-ql-chandalar_bit)
-add_dependencies(all_ql_tests ext_counter-ql-chandalar_jlink)
-add_dependencies(all_ql_tests ext_counter-ql-chandalar_openocd)
+add_dependencies(all_ql_tests_bit ext_counter-ql-chandalar_bit)
+add_dependencies(all_ql_tests_prog ext_counter-ql-chandalar_jlink)
+add_dependencies(all_ql_tests_prog ext_counter-ql-chandalar_openocd)
 
 
 add_file_target(FILE quickfeather.pcf)
@@ -44,7 +44,7 @@ add_openocd_output(
   PARENT ext_counter-ql-quickfeather
 )
 
-add_dependencies(all_ql_tests ext_counter-ql-quickfeather_bit)
-add_dependencies(all_ql_tests ext_counter-ql-quickfeather_jlink)
-add_dependencies(all_ql_tests ext_counter-ql-quickfeather_openocd)
+add_dependencies(all_ql_tests_bit ext_counter-ql-quickfeather_bit)
+add_dependencies(all_ql_tests_prog ext_counter-ql-quickfeather_jlink)
+add_dependencies(all_ql_tests_prog ext_counter-ql-quickfeather_openocd)
 

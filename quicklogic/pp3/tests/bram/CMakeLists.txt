@@ -17,7 +17,7 @@ add_openocd_output(
   PARENT bram-ql-chandalar
 )
 
-add_dependencies(all_ql_tests bram-ql-chandalar_bit)
-add_dependencies(all_ql_tests bram-ql-chandalar_jlink)
-add_dependencies(all_ql_tests bram-ql-chandalar_openocd)
+add_dependencies(all_ql_tests_bit bram-ql-chandalar_bit)
+add_dependencies(all_ql_tests_prog bram-ql-chandalar_jlink)
+add_dependencies(all_ql_tests_prog bram-ql-chandalar_openocd)
 
