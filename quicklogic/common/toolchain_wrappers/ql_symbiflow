@@ -383,7 +383,7 @@ SDC := $SDC_MAKE\n\
 BUILDDIR := build\n\n\
 all: \${BUILDDIR}/\${TOP}.bit\n\
 \n\
-\${BUILDDIR}/\${TOP}.eblif: \${VERILOG}\n\
+\${BUILDDIR}/\${TOP}.eblif: \${VERILOG} \${PCF}\n\
 	cd \${BUILDDIR} && symbiflow_synth -t \${TOP} -v \${VERILOG} -d \${DEVICE} -p \${PCF} -P \${PART} 2>&1 > $LOG_FILE\n\
 \n\
 \${BUILDDIR}/\${TOP}.net: \${BUILDDIR}/\${TOP}.eblif\n\
