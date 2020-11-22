@@ -21,8 +21,8 @@ echo -e "\nBelow are the supported commands: \n\
 \t>ql_symbiflow -synth -src <source_dir path> -d <device> -P <package> -t <top> -v <verilog file/files> -p <pcf file>  \n\
  To run synthesis, pack, place and route, generate bitstream:\n\
 \t>ql_symbiflow -compile -src <source_dir path> -d <device> -P <package> -t <top> -v <verilog file/files> -p <pcf file>  \n\
- To dump the jlink/post_verilog/header file: \n\
-\t>ql_symbiflow -compile -src <source_dir path> -d <device> -P <package> -t <top> -v <verilog file/files> -p <pcf file> -dump <jlink/post_verilog/header/openocd> \n\
+ To dump the jlink/post_verilog/header/binary file: \n\
+\t>ql_symbiflow -compile -src <source_dir path> -d <device> -P <package> -t <top> -v <verilog file/files> -p <pcf file> -dump <jlink/post_verilog/header/openocd/binary> \n\
 Device supported:ql-eos-s3\n\
 Packages supported PD64,PU64,WR42 " || exit 1
 elif [[ $1 == "-v" || $1 == "--version" ]];then
@@ -383,13 +383,13 @@ SDC := $SDC_MAKE\n\
 BUILDDIR := build\n\n\
 all: \${BUILDDIR}/\${TOP}.bit\n\
 \n\
-\${BUILDDIR}/\${TOP}.eblif: \${VERILOG} \${PCF}\n\
+\${BUILDDIR}/\${TOP}.eblif: \${VERILOG}\n\
 	cd \${BUILDDIR} && symbiflow_synth -t \${TOP} -v \${VERILOG} -d \${DEVICE} -p \${PCF} -P \${PART} 2>&1 > $LOG_FILE\n\
 \n\
 \${BUILDDIR}/\${TOP}.net: \${BUILDDIR}/\${TOP}.eblif\n\
 	cd \${BUILDDIR} && symbiflow_pack -e \${TOP}.eblif -d \${DEVICE} -s \${SDC} 2>&1 > $LOG_FILE\n\
 \n\
-\${BUILDDIR}/\${TOP}.place: \${BUILDDIR}/\${TOP}.net \${PCF}\n\
+\${BUILDDIR}/\${TOP}.place: \${BUILDDIR}/\${TOP}.net\n\
 	cd \${BUILDDIR} && symbiflow_place -e \${TOP}.eblif -d \${DEVICE} -p \${PCF} -n \${TOP}.net -P \${PARTNAME} -s \${SDC} 2>&1 > $LOG_FILE\n\
 \n\
 \${BUILDDIR}/\${TOP}.route: \${BUILDDIR}/\${TOP}.place\n\
@@ -403,6 +403,9 @@ all: \${BUILDDIR}/\${TOP}.bit\n\
 \n\
 \${BUILDDIR}/\${TOP}_bit.h: \${BUILDDIR}/\${TOP}.bit\n\
 	cd \${BUILDDIR} && symbiflow_write_bitheader -b \${TOP}.bit\n\
+\n\
+\${BUILDDIR}/\${TOP}.bin: \${BUILDDIR}/\${TOP}.bit\n\
+	cd \${BUILDDIR} && symbiflow_write_binary -b \${TOP}.bit\n\
 \n\
 \${BUILDDIR}/\${TOP}.jlink: \${BUILDDIR}/\${TOP}.bit\n\
 	cd \${BUILDDIR} && symbiflow_write_jlink -f \${TOP}.fasm -P \${PACKAGENAME} -b \${TOP}.bit\n\
@@ -440,6 +443,9 @@ elif [[ ! -z "$OUT" && $1 == "-compile" ]];then
    fi
    if [[ " ${OUT_ARR[@]} " =~ " header " ]]; then
     cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}_bit.h || exit
+   fi
+   if [[ " ${OUT_ARR[@]} " =~ " binary " ]]; then
+    cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.bin || exit
    fi
 else
  if [ $1 == "-compile" ]; then

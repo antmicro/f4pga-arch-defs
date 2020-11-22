@@ -300,17 +300,28 @@ def main():
     # Convert the config to IOMUX register content
     iomux_regs = generate_iomux_register_content(config)
 
-    print("")
-    if args.output_format == "openocd":
+    if args.output_format == "openocd":        
         # Output openOCD process
         for adr in sorted(iomux_regs.keys()):
-            print("    mww 0x{:08X} 0x{:08X}".format(adr, iomux_regs[adr]))
-    elif args.output_format == "jlink":
+            print("    mww 0x{:08x} 0x{:08x}".format(adr, iomux_regs[adr]))
+    elif args.output_format == "jlink":        
         # Output JLink commands
         for adr in sorted(iomux_regs.keys()):
-            print("w4 0x{:08X} 0x{:08X}".format(adr, iomux_regs[adr]))
+            print("w4 0x{:08x} 0x{:08x}".format(adr, iomux_regs[adr]))
+    elif args.output_format == "binary":
+        # Output binary file: <REGADDR 4B><REGVAL 4B>...
+        for adr in sorted(iomux_regs.keys()):
+            #print("0x{:08X}0x{:08X}".format(adr, iomux_regs[adr]))
+            # first the address
+            addr_bytes = int(adr).to_bytes(4,byteorder='little')
+            # output the address as raw bytes, bypass the print(), LE, 4B
+            sys.stdout.buffer.write(addr_bytes)
+            # second the value
+            val_bytes = int(iomux_regs[adr]).to_bytes(4,byteorder='little')
+            # output the value as raw bytes, bypass the print(), LE, 4B
+            sys.stdout.buffer.write(val_bytes)
     else:
-        print("Use either 'openocd' or 'jlink' output format!")
+        print("Use either 'openocd' or 'jlink' or 'binary' output format!")
         exit(-1)
 
 
