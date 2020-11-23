@@ -381,9 +381,14 @@ DEVICE  := $DEVICE\n\
 PCF := $PCF_MAKE\n\
 SDC := $SDC_MAKE\n\
 BUILDDIR := build\n\n\
+HEX_FILES := \${current_dir}/*.hex
+
 all: \${BUILDDIR}/\${TOP}.bit\n\
 \n\
 \${BUILDDIR}/\${TOP}.eblif: \${VERILOG} \${PCF}\n\
+  ifneq (\"\$(wildcard \$(HEX_FILES))\",\"\")\n\
+	\$(shell cp \${current_dir}/*.hex \${BUILDDIR})\n\
+  endif\n\
 	cd \${BUILDDIR} && symbiflow_synth -t \${TOP} -v \${VERILOG} -d \${DEVICE} -p \${PCF} -P \${PART} 2>&1 > $LOG_FILE\n\
 \n\
 \${BUILDDIR}/\${TOP}.net: \${BUILDDIR}/\${TOP}.eblif\n\
