@@ -24,8 +24,8 @@ CONDA_FLAGS="-y --override-channels -c defaults -c conda-forge"
 conda update $CONDA_FLAGS -q conda
 curl https://storage.googleapis.com/symbiflow-arch-defs-install/quicklogic-arch-defs-63c3d8f9.tar.gz --output arch.tar.gz
 tar -C $INSTALL_DIR -xvf arch.tar.gz && rm arch.tar.gz
-conda install $CONDA_FLAGS -c quicklogic-corp/label/ql yosys="0.8.0_0002_gc3b38fdc 20200901_073908" python=3.7
-conda install $CONDA_FLAGS -c quicklogic-corp/label/ql yosys-plugins="1.2.0_0009_g9ab211c 20201001_121833"
+conda install $CONDA_FLAGS -c quicklogic-corp/label/ql yosys="0.8.0_0003_e80fb742f_20201208_122808 None" python=3.7
+conda install $CONDA_FLAGS -c quicklogic-corp/label/ql yosys-plugins="1.2.0_0011_g21045a9 None"
 conda install $CONDA_FLAGS -c quicklogic-corp/label/ql vtr="v8.0.0_rc2_2894_gdadca7ecf 20201008_140004"
 conda install $CONDA_FLAGS -c quicklogic-corp iverilog
 conda install $CONDA_FLAGS -c tfors gtkwave
@@ -33,5 +33,15 @@ conda install $CONDA_FLAGS make lxml simplejson intervaltree git pip
 conda activate
 pip install python-constraint
 pip install serial
-pip install git+https://github.com/QuickLogic-Corp/quicklogic-fasm@318abca
+#pip install git+https://github.com/QuickLogic-Corp/quicklogic-fasm@2312ff0
+pip install git+https://github.com/QuickLogic-Corp/quicklogic-fasm
 conda deactivate
+setup_file=$INSTALL_DIR/setup.sh
+echo "export INSTALL_DIR=$INSTALL_DIR" >$setup_file
+chmod 755 $setup_file
+#adding symbiflow toolchain binaries to PATH
+echo "export PATH=\"\$INSTALL_DIR/quicklogic-arch-defs/bin:\$INSTALL_DIR/quicklogic-arch-defs/bin/python:\$PATH\"" >>$setup_file
+echo "source \"\$INSTALL_DIR/conda/etc/profile.d/conda.sh\"" >>$setup_file
+echo "conda activate" >>$setup_file
+echo "ql_symbiflow -v" >>$setup_file
+
