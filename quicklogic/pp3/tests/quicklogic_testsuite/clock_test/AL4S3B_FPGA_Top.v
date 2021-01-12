@@ -58,8 +58,8 @@ wire            WBs_ACK        ; // Wishbone Client Acknowledge
 wire            WB_RST         ; // Wishbone FPGA Reset
 wire            WB_RST_FPGA  ; // Wishbone FPGA Reset
 
-wire			Sys_Clk0;
-wire			Sys_Clk0_Rst;
+wire			Clk16;
+wire			Clk16_Rst;
 // Misc
 
 wire			clk1;
@@ -89,9 +89,9 @@ assign clk_out4 = clk4;
 assign clk_out5 = clk5;
 assign tff_out = clk6_r;
 
-assign WB_RST_FPGA = Sys_Clk0_Rst | WB_RST;
+assign WB_RST_FPGA = Clk16_Rst | WB_RST;
 
-gclkbuff u_gclkbuff_clock1 ( .A(Sys_Clk0) , .Z(clk1) );
+gclkbuff u_gclkbuff_clock1 ( .A(Clk16) , .Z(clk1) );
 gclkbuff u_gclkbuff_clock2 ( .A(clk2_r) , .Z(clk2) );
 gclkbuff u_gclkbuff_clock3 ( .A(clk3_r) , .Z(clk3) );
 gclkbuff u_gclkbuff_clock4 ( .A(clk4_r) , .Z(clk4) );
@@ -195,10 +195,10 @@ qlal4s3b_cell_macro              u_qlal4s3b_cell_macro
     //
     // FB Clocks
     //
-    .Sys_Clk0                  ( Sys_Clk0                    ), // output
-    .Sys_Clk0_Rst              ( Sys_Clk0_Rst                ), // output
-    .Sys_Clk1                  (                     ), // output
-    .Sys_Clk1_Rst              (                 ), // output
+    .Clk16                     ( Clk16                       ), // output
+    .Clk16_Rst                 ( Clk16_Rst                   ), // output
+    .Clk21                     (                             ), // output
+    .Clk21_Rst                 (                             ), // output
     //
     // Packet FIFO
     //
