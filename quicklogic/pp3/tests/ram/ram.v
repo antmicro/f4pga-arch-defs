@@ -13,14 +13,14 @@ module top #(
     output [1:0] read_value,
     output sanity_led
 );
-    wire Sys_Clk0;
+    wire Clk16;
     wire clk;
 
     qlal4s3b_cell_macro u_qlal4s3b_cell_macro (
-        .Sys_Clk0 ( Sys_Clk0 )
+        .Clk16 ( Clk16 )
     );
 
-    gclkbuff u_gclkbuff_clock ( .A(Sys_Clk0), .Z(clk) );
+    gclkbuff u_gclkbuff_clock ( .A(Clk16), .Z(clk) );
 
     reg [15:0] sanity_counter;
 
