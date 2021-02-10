@@ -8362,3 +8362,29 @@ module OPAD (
     .I(I)
   );
 endmodule
+
+module IBUFDS_GTE2 (
+  output O,
+  output ODIV2,
+  input CEB,
+  input I,
+  input IB
+  );
+
+  parameter CLKCM_CFG = "TRUE";
+  parameter CLKRCV_TRST = "TRUE";
+  parameter [1:0] CLKSWING_CFG = 2'b11;
+
+  IBUFDS_GTE2_VPR #(
+    .CLKCM_CFG(CLKCM_CFG),
+    .CLKRCV_TRST(CLKRCV_TRST),
+    .CLKSWING_CFG(CLKSWING_CFG)
+  ) _TECHMAP_REPLACE_ (
+    .O(O),
+    .ODIV2(ODIV2),
+    .CEB(CEB),
+    .I(I),
+    .IB(IB)
+  );
+
+endmodule
