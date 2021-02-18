@@ -119,10 +119,13 @@ def main():
         for loc, pins in pins_by_loc.items():
             if len(pins) > 1:
                 pins_on_same_coord[loc] = pins
+        # HACK: artificially move IPADs of the GTP_COMMON to match Z coordinates from VPR
+        # it won't work for GTP_CHANNEL FIXME
+        offset = 3
         for loc, pins in pins_on_same_coord.items():
             for z, (pin_name) in enumerate(pins):
                 io, loc = pin_to_iob[pin_name]
-                pin_to_iob[pin_name] = (io, (loc[0], loc[1], z))
+                pin_to_iob[pin_name] = (io, (loc[0], loc[1], z + offset))
 
         for line in csv.DictReader(args.package_pins):
 
