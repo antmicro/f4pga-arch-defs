@@ -586,7 +586,16 @@ def import_tile(db, args):
 def import_site_as_tile(db, args):
     """ Create a root-level pb_type with the same pin names as a site type.
     """
-    site_type = db.get_site_type(args.tile)
+    tile = args.tile
+    site_types = args.site_types
+    if args.base_site is not None:
+        tile = args.base_site
+        site_types = list()
+        for s in args.site_types.split(','):
+            site_types.append("{}/{}".format(args.base_site, s.split("/")[1]))
+        site_types = ','.join(site_types)
+
+    site_type = db.get_site_type(tile)
 
     # Wires sink to a site within the tile are input wires.
     input_wires = set()
@@ -600,10 +609,10 @@ def import_site_as_tile(db, args):
     if args.unused_wires:
         unused_wires = args.unused_wires.split(",")
 
-    site_type_instances = parse_site_type_instance(args.site_types)
+    site_type_instances = parse_site_type_instance(site_types)
     assert len(site_type_instances) == 1
-    assert args.tile in site_type_instances
-    assert len(site_type_instances[args.tile]) == 1
+    assert tile in site_type_instances
+    assert len(site_type_instances[tile]) == 1
 
     for site_pin in site_type.get_site_pins():
         site_type_pin = site_type.get_site_pin(site_pin)
@@ -625,7 +634,7 @@ def import_site_as_tile(db, args):
     # Generate the model.xml file                                            #
     ##########################################################################
     model = ModelXml(f=args.output_model, site_directory=args.site_directory)
-    model.add_model_include(args.tile, site_type_instances[args.tile][0])
+    model.add_model_include(args.tile, site_type_instances[tile][0])
     model.write_model()
 
     ##########################################################################
@@ -638,7 +647,7 @@ def import_site_as_tile(db, args):
     )
 
     site = args.tile
-    site_instance = site_type_instances[args.tile][0]
+    site_instance = site_type_instances[tile][0]
 
     site_pbtype = args.site_directory + "/{0}/{1}.pb_type.xml"
     site_type_path = site_pbtype.format(site.lower(), site_instance.lower())
@@ -1458,6 +1467,11 @@ connection database in lue of Project X-Ray."""
         '--no_fasm_prefix',
         action="store_true",
         help="""Do not insert fasm prefix to the metadata."""
+    )
+
+    parser.add_argument(
+        '--base_site',
+        help="Specify the real site to which belongs a synthetic one."
     )
 
     parser.add_argument(

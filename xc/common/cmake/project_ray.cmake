@@ -321,12 +321,13 @@ function(PROJECT_RAY_TILE)
   #   SITE_COORDS (option)
   #   NO_FASM_PREFIX (option)
   #   [FILTER_X <x_coord>]
-  #   UNUSED_WIRES <unused wires>
+  #   BASE_SITE <base site>
+  #   UNUSED_WIRES <unused wire1> <unused wire2> ...
   #   )
   # ~~~
 
   set(options FUSED_SITES SITE_AS_TILE USE_DATABASE NO_FASM_PREFIX)
-  set(oneValueArgs ARCH TILE FILTER_X SITE_COORDS)
+  set(oneValueArgs ARCH TILE FILTER_X SITE_COORDS BASE_SITE)
   set(multiValueArgs SITE_TYPES EQUIVALENT_SITES UNUSED_WIRES)
   cmake_parse_arguments(
     PROJECT_RAY_TILE
@@ -397,6 +398,11 @@ function(PROJECT_RAY_TILE)
     set(FASM_ARGS "--no_fasm_prefix")
   endif()
 
+  set(BASE_SITE "")
+  if(PROJECT_RAY_TILE_BASE_SITE)
+    set(BASE_SITE "--base_site" ${PROJECT_RAY_TILE_BASE_SITE})
+  endif()
+
   set(UNUSED_WIRES "")
   if(PROJECT_RAY_TILE_UNUSED_WIRES)
     string(REPLACE ";" "," UNUSED_WIRES_COMMA "${PROJECT_RAY_TILE_UNUSED_WIRES}")
@@ -417,6 +423,7 @@ function(PROJECT_RAY_TILE)
     --pin_assignments ${PIN_ASSIGNMENTS}
     --output-pb-type ${CMAKE_CURRENT_BINARY_DIR}/${TILE}.pb_type.xml
     --output-model ${CMAKE_CURRENT_BINARY_DIR}/${TILE}.model.xml
+    ${BASE_SITE}
     ${UNUSED_WIRES}
     ${FUSED_SITES_ARGS}
     ${SITE_COORDS_ARGS}
