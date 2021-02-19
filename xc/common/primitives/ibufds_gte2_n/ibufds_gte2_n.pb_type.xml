@@ -1,0 +1,25 @@
+<pb_type name="IBUFDS_GTE2_N" num_pb="1" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <input name="CEB" num_pins="1"/>
+  <clock name="I" num_pins="1"/>
+  <clock name="IB" num_pins="1"/>
+  <output name="O" num_pins="1"/>
+  <output name="ODIV2" num_pins="1"/>
+  <metadata>
+    <meta name="fasm_params">
+      CLKCM_CFG = CLKCM_CFG
+      CLKRCV_TRST = CLKRCV_TRST
+      IN_USE = IN_USE
+    </meta>
+  </metadata>
+
+  <xi:include href="../iob33/inpad.pb_type.xml"/>
+  <xi:include href="ibufds_gte2_n_prim.pb_type.xml"/>
+
+  <interconnect>
+    <direct input="inpad.inpad" name="inpad.inpad_to_IBUFDS_GTE2_N_PRIM.IB" output="IBUFDS_GTE2_N_PRIM.IB">
+      <pack_pattern name="inpad_to_IBUFDS_GTE2_N"/>
+    </direct>
+    <direct input="IBUFDS_GTE2_N_PRIM.OB" name="IBUFDS_GTE2_N_PRIM.OB_to_IBUFDS_GTE2_N.OB" output="IBUFDS_GTE2_N.OB"/>
+  </interconnect>
+
+</pb_type>

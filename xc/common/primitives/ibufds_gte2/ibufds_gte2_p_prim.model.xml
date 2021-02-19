@@ -1,6 +1,5 @@
 <models>
-  <!-- combinational_sink_ports ? -->
-  <model name="IBUFDS_GTE2_VPR">
+  <model name="IBUFDS_GTE2_P_PRIM">
     <input_ports>
       <port name="CEB"/>
       <port name="I" is_clock="1"/>

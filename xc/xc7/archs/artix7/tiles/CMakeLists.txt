@@ -12,7 +12,8 @@ add_subdirectory(bufgctrl)
 add_subdirectory(hclk_ioi3)
 add_subdirectory(gtpe2_common)
 add_subdirectory(gtpe2_channel)
-add_subdirectory(ibufds_gte2)
+add_subdirectory(ibufds_gte2_p)
+add_subdirectory(ibufds_gte2_n)
 add_subdirectory(gtp_common)
 #add_subdirectory(gtp_channel_0)
 #add_subdirectory(gtp_channel_1)
@@ -39,3 +40,13 @@ project_ray_equiv_tile(
   PB_TYPES PLLE2_ADV
   PB_TYPE_SITES PLLE2_ADV_SITES
   )
+
+#set(IBUFDS_GTE2_P_SITES IBUFDS_GTE2_P)
+#set(IBUFDS_GTE2_N_SITES IBUFDS_GTE2_N)
+#
+#project_ray_equiv_tile(
+#  ARCH artix7
+#  TILES IBUFDS_GTE2
+#  PB_TYPES IBUFDS_GTE2_P IBUFDS_GTE2_N
+#  PB_TYPE_SITES IBUFDS_GTE2_P_SITES IBUFDS_GTE2_N_SITES
+#  )

@@ -1,0 +1,10 @@
+<models>
+  <model name="IBUFDS_GTE2_N_PRIM">
+    <input_ports>
+      <port name="IB" is_clock="1"/>
+    </input_ports>
+    <output_ports>
+      <port name="OB"/>
+    </output_ports>
+  </model>
+</models>

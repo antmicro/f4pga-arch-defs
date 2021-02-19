@@ -8351,16 +8351,27 @@ module IBUFDS_GTE2 (
   parameter CLKRCV_TRST = "TRUE";
   parameter [1:0] CLKSWING_CFG = 2'b11;
 
-  IBUFDS_GTE2_VPR #(
+  wire interconnect;
+
+  IBUFDS_GTE2_P_VPR #(
     .CLKCM_CFG(CLKCM_CFG),
     .CLKRCV_TRST(CLKRCV_TRST),
     .CLKSWING_CFG(CLKSWING_CFG)
-  ) _TECHMAP_REPLACE_ (
+  ) IBUFDS_GTE2_P (
     .O(O),
     .ODIV2(ODIV2),
     .CEB(CEB),
     .I(I),
-    .IB(IB)
+    .IB(interconnect)
+  );
+
+  IBUFDS_GTE2_N_VPR #(
+    .CLKCM_CFG(CLKCM_CFG),
+    .CLKRCV_TRST(CLKRCV_TRST),
+    .CLKSWING_CFG(CLKSWING_CFG)
+  ) IBUFDS_GTE2_N (
+    .IB(IB),
+    .OB(interconnect)
   );
 
 endmodule

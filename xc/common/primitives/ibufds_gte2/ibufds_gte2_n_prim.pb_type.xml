@@ -1,0 +1,11 @@
+<pb_type name="IBUFDS_GTE2_N" num_pb="1" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <clock name="IB" num_pins="1"/>
+  <output name="OB" num_pins="1"/>
+  <metadata>
+    <meta name="fasm_params">
+      CLKCM_CFG = CLKCM_CFG
+      CLKRCV_TRST = CLKRCV_TRST
+      IN_USE = IN_USE
+    </meta>
+  </metadata>
+</pb_type>

@@ -1,5 +1,4 @@
-<pb_type name="IBUFDS_GTE2" num_pb="1" blif_model=".subckt IBUFDS_GTE2_VPR">
-  <!-- combinational_sink_ports ? -->
+<pb_type name="IBUFDS_GTE2_P_PRIM" num_pb="1" blif_model=".subckt IBUFDS_GTE2_P_VPR">
   <input name="CEB" num_pins="1"/>
   <clock name="I" num_pins="1"/>
   <clock name="IB" num_pins="1"/>
