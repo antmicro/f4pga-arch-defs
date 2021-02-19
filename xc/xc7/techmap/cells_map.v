@@ -8339,30 +8339,6 @@ module CARRY4_FIX(output O0, O1, O2, O3, CO0, CO1, CO2, CO3, input CYINIT, CIN, 
   end
 endmodule
 
-module IPAD (
-  output O
-  );
-  parameter LOC = "UNPLACED";
-
-  IPAD_VPR #(
-    .LOC(LOC)
-  ) _TECHMAP_REPLACE_ (
-    .O(O)
-  );
-endmodule
-
-module OPAD (
-  input I
-  );
-  parameter LOC = "UNPLACED";
-
-  OPAD_VPR #(
-    .LOC(LOC)
-  ) _TECHMAP_REPLACE_ (
-    .I(I)
-  );
-endmodule
-
 module IBUFDS_GTE2 (
   output O,
   output ODIV2,

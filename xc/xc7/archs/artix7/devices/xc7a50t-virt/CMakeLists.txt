@@ -31,6 +31,4 @@ add_xc_device_define_type(
     HCLK_IOI3
     GTPE2_COMMON
     IBUFDS_GTE2
-    IPAD
-    OPAD
 )

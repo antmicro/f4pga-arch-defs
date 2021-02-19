@@ -1,7 +1,0 @@
-<models>
-  <model name="IPAD_VPR" never_prune="true">
-    <output_ports>
-      <port name="O"/>
-    </output_ports>
-  </model>
-</models>
