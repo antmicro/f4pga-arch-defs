@@ -4,6 +4,7 @@ import json
 import sys
 import prjxray.db
 from prjxray.site_type import SitePinDirection
+from prjxray.tile import Site
 from lib.pb_type_xml import start_heterogeneous_tile, add_switchblock_locations
 import lxml.etree as ET
 
@@ -48,6 +49,11 @@ def main():
     parser.add_argument('--pb_types', required=True)
     parser.add_argument('--pin_assignments', required=True)
     parser.add_argument(
+        '--base_sites',
+        help="Override site names. E.g. IBUFDS_GTE2_N=IBUFDS_GTE2,"\
+             "IBUFDS_GTE2_P=IBUFDS_GTE2"
+    )
+    parser.add_argument(
         '--unused_wires',
         help="Comma seperated list of site wires to exclude in this tile."
     )
@@ -63,6 +69,18 @@ def main():
     sites = {}
 
     pb_types = args.pb_types.split(',')
+
+    #if args.base_sites:
+    #    base_sites_assignments = args.base_sites.split(',')
+    #    base_sites_unsorted = {site.split('=')[0]: site.split('=')[1] for site in base_sites_assignments}
+    #    base_sites = {k: [] for k in base_sites_unsorted.values()}
+
+    #    for i, pb_type in enumerate(pb_types):
+    #        if pb_type in base_sites_unsorted.keys():
+    #            base_sites[base_sites_unsorted[pb_type]] += [pb_type]
+    #            pb_types[i] = base_sites_unsorted[pb_type]
+
+    pb_types = list(dict.fromkeys(pb_types))
 
     equivalent_sites_dict = dict()
     for pb_type in pb_types:
@@ -86,6 +104,32 @@ def main():
         input_wires, output_wires = get_wires(site, site_type, args.unused_wires)
 
         sites[site.type].append((site, input_wires, output_wires))
+
+    #if args.base_sites:
+    #    for site_type in sites.keys():
+    #        if site_type in base_sites.keys():
+    #            new_site_cfg = list()
+    #            for site_cfg in sites[site_type]:
+    #                for synth_site in base_sites[site_type]:
+    #                    new_sites = None
+    #                    new_wires = list()
+    #                    equivalent_sites_dict[synth_site] = []
+    #                    for cfg in site_cfg:
+    #                        if isinstance(cfg, Site):
+    #                            new_site = Site(name=cfg.name,
+    #                                            prefix=synth_site,
+    #                                            x=cfg.x,
+    #                                            y=cfg.y,
+    #                                            type=synth_site,
+    #                                            site_pins=cfg.site_pins
+    #                            )
+    #                        else:
+    #                            new_wires.append(cfg)
+    #                    new_site_cfg.append((new_site, new_wires[0], new_wires[1]))
+    #            sites[site_type] = new_site_cfg
+    #            del equivalent_sites_dict[site_type]
+
+    #print(equivalent_sites_dict)
 
     tile_xml = start_heterogeneous_tile(
         args.tile_type,

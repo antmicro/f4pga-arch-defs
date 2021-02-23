@@ -619,6 +619,19 @@ ORDER BY site_instance.x_coord, site_instance.y_coord, site_type.name;""",
         else:
             prefixes.append('{}.{}.{}'.format(tile_prefix, site_type, prefix))
 
+    if 'GTP_COMMON' in tile_prefix:
+        new_prefixes = list()
+        for p in prefixes:
+            if "IBUFDS_GTE2" in p:
+                new_prefixes.append(p.replace("IBUFDS_GTE2", "IBUFDS_GTE2_P"))
+                new_prefixes.append(p.replace("IBUFDS_GTE2", "IBUFDS_GTE2_N"))
+            elif 'IPAD' not in p and 'OPAD' not in p:
+                new_prefixes.append(p)
+        prefixes = new_prefixes
+
+    if 'GTP_COMMON' in tile_prefix:
+        print(prefixes)
+
     assert len(prefixes
                ) == tile_capacity, (tile_pkey, tile_capacity, len(prefixes))
 

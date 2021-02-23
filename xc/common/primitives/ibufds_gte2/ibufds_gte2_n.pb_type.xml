@@ -1,9 +1,6 @@
 <pb_type name="IBUFDS_GTE2_N" num_pb="1" xmlns:xi="http://www.w3.org/2001/XInclude">
-  <input name="CEB" num_pins="1"/>
-  <clock name="I" num_pins="1"/>
   <clock name="IB" num_pins="1"/>
-  <output name="O" num_pins="1"/>
-  <output name="ODIV2" num_pins="1"/>
+  <output name="OB" num_pins="1"/>
   <metadata>
     <meta name="fasm_params">
       CLKCM_CFG = CLKCM_CFG

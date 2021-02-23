@@ -588,7 +588,7 @@ def import_site_as_tile(db, args):
     """
     tile = args.tile
     site_types = args.site_types
-    if args.base_site is not None:
+    if args.base_site:
         tile = args.base_site
         site_types = list()
         for s in args.site_types.split(','):
@@ -651,6 +651,8 @@ def import_site_as_tile(db, args):
 
     site_pbtype = args.site_directory + "/{0}/{1}.pb_type.xml"
     site_type_path = site_pbtype.format(site.lower(), site_instance.lower())
+    if args.synth_site:
+        site_type_path = site_pbtype.format(site_types.split('/')[0].lower(), site_types.split('/')[1].lower())
     ET.SubElement(pb_type_xml, XI_INCLUDE, {
         'href': site_type_path,
     })
@@ -1472,6 +1474,11 @@ connection database in lue of Project X-Ray."""
     parser.add_argument(
         '--base_site',
         help="Specify the real site to which belongs a synthetic one."
+    )
+
+    parser.add_argument(
+        '--synth_site',
+        action='store_true'
     )
 
     parser.add_argument(

@@ -29,7 +29,9 @@ add_xc_device_define_type(
     BUFGCTRL
     PLLE2_ADV
     HCLK_IOI3
-    IBUFDS_GTE2_P
-    IBUFDS_GTE2_N
+    IBUFDS_GTE2_P_0
+    IBUFDS_GTE2_N_0
+    IBUFDS_GTE2_P_1
+    IBUFDS_GTE2_N_1
     GTPE2_COMMON
 )

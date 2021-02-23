@@ -326,7 +326,7 @@ function(PROJECT_RAY_TILE)
   #   )
   # ~~~
 
-  set(options FUSED_SITES SITE_AS_TILE USE_DATABASE NO_FASM_PREFIX)
+  set(options FUSED_SITES SITE_AS_TILE USE_DATABASE NO_FASM_PREFIX SYNTH_SITE)
   set(oneValueArgs ARCH TILE FILTER_X SITE_COORDS BASE_SITE)
   set(multiValueArgs SITE_TYPES EQUIVALENT_SITES UNUSED_WIRES)
   cmake_parse_arguments(
@@ -374,6 +374,9 @@ function(PROJECT_RAY_TILE)
   endif()
   if(PROJECT_RAY_TILE_SITE_AS_TILE)
       set(FUSED_SITES_ARGS "--site_as_tile")
+  endif()
+  if(PROJECT_RAY_TILE_SYNTH_SITE)
+      set(SYNTH_SITE_ARG "--synth_site")
   endif()
   if(PROJECT_RAY_TILE_USE_DATABASE)
       set(GENERIC_CHANNELS
@@ -424,6 +427,7 @@ function(PROJECT_RAY_TILE)
     --output-pb-type ${CMAKE_CURRENT_BINARY_DIR}/${TILE}.pb_type.xml
     --output-model ${CMAKE_CURRENT_BINARY_DIR}/${TILE}.model.xml
     ${BASE_SITE}
+    ${SYNTH_SITE_ARG}
     ${UNUSED_WIRES}
     ${FUSED_SITES_ARGS}
     ${SITE_COORDS_ARGS}
@@ -678,7 +682,8 @@ function(PROJECT_RAY_TILE_CAPACITY)
   #   ARCH <arch>
   #   TILE <tile>
   #   SITE_TYPES <site types>
-  #   UNUSED_WIRES <unused wires>
+  #   BASE_SITES <SITE1=SITE,SITE2=SITE ...>
+  #   UNUSED_WIRES <unused_wire1,unused_wire2 ...>
   #   )
   # ~~~
   #
@@ -688,7 +693,7 @@ function(PROJECT_RAY_TILE_CAPACITY)
 
   set(options)
   set(oneValueArgs ARCH TILE)
-  set(multiValueArgs SITE_TYPES UNUSED_WIRES)
+  set(multiValueArgs SITE_TYPES UNUSED_WIRES BASE_SITES)
   cmake_parse_arguments(
     PROJECT_RAY_TILE_CAPACITY
     "${options}"
@@ -726,6 +731,12 @@ function(PROJECT_RAY_TILE_CAPACITY)
     set(UNUSED_WIRES "--unused_wires" ${UNUSED_WIRES_COMMA})
   endif()
 
+  set(BASE_SITES "")
+  if(PROJECT_RAY_TILE_CAPACITY_BASE_SITES)
+    string(REPLACE ";" "," BASE_SITES_COMMA "${PROJECT_RAY_TILE_CAPACITY_BASE_SITES}")
+    set(BASE_SITES "--base_sites" ${BASE_SITES_COMMA})
+  endif()
+
   add_custom_command(
     OUTPUT ${TILE_LOWER}.tile.xml
     COMMAND ${CMAKE_COMMAND} -E env PYTHONPATH=${PRJRAY_DIR}:${symbiflow-arch-defs_SOURCE_DIR}/utils
@@ -738,6 +749,7 @@ function(PROJECT_RAY_TILE_CAPACITY)
       --pb_types ${SITE_TYPES_COMMA}
       --pin_assignments ${PIN_ASSIGNMENTS}
       ${UNUSED_WIRES}
+      ${BASE_SITES}
     DEPENDS
       ${TILE_CAPACITY_IMPORT}
       ${DEPS}
