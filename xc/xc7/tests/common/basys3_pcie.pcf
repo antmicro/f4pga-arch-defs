@@ -1,0 +1,2 @@
+set_io sys_rst_n E18
+set_io drp_rdy U16
