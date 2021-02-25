@@ -10,6 +10,8 @@ add_subdirectory(clk_bufg_top_r)
 add_subdirectory(clk_bufg_bot_r)
 add_subdirectory(bufgctrl)
 add_subdirectory(hclk_ioi3)
+add_subdirectory(pcie_2_1)
+add_subdirectory(pcie_bot)
 
 set(IOPAD_SITES IOB33 IDELAYE2 ILOGICE3 OLOGICE3)
 set(IOPAD_S_SITES IOB33S IDELAYE2 ILOGICE3 OLOGICE3)
