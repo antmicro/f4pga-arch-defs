@@ -58,7 +58,7 @@ class IoPlace(object):
         self.net_to_block = {}
 
         for block in net_root.xpath(
-                "//block[@instance='inpad[0]'] | //block[@instance='outpad[0]']"
+                "//block[contains(@instance, 'inpad[0]')] | //block[contains(@instance, 'outpad[0]')]"
         ):
             top_block = block.getparent()
             assert top_block is not None

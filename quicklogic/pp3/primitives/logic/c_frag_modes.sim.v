@@ -28,7 +28,7 @@ module C_FRAG_MODES (TBS, TAB, TSL, TA1, TA2, TB1, TB2, BAB, BSL, BA1, BA2, BB1,
     parameter MODE = "SINGLE";
 
     // A single C_FRAG
-    generate if (MODE == "SINGLE") begin
+    generate if (MODE == "SINGLE") begin : SINGLE
 
         (* pack="C_FRAG_to_FF" *)
         wire cz;
@@ -55,7 +55,7 @@ module C_FRAG_MODES (TBS, TAB, TSL, TA1, TA2, TB1, TB2, BAB, BSL, BA1, BA2, BB1,
 
     // A split C_FRAG consisting of a T_FRAG and a B_FRAG, both can host the
     // same cells.
-    end else if (MODE == "SPLIT") begin
+    end if (MODE == "SPLIT") begin : SPLIT
 
         (* pack="B_FRAG_to_FF" *)
         wire cz;

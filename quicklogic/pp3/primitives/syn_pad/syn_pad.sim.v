@@ -10,12 +10,12 @@ module SYN_PAD(I, O);
     parameter MODE="INPUT";
 
     // Input mode
-    generate if (MODE == "INPUT") begin
+    generate if (MODE == "INPUT") begin : INPUT
         (* keep *)
         VPR_IPAD ipad(O);
 
     // Output mode
-    end else if (MODE == "OUTPUT") begin
+    end if (MODE == "OUTPUT") begin : OUTPUT
         (* keep *)
         VPR_OPAD opad(I);
 

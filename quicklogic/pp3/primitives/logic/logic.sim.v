@@ -40,7 +40,7 @@ module LOGIC (QST, QDS, TBS, TAB, TSL, TA1, TA2, TB1, TB2, BAB, BSL, BA1, BA2, B
     parameter MODE = "MACRO";
 
     // LOGIC macro
-    generate if (MODE == "MACRO") begin
+    generate if (MODE == "MACRO") begin : MACRO
 
         (* FASM_PREFIX="LOGIC.LOGIC" *)
         LOGIC_MACRO logic_macro (
@@ -75,7 +75,7 @@ module LOGIC (QST, QDS, TBS, TAB, TSL, TA1, TA2, TB1, TB2, BAB, BSL, BA1, BA2, B
         );
 
     // LOGIC split into fragments
-    end else if (MODE == "FRAGS") begin
+    end if (MODE == "FRAGS") begin : FRAGS
 
         // The C-Frag (with modes)
         (* FASM_PREFIX="LOGIC.LOGIC" *)

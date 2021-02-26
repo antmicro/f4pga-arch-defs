@@ -14,17 +14,21 @@
         }
     },
     "BIDIR": {
-        "bidir": {
+        "INPUT_bidir": {
             "INPUT": [
                 "BIDIR3_ESEL_EQ_1_DS_EQ_1.IO2",
                 "BIDIR3_OSEL_EQ_1_IE_EQ_1_DS_EQ_1.IO2",
                 "BIDIR3_IE_EQ_0_INEN_EQ_1.IO2"
-            ],
+            ]
+        },
+        "OUTPUT_bidir": {
             "OUTPUT": [
                 "BIDIR3_ESEL_EQ_1_DS_EQ_1.IO2",
                 "BIDIR3_OSEL_EQ_1_IE_EQ_1_DS_EQ_1.IO2",
                 "BIDIR3_IE_EQ_0_INEN_EQ_1.IO2"
-            ],
+            ]
+        },
+        "INOUT_bidir": {
             "INOUT": [
                 "BIDIR3_ESEL_EQ_1_DS_EQ_1.IO2",
                 "BIDIR3_OSEL_EQ_1_IE_EQ_1_DS_EQ_1.IO2",
@@ -33,19 +37,23 @@
         }
     },
     "SDIOMUX": {
-        "sdiomux": {
+        "INPUT_sdiomux": {
             "INPUT": [
                 "SDIOMUX.SFB_0_IO",
                 "SDIOMUX_IE_EQ_0_OE_EQ_0.SFB_0_IO",
                 "SDIOMUX_IE_EQ_1_OE_EQ_1.SFB_0_IO",
                 "ASSPTMR.ASSPTMR"
-            ],
+            ]
+        },
+        "OUTPUT_sdiomux": {
             "OUTPUT": [
                 "SDIOMUX.SFB_0_IO",
                 "SDIOMUX_IE_EQ_0_OE_EQ_0.SFB_0_IO",
                 "SDIOMUX_IE_EQ_1_OE_EQ_1.SFB_0_IO",
                 "ASSPTMR.ASSPTMR"
-            ],
+            ]
+        },
+        "INOUT_sdiomux": {
             "INOUT": [
                 "SDIOMUX.SFB_0_IO",
                 "SDIOMUX_IE_EQ_0_OE_EQ_0.SFB_0_IO",
@@ -62,7 +70,7 @@
         }
     },
     "LOGIC": {
-        "logic_macro": {
+        "MACRO_logic_macro": {
             "MACRO":[
                 "LOGIC3.LOGIC3",
                 "LOGIC3_TAB_EQ_0_TSL_EQ_0_TAS1_EQ_0.LOGIC3",
@@ -88,7 +96,7 @@
                 "LOGIC3_FS_EQ_1.LOGIC3"
             ]
         },
-        "c_frag": {
+        "SINGLE_c_frag": {
             "SINGLE":[
                 "LOGIC3.LOGIC3",
                 "LOGIC3_TAB_EQ_0_TSL_EQ_0_TAS1_EQ_0.LOGIC3",
@@ -107,7 +115,7 @@
                 "LOGIC3_TBS_EQ_1_BAB_EQ_1_BSL_EQ_1_BBS2_EQ_0.LOGIC3"
             ]
         },
-        "t_frag": {
+        "SPLIT_t_frag": {
             "SPLIT":[
                 "LOGIC3.LOGIC3",
                 "LOGIC3_TAB_EQ_0_TSL_EQ_0_TAS1_EQ_0.LOGIC3",
@@ -122,7 +130,7 @@
                 "LOGIC3_TBS_EQ_0_TAB_EQ_1_TSL_EQ_1_TBS2_EQ_0.LOGIC3"
             ]
         },
-        "b_frag": {
+        "SPLIT_b_frag": {
             "SPLIT":[
                 "LOGIC3.LOGIC3",
                 "LOGIC3_TAB_EQ_0_TSL_EQ_0_TAS1_EQ_0.LOGIC3",
@@ -137,13 +145,15 @@
                 "LOGIC3_TBS_EQ_1_BAB_EQ_1_BSL_EQ_1_BBS2_EQ_0.LOGIC3"
             ]
         },
-        "q_frag": {
+        "INT_q_frag": {
             "INT":[
                 "LOGIC3_QCKS_EQ_1.LOGIC3",
                 "LOGIC3_QRT_EQ_0_QST_EQ_0_QCKS_EQ_1.LOGIC3",
                 "LOGIC3_QDS_EQ_1_QEN_EQ_1_QRT_EQ_0_QST_EQ_0_QCKS_EQ_1.LOGIC3",
                 "LOGIC3_QEN_EQ_1_QRT_EQ_0_QST_EQ_0_QCKS_EQ_1.LOGIC3"
-            ],
+            ]
+        },
+        "EXT_q_frag": {
             "EXT":[
                 "LOGIC3_QCKS_EQ_1.LOGIC3",
                 "LOGIC3_QRT_EQ_0_QST_EQ_0_QCKS_EQ_1.LOGIC3",
@@ -151,7 +161,7 @@
                 "LOGIC3_QEN_EQ_1_QRT_EQ_0_QST_EQ_0_QCKS_EQ_1.LOGIC3"
             ]
         },
-        "f_frag": {
+        "FRAGS_f_frag": {
             "FRAGS":[
                 "LOGIC3.LOGIC3",
                 "LOGIC3_FS_EQ_0.LOGIC3", 
@@ -160,11 +170,13 @@
         }
     },
     "GMUX": {
-        "gmux": {
+        "IP_gmux": {
             "IP": [
                 "GMUX_IS0_EQ_0.GMUX",
                 "GMUX_IS0_EQ_1.GMUX"
-            ],
+            ]
+        },
+        "IC_gmux": {
             "IC": [
                 "GMUX_IS0_EQ_0.GMUX",
                 "GMUX_IS0_EQ_1.GMUX"

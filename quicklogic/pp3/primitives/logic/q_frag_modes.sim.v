@@ -16,7 +16,7 @@ module Q_FRAG_MODES (QCK, QST, QRT, QEN, QDI, QDS, CZI, QZ, FAKE_CONST);
     parameter MODE = "INT";
 
     // Q_FRAG with the FF connected to CZI
-    generate if (MODE == "INT") begin
+    generate if (MODE == "INT") begin : INT
 
         (* pack="C_FRAG_to_FF;B_FRAG_to_FF" *)
         wire   qd;
@@ -34,7 +34,7 @@ module Q_FRAG_MODES (QCK, QST, QRT, QEN, QDI, QDS, CZI, QZ, FAKE_CONST);
         );
 
     // Q_FRAG with the FF connected to QDI (external)
-    end else if (MODE == "EXT") begin
+    end if (MODE == "EXT") begin : EXT
 
         Q_FRAG q_frag (
             .QCK    (QCK),

@@ -21,42 +21,13 @@ module BIDIR(
     parameter MODE = "INPUT";
 
     // Input mode
-    generate if (MODE == "INPUT") begin
+    generate if (MODE == "INPUT") begin : INPUT
 
         (* pack="IPAD_TO_BIDIR" *)
         wire i_pad;
 
         (* keep *)
         VPR_IPAD inpad(i_pad);
-
-    // Output mode
-    end else if (MODE == "OUTPUT") begin
-
-        (* pack="BIDIR_TO_OPAD" *)
-        wire o_pad;
-
-        (* keep *)
-        VPR_OPAD outpad(o_pad);
-
-    // InOut mode
-    end if (MODE == "INOUT") begin
-
-        (* pack="IOPAD_TO_BIDIR" *)
-        wire i_pad;
-
-        (* pack="IOPAD_TO_BIDIR" *)
-        wire o_pad;
-
-        (* keep *)
-        VPR_IPAD inpad(i_pad);
-
-        (* keep *)
-        VPR_OPAD outpad(o_pad);
-
-    end endgenerate
-
-    // IO buffer
-    generate if (MODE == "INPUT") begin
 
         (* keep *)
         (* FASM_PREFIX="INTERFACE.BIDIR" *)
@@ -69,7 +40,14 @@ module BIDIR(
             .O_EN (IE)
         );
 
-    end else if (MODE == "OUTPUT") begin
+    // Output mode
+    end if (MODE == "OUTPUT") begin : OUTPUT
+
+        (* pack="BIDIR_TO_OPAD" *)
+        wire o_pad;
+
+        (* keep *)
+        VPR_OPAD outpad(o_pad);
 
         (* keep *)
         (* FASM_PREFIX="INTERFACE.BIDIR" *)
@@ -82,7 +60,20 @@ module BIDIR(
             .O_EN (IE)
         );
 
-    end else if (MODE == "INOUT") begin
+    // InOut mode
+    end if (MODE == "INOUT") begin : INOUT
+
+        (* pack="IOPAD_TO_BIDIR" *)
+        wire i_pad;
+
+        (* pack="IOPAD_TO_BIDIR" *)
+        wire o_pad;
+
+        (* keep *)
+        VPR_IPAD inpad(i_pad);
+
+        (* keep *)
+        VPR_OPAD outpad(o_pad);
 
         (* keep *)
         (* FASM_PREFIX="INTERFACE.BIDIR" *)

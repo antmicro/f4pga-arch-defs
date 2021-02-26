@@ -13,42 +13,13 @@ module SDIOMUX(
     parameter MODE = "INPUT";
 
     // Input mode
-    generate if (MODE == "INPUT") begin
+    generate if (MODE == "INPUT") begin : INPUT
 
         (* pack="IPAD_TO_SDIOMUX" *)
         wire i_pad;
 
         (* keep *)
         VPR_IPAD inpad(i_pad);
-
-    // Output mode
-    end else if (MODE == "OUTPUT") begin
-
-        (* pack="SDIOMUX_TO_OPAD" *)
-        wire o_pad;
-
-        (* keep *)
-        VPR_OPAD outpad(o_pad);
-
-    // InOut mode
-    end if (MODE == "INOUT") begin
-
-        (* pack="IOPAD_TO_SDIOMUX" *)
-        wire i_pad;
-
-        (* pack="IOPAD_TO_SDIOMUX" *)
-        wire o_pad;
-
-        (* keep *)
-        VPR_IPAD inpad(i_pad);
-
-        (* keep *)
-        VPR_OPAD outpad(o_pad);
-
-    end endgenerate
-
-    // IO buffer
-    generate if (MODE == "INPUT") begin
 
         (* keep *)
         SDIOMUX_CELL sdiomux(
@@ -60,7 +31,14 @@ module SDIOMUX(
             .O_EN (OE)
         );
 
-    end else if (MODE == "OUTPUT") begin
+    // Output mode
+    end if (MODE == "OUTPUT") begin : OUTPUT
+
+        (* pack="SDIOMUX_TO_OPAD" *)
+        wire o_pad;
+
+        (* keep *)
+        VPR_OPAD outpad(o_pad);
 
         (* keep *)
         SDIOMUX_CELL sdiomux(
@@ -71,8 +49,20 @@ module SDIOMUX(
             .O_DAT(OQI),
             .O_EN (OE)
         );
+    // InOut mode
+    end if (MODE == "INOUT") begin : INOUT
 
-    end else if (MODE == "INOUT") begin
+        (* pack="IOPAD_TO_SDIOMUX" *)
+        wire i_pad;
+
+        (* pack="IOPAD_TO_SDIOMUX" *)
+        wire o_pad;
+
+        (* keep *)
+        VPR_IPAD inpad(i_pad);
+
+        (* keep *)
+        VPR_OPAD outpad(o_pad);
 
         (* keep *)
         SDIOMUX_CELL sdiomux(
