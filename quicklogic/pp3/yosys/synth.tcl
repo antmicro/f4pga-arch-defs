@@ -6,7 +6,7 @@ read_verilog -lib $::env(TECHMAP_PATH)/cells_sim.v
 read_verilog -lib $::env(DEVICE_CELLS_SIM)
 
 # Synthesize
-synth_quicklogic -family pp3 
+synth_quicklogic -family pp3 -abc9
 
 # Optimize the netlist by adaptively splitting cells that fit into C_FRAG into
 # smaller that can fit into F_FRAG.
@@ -19,6 +19,7 @@ stat
 # Assing parameters to IO cells basing on constraints and package pinmap
 if { $::env(PCF_FILE) != "" && $::env(PINMAP_FILE) != ""} {
     plugin -i ql-iob
+    yosys -import
     quicklogic_iob $::env(PCF_FILE) $::env(PINMAP_FILE)
 }
 

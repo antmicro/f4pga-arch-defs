@@ -35,6 +35,7 @@ proc pack {} {
 
     # Load the plugin that allows to retrieve cell count
     yosys plugin -i get_count
+    yosys -import
 
     # Maximum number of LOGIC cells in the device
     set max_logic 891
