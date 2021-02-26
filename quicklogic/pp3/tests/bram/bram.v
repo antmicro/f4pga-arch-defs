@@ -185,7 +185,7 @@ module top (
     // input_mode == 01 -> in[7:0] -> data_reg[7:0]
     // input_mode == 10 -> in[7:0] -> data_reg[15:8]
     // input_mode == 11 -> data_reg -> ram[address_reg]
-    wire [1:0] input_mode;
+    wire [3:0] input_mode;
 
     // WE == 0 -> address_reg and data_reg unchanged.
     // WE == 1 -> address_reg or data_reg is updated because on input_mode.
