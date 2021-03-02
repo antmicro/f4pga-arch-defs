@@ -1,11 +1,11 @@
-set_io RGB_DAT_i(7) F5
-set_io RGB_DAT_i(6) G5
-set_io RGB_DAT_i(5) H1
-set_io RGB_DAT_i(4) F1
-set_io RGB_DAT_i(3) D2
-set_io RGB_DAT_i(2) H6
-set_io RGB_DAT_i(1) G6
-set_io RGB_DAT_i(0) G4
+set_io RGB_DAT_i[7] F5
+set_io RGB_DAT_i[6] G5
+set_io RGB_DAT_i[5] H1
+set_io RGB_DAT_i[4] F1
+set_io RGB_DAT_i[3] D2
+set_io RGB_DAT_i[2] H6
+set_io RGB_DAT_i[1] G6
+set_io RGB_DAT_i[0] G4
 
 set_io PCLK_i G7
 set_io VSYNC_i H5
