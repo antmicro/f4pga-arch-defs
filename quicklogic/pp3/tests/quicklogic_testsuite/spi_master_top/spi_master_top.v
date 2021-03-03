@@ -84,9 +84,9 @@ wire wb_we;
 wire wb_stb;
 wire wb_ack;
 
-wire Clk16_Rst;
+wire Clk_C16_Rst;
 wire wb_rst;
-wire Clk16;
+wire Clk_C16;
 
 wire wb_inta;  
 wire TIP; 
@@ -95,8 +95,8 @@ wire [15:0] Device_ID;
 
 assign Device_ID = 16'h1234;
 	
-gclkbuff u_gclkbuff_reset ( .A(Clk16_Rst) , .Z(rst) );
-gclkbuff u_gclkbuff_clock ( .A(Clk16             ) , .Z(wb_clk       ) );
+gclkbuff u_gclkbuff_reset ( .A(Clk_C16_Rst) , .Z(rst) );
+gclkbuff u_gclkbuff_clock ( .A(Clk_C16             ) , .Z(wb_clk       ) );
 
 
 assign wb_cyc = WBs_CYC;
@@ -242,10 +242,10 @@ qlal4s3b_cell_macro              u_qlal4s3b_cell_macro
     //
     // FB Clocks
     //
-    .Clk16                     ( Clk16                       ), // output
-    .Clk16_Rst                 ( Clk16_Rst                   ), // output
-    .Clk21                     ( Clk21                       ), // output
-    .Clk21_Rst                 ( Clk21_Rst                   ), // output
+    .Clk_C16                   ( Clk_C16                     ), // output
+    .Clk_C16_Rst               ( Clk_C16_Rst                 ), // output
+    .Clk_C21                   ( Clk_C21                     ), // output
+    .Clk_C21_Rst               ( Clk_C21_Rst                 ), // output
     //
     // Packet FIFO
     //

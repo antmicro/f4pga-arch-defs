@@ -9,10 +9,10 @@ wire pwm1;
 wire pwm2;
 
 wire WB_CLK;
-wire Clk16;
-wire Clk16_Rst;
-wire Clk21;
-wire Clk21_Rst;
+wire Clk_C16;
+wire Clk_C16_Rst;
+wire Clk_C21;
+wire Clk_C21_Rst;
 wire RST_FB21; 
 wire CLK_FB21;
 
@@ -40,11 +40,11 @@ reg [31:0] Device_ID = 32'h0;
 assign WBs_BTE = 2'h0;
 assign WBs_CTI = 3'h0;
 
-gclkbuff u_gclkbuff_reset ( .A(Clk16_Rst | WB_RST) , .Z(WB_RST_FPGA)   );
-gclkbuff u_gclkbuff_clock ( .A(Clk16             ) , .Z(WB_CLK     )   ); // Clock 16
+gclkbuff u_gclkbuff_reset ( .A(Clk_C16_Rst | WB_RST) , .Z(WB_RST_FPGA)   );
+gclkbuff u_gclkbuff_clock ( .A(Clk_C16             ) , .Z(WB_CLK     )   ); // Clock 16
 
-gclkbuff u_gclkbuff_reset1 ( .A(Clk21_Rst) , .Z(RST_FB21) );  
-gclkbuff u_gclkbuff_clock1 ( .A(Clk21    ) , .Z(CLK_FB21) );  // Clock 21 
+gclkbuff u_gclkbuff_reset1 ( .A(Clk_C21_Rst) , .Z(RST_FB21) );  
+gclkbuff u_gclkbuff_clock1 ( .A(Clk_C21    ) , .Z(CLK_FB21) );  // Clock 21 
 
 litex_core u_soc (
     .wb_adr ( WBs_ADR[16:2] ),
@@ -99,10 +99,10 @@ qlal4s3b_cell_macro              u_qlal4s3b_cell_macro
     //
     // FB Clocks
     //
-    .Clk16                     ( Clk16                       ), // output
-    .Clk16_Rst                 ( Clk16_Rst                   ), // output
-    .Clk21                     ( Clk21                       ), // output
-    .Clk21_Rst                 ( Clk21_Rst                   ), // output
+    .Clk_C16                   ( Clk_C16                     ), // output
+    .Clk_C16_Rst               ( Clk_C16_Rst                 ), // output
+    .Clk_C21                   ( Clk_C21                     ), // output
+    .Clk_C21_Rst               ( Clk_C21_Rst                 ), // output
     //
     // Packet FIFO
     //

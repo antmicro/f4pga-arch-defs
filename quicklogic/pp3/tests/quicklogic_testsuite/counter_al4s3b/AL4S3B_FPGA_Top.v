@@ -69,11 +69,11 @@ wire    [31:0]   Device_ID ;
 //
 wire            WB_CLK         ; // Selected FPGA Clock
 
-wire            Clk16       ; // Selected FPGA Clock
-wire            Clk16_Rst   ; // Selected FPGA Reset
+wire            Clk_C16       ; // Selected FPGA Clock
+wire            Clk_C16_Rst   ; // Selected FPGA Reset
 
-wire            Clk21       ; // Selected FPGA Clock
-wire            Clk21_Rst   ; // Selected FPGA Reset
+wire            Clk_C21       ; // Selected FPGA Clock
+wire            Clk_C21_Rst   ; // Selected FPGA Reset
 
 // Wishbone Bus Signals
 //
@@ -98,8 +98,8 @@ wire            WB_RST_FPGA  ; // Wishbone FPGA Reset
 //
 // Note: Reset the FPGA IP on either the AHB or clock domain reset signals.
 //
-gclkbuff u_gclkbuff_reset ( .A(Clk16_Rst | WB_RST) , .Z(WB_RST_FPGA) );
-gclkbuff u_gclkbuff_clock ( .A(Clk16             ) , .Z(WB_CLK       ) );
+gclkbuff u_gclkbuff_reset ( .A(Clk_C16_Rst | WB_RST) , .Z(WB_RST_FPGA) );
+gclkbuff u_gclkbuff_clock ( .A(Clk_C16             ) , .Z(WB_CLK       ) );
 
 // Example FPGA Design
 //
@@ -203,10 +203,10 @@ qlal4s3b_cell_macro              u_qlal4s3b_cell_macro
     //
     // FB Clocks
     //
-    .Clk16                     ( Clk16                       ), // output
-    .Clk16_Rst                 ( Clk16_Rst                   ), // output
-    .Clk21                     ( Clk21                       ), // output
-    .Clk21_Rst                 ( Clk21_Rst                   ), // output
+    .Clk_C16                   ( Clk_C16                     ), // output
+    .Clk_C16_Rst               ( Clk_C16_Rst                 ), // output
+    .Clk_C21                   ( Clk_C21                     ), // output
+    .Clk_C21_Rst               ( Clk_C21_Rst                 ), // output
     //
     // Packet FIFO
     //

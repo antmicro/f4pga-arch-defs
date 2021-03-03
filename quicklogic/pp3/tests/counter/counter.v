@@ -1,15 +1,15 @@
 module top(
     output wire [3:0] led
 );
-    wire Clk16;
+    wire Clk_C16;
     wire clk;
 
     qlal4s3b_cell_macro u_qlal4s3b_cell_macro (
-        .Clk16 (Clk16),
+        .Clk_C16 (Clk_C16),
     );
 
     gclkbuff u_gclkbuff_clock (
-        .A(Clk16),
+        .A(Clk_C16),
         .Z(clk)
     );
 

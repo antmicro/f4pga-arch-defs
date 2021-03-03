@@ -242,11 +242,11 @@ wire            I2C_SDA_SEN    ;
 //
 wire            WB_CLK         ; // Selected Fabric Clock
 
-wire            Clk16       ; // Selected Fabric Clock
-wire            Clk16_Rst   ; // Selected Fabric Reset
+wire            Clk_C16       ; // Selected Fabric Clock
+wire            Clk_C16_Rst   ; // Selected Fabric Reset
 
-wire            Clk21       ; // Selected Fabric Clock
-wire            Clk21_Rst   ; // Selected Fabric Reset
+wire            Clk_C21       ; // Selected Fabric Clock
+wire            Clk_C21_Rst   ; // Selected Fabric Reset
 
 // Wishbone Bus Signals
 //
@@ -308,8 +308,8 @@ wire			RST_fb1;
 wire      		ov7670_pwdn_sig;       
 
 //In VGA.
-assign OV7670_RST_n_o   = ~Clk16_Rst;
-assign OV7670_XCLK_o  = Clk16;
+assign OV7670_RST_n_o   = ~Clk_C16_Rst;
+assign OV7670_XCLK_o  = Clk_C16;
 assign OV7670_PWDN_o  = 1'b0;
 
 
@@ -320,11 +320,11 @@ assign OV7670_PWDN_o  = 1'b0;
 //
 // Note: Reset the fabric IP on either the AHB or clock domain reset signals.
 //
-gclkbuff u_gclkbuff_reset ( .A(Clk16_Rst | WB_RST) , .Z(WB_RST_fabric) );
-gclkbuff u_gclkbuff_clock ( .A(Clk16             ) , .Z(WB_CLK       ) );
+gclkbuff u_gclkbuff_reset ( .A(Clk_C16_Rst | WB_RST) , .Z(WB_RST_fabric) );
+gclkbuff u_gclkbuff_clock ( .A(Clk_C16             ) , .Z(WB_CLK       ) );
 
-gclkbuff u_gclkbuff_reset1 ( .A(Clk21_Rst) , .Z(RST_fb1) );
-gclkbuff u_gclkbuff_clock1  ( .A(Clk21   ) , .Z(CLK_32K ) );
+gclkbuff u_gclkbuff_reset1 ( .A(Clk_C21_Rst) , .Z(RST_fb1) );
+gclkbuff u_gclkbuff_clock1  ( .A(Clk_C21   ) , .Z(CLK_32K ) );
 
 //------Instantiate Modules------------
 
@@ -564,10 +564,10 @@ qlal4s3b_cell_macro              u_qlal4s3b_cell_macro
     //
     // FB Clocks
     //
-    .Clk16                     ( Clk16                       ), // output
-    .Clk16_Rst                 ( Clk16_Rst                   ), // output
-    .Clk21                     ( Clk21                       ), // output
-    .Clk21_Rst                 ( Clk21_Rst                   ), // output
+    .Clk_C16                   ( Clk_C16                     ), // output
+    .Clk_C16_Rst               ( Clk_C16_Rst                 ), // output
+    .Clk_C21                   ( Clk_C21                     ), // output
+    .Clk_C21_Rst               ( Clk_C21_Rst                 ), // output
     //
     // Packet FIFO
     //

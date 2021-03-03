@@ -1,26 +1,26 @@
 module top(
     output wire [3:0] led
 );
-    wire Clk16;
-    wire Clk16_Rst;
-    wire Clk21;
-    wire Clk21_Rst;
+    wire Clk_C16;
+    wire Clk_C16_Rst;
+    wire Clk_C21;
+    wire Clk_C21_Rst;
 
     wire clk0, rst0;
     wire clk1, rst1;
 
     qlal4s3b_cell_macro u_qlal4s3b_cell_macro (
-        .Clk16     (Clk16),
-        .Clk16_Rst (Clk16_Rst),
-        .Clk21     (Clk21),
-        .Clk21_Rst (Clk21_Rst),
+        .Clk_C16     (Clk_C16),
+        .Clk_C16_Rst (Clk_C16_Rst),
+        .Clk_C21     (Clk_C21),
+        .Clk_C21_Rst (Clk_C21_Rst),
     );
 
-    gclkbuff u_gclkbuff_clock0 (.A(Clk16),       .Z(clk0));
-    gclkbuff u_gclkbuff_reset0 (.A(Clk16_Rst),   .Z(rst0));
+    gclkbuff u_gclkbuff_clock0 (.A(Clk_C16),       .Z(clk0));
+    gclkbuff u_gclkbuff_reset0 (.A(Clk_C16_Rst),   .Z(rst0));
 
-    gclkbuff u_gclkbuff_clock1 (.A(Clk21),       .Z(clk1));
-    gclkbuff u_gclkbuff_reset1 (.A(Clk21_Rst),   .Z(rst1));
+    gclkbuff u_gclkbuff_clock1 (.A(Clk_C21),       .Z(clk1));
+    gclkbuff u_gclkbuff_reset1 (.A(Clk_C21_Rst),   .Z(rst1));
 
     reg [23:0] cnt0;
     initial cnt0 <= 0;
