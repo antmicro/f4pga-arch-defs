@@ -17,11 +17,14 @@ elif [[ $1 == "-synth" || $1 == "-compile" ]]; then
 echo -e "----------------- \n" 
 elif [[ $1 == "-h"  ||  $1 == "--help" ]];then
 echo -e "\nBelow are the supported commands: \n\
- To synthesize and dump a eblif file:\n\
-\t>ql_symbiflow -synth -src <source_dir path> -d <device> -t <top> -v <verilog file/files> -p <pcf file>\n\
+ To synthesize and dump a eblif file: \n\
+\t>ql_symbiflow -synth -src <source_dir path> -d <device> -P <package> -t <top> -v <verilog file/files> -p <pcf file>  \n\
  To run synthesis, pack, place and route, generate bitstream:\n\
-\t>ql_symbiflow -compile -src <source_dir path> -d <device> -t <top> -v <verilog file/files> -p <pcf file>  \n\
-Device supported:ql-openfpga-k4_N8" || exit
+\t>ql_symbiflow -compile -src <source_dir path> -d <device> -P <package> -t <top> -v <verilog file/files> -p <pcf file>  \n\
+ To dump the jlink/post_verilog/header/binary file: \n\
+\t>ql_symbiflow -compile -src <source_dir path> -d <device> -P <package> -t <top> -v <verilog file/files> -p <pcf file> -dump <jlink/post_verilog/header/openocd/binary> \n\
+Device supported:ql-eos-s3\n\
+Packages supported PD64,PU64,WR42 " || exit 1
 elif [[ $1 == "-v" || $1 == "--version" ]];then
         echo "Symbiflow Tool Version : ${VERSION}"
         exit
@@ -37,12 +40,10 @@ TOP=""
 SOURCE=""
 HELP=""
 DEVICE=""
-FAMILY=""
 PART=""
 SDC=""
 OUT=()
 ROUTE_FLAG0=""
-ADDER=""
 MAX_CRITICALITY="0.0"
 
 VERILOGLIST=0
@@ -55,7 +56,6 @@ PARTNAME=0
 SDCNAME=0
 OUTNAME=0
 ROUTE_NAME0=0
-ADDER_NAME=0
 
 for arg_v in $@; do
 	echo $arg_v
@@ -71,7 +71,6 @@ for arg_v in $@; do
 			SDCNAME=0
 			OUTNAME=0
 			ROUTE_NAME0=0
-			ADDER_NAME=0
 			;;
 		-t|--top)
 			VERILOGLIST=0
@@ -84,7 +83,6 @@ for arg_v in $@; do
 			SDCNAME=0
 			OUTNAME=0
 			ROUTE_NAME0=0
-			ADDER_NAME=0
 			;;
 		-v|--verilog)
 			VERILOGLIST=1
@@ -97,7 +95,6 @@ for arg_v in $@; do
 			SDCNAME=0
 			OUTNAME=0
 			ROUTE_NAME0=0
-			ADDER_NAME=0
 			;;
 		-d|--device)
 			VERILOGLIST=0
@@ -110,7 +107,6 @@ for arg_v in $@; do
 			SDCNAME=0
 			OUTNAME=0
 			ROUTE_NAME0=0
-			ADDER_NAME=0
 			;;
 		-h|--help)
 			VERILOGLIST=0
@@ -123,7 +119,6 @@ for arg_v in $@; do
 			SDCNAME=0
 			OUTNAME=0
 			ROUTE_NAME0=0
-			ADDER_NAME=0
 			;;
 		-p|--pcf)
 			VERILOGLIST=0
@@ -136,7 +131,6 @@ for arg_v in $@; do
 			SDCNAME=0
 			OUTNAME=0
 			ROUTE_NAME0=0
-			ADDER_NAME=0
 			;;
 		-P|--part)
 			VERILOGLIST=0
@@ -149,7 +143,6 @@ for arg_v in $@; do
 			SDCNAME=0
 			OUTNAME=0
 			ROUTE_NAME0=0
-			ADDER_NAME=0
 			;;
 		-s|--sdc)
 			VERILOGLIST=0
@@ -162,7 +155,6 @@ for arg_v in $@; do
 			SDCNAME=1
 			OUTNAME=0
 			ROUTE_NAME0=0
-			ADDER_NAME=0
 			;;
 		-r|--route_type)
 			VERILOGLIST=0
@@ -175,7 +167,6 @@ for arg_v in $@; do
 			SDCNAME=0
 			OUTNAME=0
 			ROUTE_NAME0=1
-			ADDER_NAME=0
 			;;
 		-dump)
 			VERILOGLIST=0
@@ -188,22 +179,7 @@ for arg_v in $@; do
 			SDCNAME=0
 			OUTNAME=1
 			ROUTE_NAME0=0
-			ADDER_NAME=0
 			;;
-		-m|--mode)
-			VERILOGLIST=0
-			PCFNAME=0
-			TOPNAME=0
-			SOURCEDIR=0
-			HELPNAME=0
-			DEVICENAME=0
-			PARTNAME=0
-			SDCNAME=0
-			OUTNAME=0
-			ROUTE_NAME0=0
-			ADDER_NAME=1
-			;;
-
 		-synth|-compile)
 			VERILOGLIST=0
 			PCFNAME=0
@@ -215,7 +191,6 @@ for arg_v in $@; do
 			SDCNAME=0
 			OUTNAME=0
 			ROUTE_NAME0=0
-			ADDER_NAME=0
 			;;
 
 		*)
@@ -227,33 +202,10 @@ for arg_v in $@; do
 				echo "" 
 			elif [ $TOPNAME -eq 1 ]; then
 				TOP=$arg_v
-			elif [ $ADDER_NAME -eq 1 ]; then
-				ADDER=$arg_v
 			elif [ $DEVICENAME -eq 1 ]; then
 				DEVICE="${arg_v}"
-				#DEVICE="${DEVICE,,}"
-            	case ${DEVICE} in
-            		ql-eos-s3)
-						DEVICE="${DEVICE}_wlcsp"
-            			FAMILY="pp3"
-            			;;
-            		ql-ap3-ql745a)
-						DEVICE="${DEVICE}_ql745a"
-            			FAMILY="ap3"
-            			;;
-            		ql-openfpga-k4_N4)
-						DEVICE="${DEVICE}_${DEVICE}"
-            			FAMILY="openfpga"
-            			;;
-            		ql-openfpga-k4_N8)
-						DEVICE="${DEVICE}_${DEVICE}"
-            			FAMILY="openfpga"
-            			;;
-            		*)
-            			echo "Unsupported device '${DEVICE}'"
-            			exit 1
-            			;;
-            	esac
+				DEVICE="${DEVICE,,}"
+				DEVICE="${DEVICE}_wlcsp"
 			elif [ $PCFNAME -eq 1 ]; then
 				PCF="$arg_v"
 			elif [ $SDCNAME -eq 1 ]; then
@@ -314,42 +266,36 @@ fi
 fi
 
 if [[ $1 == "-compile" || $1 == "-post_verilog" ]]; then
-  # FIXME: Allow no PCF/pinmap for AP3 and OpenFPGA devices
-  if [[ "$DEVICE" != "ql-ap3-ql745a_ql745a" && ! "$DEVICE" =~ ^(ql-openfpga-.*)$ ]]; then
-    if [ -z "$PCF" ]; then
-      echo "PCF file option is missing. Refer -h/--help"
-      exit 1
-    elif ! [ -f "$SOURCE/$PCF" ]; then
-      echo "The pcf file: $PCF is missing at: $SOURCE"
-      exit 1
-    fi
+  if [ -z "$PCF" ]; then
+    echo "PCF file option is missing. Refer -h/--help"
+    exit 1
+  elif ! [ -f "$SOURCE/$PCF" ]; then
+    echo "The pcf file: $PCF is missing at: $SOURCE"
+    exit 1
   fi
   if [ -z "$DEVICE" ]; then
     echo "DEVICE name is missing. Refer -h/--help"
     exit 1
-  elif ! [[ "$DEVICE" =~ ^(ql-eos-s3_wlcsp|ql-ap3-ql745a_ql745a|ql-openfpga-.*)$ ]]; then 
-    echo "Invalid Device name, supported ql-eos-s3, ql-ap3-ql745a, ql-openfpga-k4_N4, ql-openfpga-k4_N8"
+  elif ! [[ "$DEVICE" =~ ^(ql-eos-s3_wlcsp)$ ]]; then 
+    echo "Invalid Device name, supported ql-eos-s3"
     exit 1
   fi
   if [ -z "$TOP" ]; then
     echo "TOP module name is missing. Refer -h/--help"
     exit 1
   fi
-    # FIXME: Allow no PCF/pinmap for AP3 and OpenFPGA devices
-    if [[ "$DEVICE" != "ql-ap3-ql745a_ql745a" && ! "$DEVICE" =~ ^(ql-openfpga-.*)$ ]]; then
-      if [ -z "$PART" ]; then
-       echo "PART name is missing. Refer -h/--help"
-       exit 1
-      elif ! [[ "$PART" =~ ^(PU64|WR42|PD64)$ ]]; then 
-       echo "Invalid Package name, supported PU64,WR42,PD64"
-  	   PINMAPCSV="pinmap_PD64.csv"
-       exit 1
-      else
-  	    if ! [[ "$PART" =~ ^(WR42|PU64|PD64)$ ]]; then 
-          PINMAPCSV="pinmap_${PART}.csv"
+    if [ -z "$PART" ]; then
+     echo "PART name is missing. Refer -h/--help"
+     exit 1
+    elif ! [[ "$PART" =~ ^(PU64|WR42|PD64)$ ]]; then 
+     echo "Invalid Package name, supported PU64,WR42,PD64"
+	 PINMAPCSV="pinmap_PD64.csv"
+         exit 1
+     else
+	if ! [[ "$PART" =~ ^(WR42|PU64|PD64)$ ]]; then 
+         PINMAPCSV="pinmap_${PART}.csv"
         fi
-      fi
-    fi
+     fi
     if [ -z "$ROUTE_FLAG0" ]; then
       MAX_CRITICALITY="0.0"
     elif ! [[ "$ROUTE_FLAG0" =~ ^(timing|congestion)$ ]]; then 
@@ -391,17 +337,10 @@ if [ -f "$SOURCE/v_list_tmp" ]; then
     VERILOG_LIST=`cat ${SOURCE}/v_list_tmp`
 fi
 
-# FIXME: AP3 and OpenFPGA do not have fasm2bels yet
-if [[ "$DEVICE" == "ql-ap3-ql745a_ql745a" || "$DEVICE" =~ ^(ql-openfpga-.*)$ ]]; then
-    HAVE_FASM2BELS=0
-else
-    HAVE_HASM2BELS=1
-fi
 
 export PCF_FILE=$PCF
 export TOP_F=$TOP
 export PART=$PART
-export ADDER=$ADDER
 export PINMAP_FILE=$PINMAPCSV
 export MAX_CRITICALITY=$MAX_CRITICALITY
 ##### Create Makefile #####
@@ -418,8 +357,7 @@ LOG_FILE=${CURR_DIR}/${BUILDDIR}/${TOP}.log
 if [ -f "$SOURCE"/$PCF_FILE ];then
 	PCF_MAKE="\${current_dir}/$PCF_FILE"
 else
-    touch ${CURR_DIR}/build/${TOP}_dummy.pcf
-    PCF_MAKE="\${current_dir}/build/${TOP}_dummy.pcf"
+   PCF_MAKE=""
 fi
 
 if ! [ -z "$SDC" ]; then
@@ -440,10 +378,8 @@ TOP := $TOP\n\
 VERILOG := $VERILOG_LIST \n\
 PARTNAME := $PART\n\
 DEVICE  := $DEVICE\n\
-FAMILY := $FAMILY\n\
 PCF := $PCF_MAKE\n\
 SDC := $SDC_MAKE\n\
-ADDER := $ADDER\n\
 BUILDDIR := build\n\n\
 HEX_FILES := \${current_dir}/*.hex
 
@@ -453,19 +389,19 @@ all: \${BUILDDIR}/\${TOP}.bit\n\
   ifneq (\"\$(wildcard \$(HEX_FILES))\",\"\")\n\
 	\$(shell cp \${current_dir}/*.hex \${BUILDDIR})\n\
   endif\n\
-	cd \${BUILDDIR} && symbiflow_synth -t \${TOP} -v \${VERILOG} -f \${FAMILY} -d \${DEVICE} -p \${PCF} -P \${PART} -m \${ADDER} 2>&1 > $LOG_FILE\n\
+	cd \${BUILDDIR} && symbiflow_synth -t \${TOP} -v \${VERILOG} -d \${DEVICE} -p \${PCF} -P \${PART} 2>&1 > $LOG_FILE\n\
 \n\
 \${BUILDDIR}/\${TOP}.net: \${BUILDDIR}/\${TOP}.eblif\n\
-	cd \${BUILDDIR} && symbiflow_pack -e \${TOP}.eblif -f \${FAMILY} -d \${DEVICE} -s \${SDC} 2>&1 > $LOG_FILE\n\
+	cd \${BUILDDIR} && symbiflow_pack -e \${TOP}.eblif -d \${DEVICE} -s \${SDC} 2>&1 > $LOG_FILE\n\
 \n\
 \${BUILDDIR}/\${TOP}.place: \${BUILDDIR}/\${TOP}.net \${PCF}\n\
-	cd \${BUILDDIR} && symbiflow_place -e \${TOP}.eblif -f \${FAMILY} -d \${DEVICE} -p \${PCF} -n \${TOP}.net -P \${PARTNAME} -s \${SDC} 2>&1 > $LOG_FILE\n\
+	cd \${BUILDDIR} && symbiflow_place -e \${TOP}.eblif -d \${DEVICE} -p \${PCF} -n \${TOP}.net -P \${PARTNAME} -s \${SDC} 2>&1 > $LOG_FILE\n\
 \n\
 \${BUILDDIR}/\${TOP}.route: \${BUILDDIR}/\${TOP}.place\n\
-	cd \${BUILDDIR} && symbiflow_route -e \${TOP}.eblif -f \${FAMILY} -d \${DEVICE} -s \${SDC} 2>&1 > $LOG_FILE\n\
+	cd \${BUILDDIR} && symbiflow_route -e \${TOP}.eblif -d \${DEVICE} -s \${SDC} 2>&1 > $LOG_FILE\n\
 \n\
 \${BUILDDIR}/\${TOP}.fasm: \${BUILDDIR}/\${TOP}.route\n\
-	cd \${BUILDDIR} && symbiflow_write_fasm -e \${TOP}.eblif -f \${FAMILY} -d \${DEVICE} 2>&1 > $LOG_FILE\n\
+	cd \${BUILDDIR} && symbiflow_write_fasm -e \${TOP}.eblif -d \${DEVICE}\n\
 \n\
 \${BUILDDIR}/\${TOP}.bit: \${BUILDDIR}/\${TOP}.fasm\n\
 	cd \${BUILDDIR} && symbiflow_write_bitstream -d \${DEVICE} -f \${TOP}.fasm -P \${PARTNAME} -b \${TOP}.bit\n\
@@ -485,62 +421,44 @@ all: \${BUILDDIR}/\${TOP}.bit\n\
 \${BUILDDIR}/\${TOP}_jlink.h: \${BUILDDIR}/\${TOP}.jlink\n\
 	cd \${BUILDDIR} && symbiflow_write_jlinkheader\n\
 \n\
-\${BUILDDIR}/\${TOP}.post_v: \${BUILDDIR}/\${TOP}.route\n\
-" >$MAKE_FILE
-
-if [ "$HAVE_FASM2BELS" != 0 ]; then
-    echo -e "\
+\${BUILDDIR}/\${TOP}.post_v: \${BUILDDIR}/\${TOP}.bit\n\
 	cd \${BUILDDIR} && symbiflow_write_fasm2bels -e \${TOP}.eblif -d \${DEVICE} -p \${PCF} -n \${TOP}.net -P \${PARTNAME}\n\
-    " >>$MAKE_FILE
-fi
-
-echo -e "\
-	cd \${BUILDDIR} && symbiflow_analysis -e \${TOP}.eblif -f \${FAMILY} -d \${DEVICE} -s \${SDC} 2>&1 > $LOG_FILE\n\
+	cd \${BUILDDIR} && symbiflow_analysis -e \${TOP}.eblif -d \${DEVICE} -s \${SDC} 2>&1 > $LOG_FILE\n\
 \n\
 clean:\n\
 	rm -rf \${BUILDDIR}\n\
-" >>$MAKE_FILE
+" >$MAKE_FILE
 
 #### Remove temporary files #####
 rm -f $SOURCE/f_list_temp $SOURCE/v_list_tmp $SOURCE/v_list 
 
 ##### Make file Targets #####
 if [ $1 == "-synth" ]; then
-  echo -e "Performing Synthesis " 
-  cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.eblif || exit
-elif [ $1 == "-compile" ]; then
-  echo -e "Running Synth->Pack->Place->Route"
-
-  # FIXME: No bitstream for OpenFPGA yet!
-  if [ ! "${FAMILY}" == "openfpga" ]; then
-
-    # FIXME: For AP3 write FASM only
-    if [ "${FAMILY}" == "ap3" ]; then
-      cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.fasm  || exit
-    else
-      cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.bit  || exit
-    fi
-  else
-    cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.route  || exit
-  fi
-
-  if [ ! -z "$OUT" ]; then
-    if [[ " ${OUT_ARR[@]} " =~ " jlink " ]]; then
-     cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.jlink || exit
-    fi
-    if [[ " ${OUT_ARR[@]} " =~ " openocd " ]]; then
-     cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.openocd || exit
-    fi    
-    if [[ " ${OUT_ARR[@]} " =~ " post_verilog " ]]; then
-     cd $SOURCE;make -f Makefile.symbiflow  ${BUILDDIR}/${TOP}.post_v || exit
-    fi
-    if [[ " ${OUT_ARR[@]} " =~ " header " ]]; then
-     cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}_bit.h || exit
-    fi
-    if [[ " ${OUT_ARR[@]} " =~ " binary " ]]; then
-     cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.bin || exit
-    fi
-  fi
+echo -e "Performing Synthesis " 
+cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.eblif || exit
+elif [[ ! -z "$OUT" && $1 == "-compile" ]];then 
+   if [[ " ${OUT_ARR[@]} " =~ " jlink " ]]; then
+    cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.jlink || exit
+   fi
+   if [[ " ${OUT_ARR[@]} " =~ " openocd " ]]; then
+    cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.openocd || exit
+   fi
+   if [[ " ${OUT_ARR[@]} " =~ " post_verilog " ]]; then
+    cd $SOURCE;make -f Makefile.symbiflow  ${BUILDDIR}/${TOP}.post_v || exit
+   fi
+   if [[ " ${OUT_ARR[@]} " =~ " header " ]]; then
+    cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}_bit.h || exit
+   fi
+   if [[ " ${OUT_ARR[@]} " =~ " binary " ]]; then
+    cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.bin || exit
+   fi
+else
+ if [ $1 == "-compile" ]; then
+   echo -e "Running Synth->Pack->Place->Route " 
+   cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.bit  || exit
+ elif [ $OUT == "" ]; then
+   cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.fasm  || exit
+ fi
 fi
 
 ###############################################################################################
