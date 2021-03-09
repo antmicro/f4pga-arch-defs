@@ -4,13 +4,16 @@ set -e
 MYPATH=`realpath $0`
 MYPATH=`dirname ${MYPATH}`
 
+export TECHMAP_PATH=`realpath ${MYPATH}/../share/techmaps/quicklogic/pp3/techmap`
+#Set the tcl paths
+SYNTH_TCL_PATH=`realpath ${MYPATH}/../share/quicklogic/synth.tcl`
+CONV_TCL_PATH=`realpath ${MYPATH}/../share/quicklogic/conv.tcl`
 SPLIT_INOUTS=`realpath ${MYPATH}/python/split_inouts.py`
 
 VERILOG_FILES=()
 XDC_FILES=()
 TOP=top
 DEVICE=""
-FAMILY=""
 PART=""
 PCF=""
 
@@ -18,7 +21,6 @@ VERILOGLIST=0
 XDCLIST=0
 TOPNAME=0
 DEVICENAME=0
-FAMILYNAME=0
 PARTNAME=0
 PCFNAME=0
 
@@ -31,7 +33,6 @@ for arg in $@; do
 			XDCLIST=0
 			TOPNAME=1
 			DEVICENAME=0
-			FAMILYNAME=0
 			PARTNAME=0
 			PCFNAME=0
 			;;
@@ -40,7 +41,6 @@ for arg in $@; do
 			XDCLIST=1
 			TOPNAME=0
 			DEVICENAME=0
-			FAMILYNAME=0
 			PARTNAME=0
 			PCFNAME=0
 			;;
@@ -49,7 +49,6 @@ for arg in $@; do
 			XDCLIST=0
 			TOPNAME=0
 			DEVICENAME=0
-			FAMILYNAME=0
 			PARTNAME=0
 			PCFNAME=0
 			;;
@@ -58,16 +57,6 @@ for arg in $@; do
 			XDCLIST=0
 			TOPNAME=0
 			DEVICENAME=1
-			FAMILYNAME=0
-			PARTNAME=0
-			PCFNAME=0
-			;;
-		-f|--family)
-			VERILOGLIST=0
-			XDCLIST=0
-			TOPNAME=0
-			DEVICENAME=0
-			FAMILYNAME=1
 			PARTNAME=0
 			PCFNAME=0
 			;;
@@ -76,7 +65,6 @@ for arg in $@; do
 			XDCLIST=0
 			TOPNAME=0
 			DEVICENAME=0
-			FAMILYNAME=0
 			PARTNAME=1
 			PCFNAME=0
 			;;
@@ -85,7 +73,6 @@ for arg in $@; do
 			XDCLIST=0
 			TOPNAME=0
 			DEVICENAME=0
-			FAMILYNAME=0
 			PARTNAME=0
 			PCFNAME=1
 			;;
@@ -98,8 +85,6 @@ for arg in $@; do
 				TOP=$arg
 			elif [ $DEVICENAME -eq 1 ]; then
 				DEVICE=$arg
-			elif [ $FAMILYNAME -eq 1 ]; then
-				FAMILY=$arg
 			elif [ $PARTNAME -eq 1 ]; then
 				PART=$arg
 			elif [ $PCFNAME -eq 1 ]; then
@@ -107,7 +92,6 @@ for arg in $@; do
 			else
 				echo "Usage: synth [-t|--top <top module name> -v|--verilog <Verilog files list> [-x|--xdc <XDC files list>]"
 				echo "             [-d|--device <device type (e.g. artix7)>] [-P|--part <part name>]"
-				echo "             [-f|--family <device family (pp3,ap3)>] [-P|--part <part name>]"
 				echo "note: device and part parameters are required if xdc is passed"
 				exit 1
 			fi
@@ -115,26 +99,17 @@ for arg in $@; do
 	esac
 done
 
-if [ -z ${FAMILY} ]; then
-    echo "Please specify device family"
-    exit 1
-fi
-
 if [ ${#VERILOG_FILES[@]} -eq 0 ]; then
 	echo "Please provide at least one Verilog file"
 	exit 1
 fi
 
 if ! [[ "$PART" =~ ^(PU64|WR42|PD64)$ ]]; then 
-	PINMAPCSV="pinmap_PD64.csv"
+	 PINMAPCSV="pinmap_PD64.csv"
 else
-	PINMAPCSV="pinmap_${PART}.csv"
+         PINMAPCSV="pinmap_${PART}.csv"
 fi
 
-export TECHMAP_PATH=`realpath ${MYPATH}/../share/techmaps/quicklogic/${FAMILY}/techmap`
-
-SYNTH_TCL_PATH=`realpath ${MYPATH}/../share/quicklogic/${FAMILY}/yosys/synth.tcl`
-CONV_TCL_PATH=`realpath ${MYPATH}/../share/quicklogic/${FAMILY}/yosys/conv.tcl`
 
 export USE_ROI="FALSE"
 export INPUT_XDC_FILE=${XDC_FILES[*]}
@@ -145,30 +120,10 @@ export OUT_SYNTH_V=${TOP}_synth.v
 export OUT_EBLIF=${TOP}.eblif
 #export PART_JSON=`realpath ${MYPATH}/../share/prjxray/prjxray-db/$DEVICE/$PART/part.json`
 export OUT_FASM_EXTRA=${TOP}_fasm_extra.fasm
-
-if [ -s $PCF ]; then
-    export PCF_FILE=$PCF
-fi
-
-DEVICE_PATH=`realpath ${MYPATH}/../share/arch/${DEVICE}`
-export PINMAP_FILE=${DEVICE_PATH}/${PINMAPCSV}
-if [ -d "${DEVICE_PATH}/cells" ]; then
-	export DEVICE_CELLS_SIM=`find ${DEVICE_PATH}/cells -name "*_sim.v"`
-	export DEVICE_CELLS_MAP=`find ${DEVICE_PATH}/cells -name "*_map.v"`
-else
-	export DEVICE_CELLS_SIM=
-	export DEVICE_CELLS_MAP=
-fi
-
-# Device-specific synthesis options
-if [[ "$DEVICE" =~ ^(ql-openfpga-.*)$ ]]; then
-    if [[ "$ADDER" == "no_adder" ]]; then
-    echo "No Adder Mode"
-    else
-    export SYNTH_OPTS="-adder"
-fi
-fi
-
+export PCF_FILE=$PCF
+export PINMAP_FILE=`realpath ${MYPATH}/../share/arch/${DEVICE}/${PINMAPCSV}`
+export DEVICE_CELLS_SIM=`find ${MYPATH}/../share/arch/${DEVICE}/cells -name "*_sim.v"`
+export DEVICE_CELLS_MAP=`find ${MYPATH}/../share/arch/${DEVICE}/cells -name "*_map.v"`
 LOG=${TOP}_synth.log
 
 yosys -p "tcl ${SYNTH_TCL_PATH}" -l $LOG ${VERILOG_FILES[*]}
