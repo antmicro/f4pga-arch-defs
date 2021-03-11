@@ -18,6 +18,7 @@ add_openocd_output(
 )
 
 add_dependencies(all_ql_tests_bit  rgb2ycrcb-ql-chandalar_bit)
+add_dependencies(all_ql_tests_bit_v rgb2ycrcb-ql-chandalar_bit_v)
 add_dependencies(all_ql_tests_prog rgb2ycrcb-ql-chandalar_jlink)
 add_dependencies(all_ql_tests_prog rgb2ycrcb-ql-chandalar_openocd)
 
@@ -40,6 +41,7 @@ add_openocd_output(
 )
 
 add_dependencies(all_ql_tests_bit  rgb2ycrcb-ql-quickfeather_bit)
+add_dependencies(all_ql_tests_bit_v rgb2ycrcb-ql-quickfeather_bit_v)
 add_dependencies(all_ql_tests_prog rgb2ycrcb-ql-quickfeather_jlink)
 add_dependencies(all_ql_tests_prog rgb2ycrcb-ql-quickfeather_openocd)
 

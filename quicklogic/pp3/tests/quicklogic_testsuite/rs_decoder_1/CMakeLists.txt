@@ -18,6 +18,7 @@ add_openocd_output(
 )
 
 add_dependencies(all_ql_tests_bit  rs-decoder-ql-chandalar_bit)
+add_dependencies(all_ql_tests_bit_v rs-decoder-ql-chandalar_bit_v)
 add_dependencies(all_ql_tests_prog rs-decoder-ql-chandalar_jlink)
 add_dependencies(all_ql_tests_prog rs-decoder-ql-chandalar_openocd)
 

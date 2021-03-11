@@ -22,6 +22,7 @@ add_openocd_output(
 )
 
 add_dependencies(all_ql_tests_bit  wbqspiflash-ql-chandalar_bit)
+add_dependencies(all_ql_tests_bit_v wbqspiflash-ql-chandalar_bit_v)
 add_dependencies(all_ql_tests_prog wbqspiflash-ql-chandalar_jlink)
 add_dependencies(all_ql_tests_prog wbqspiflash-ql-chandalar_openocd)
 
@@ -44,6 +45,7 @@ add_openocd_output(
 )
 
 add_dependencies(all_ql_tests_bit  wbqspiflash-ql-quickfeather_bit)
+add_dependencies(all_ql_tests_bit_v wbqspiflash-ql-quickfeather_bit_v)
 add_dependencies(all_ql_tests_prog wbqspiflash-ql-quickfeather_jlink)
 add_dependencies(all_ql_tests_prog wbqspiflash-ql-quickfeather_openocd)
 

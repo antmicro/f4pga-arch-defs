@@ -22,6 +22,7 @@ add_dependencies(all_quick_tests soc_clocks-ql-chandalar_jlink)
 add_dependencies(all_quick_tests soc_clocks-ql-chandalar_openocd)
 
 add_dependencies(all_ql_tests_bit soc_clocks-ql-chandalar_bit)
+add_dependencies(all_ql_tests_bit_v soc_clocks-ql-chandalar_bit_v)
 add_dependencies(all_ql_tests_prog soc_clocks-ql-chandalar_jlink)
 add_dependencies(all_ql_tests_prog soc_clocks-ql-chandalar_openocd)
 add_dependencies(all_quick_tests soc_clocks-ql-chandalar_analysis)
@@ -47,5 +48,6 @@ add_openocd_output(
 )
 
 add_dependencies(all_ql_tests_bit  soc_clocks-ql-quickfeather_bit)
+add_dependencies(all_ql_tests_bit_v soc_clocks-ql-quickfeather_bit_v)
 add_dependencies(all_ql_tests_prog soc_clocks-ql-quickfeather_jlink)
 add_dependencies(all_ql_tests_prog soc_clocks-ql-quickfeather_openocd)

@@ -18,5 +18,6 @@ add_openocd_output(
 )
 
 add_dependencies(all_ql_tests_bit  clock-tree-design-ql-chandalar_bit)
+add_dependencies(all_ql_tests_bit_v clock-tree-design-ql-chandalar_bit_v)
 add_dependencies(all_ql_tests_prog clock-tree-design-ql-chandalar_jlink)
 add_dependencies(all_ql_tests_prog clock-tree-design-ql-chandalar_openocd)

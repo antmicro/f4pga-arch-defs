@@ -22,6 +22,7 @@ add_openocd_output(
 )
 
 add_dependencies(all_ql_tests_bit  osc_alu-ql-chandalar_bit)
+add_dependencies(all_ql_tests_bit_v osc_alu-ql-chandalar_bit_v)
 add_dependencies(all_ql_tests_prog osc_alu-ql-chandalar_jlink)
 add_dependencies(all_ql_tests_prog osc_alu-ql-chandalar_openocd)
 add_dependencies(all_quick_tests osc_alu-ql-chandalar_analysis)

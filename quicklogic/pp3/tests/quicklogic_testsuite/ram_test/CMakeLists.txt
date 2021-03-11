@@ -40,6 +40,7 @@ add_openocd_output(
 )
 
 add_dependencies(all_ql_tests_bit  ram_test-ql-chandalar_bit)
+add_dependencies(all_ql_tests_bit_v ram_test-ql-chandalar_bit_v)
 add_dependencies(all_ql_tests_prog ram_test-ql-chandalar_jlink)
 add_dependencies(all_ql_tests_prog ram_test-ql-chandalar_openocd)
 

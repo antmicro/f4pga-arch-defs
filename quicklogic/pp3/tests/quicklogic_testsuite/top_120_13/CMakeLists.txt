@@ -18,6 +18,7 @@ add_openocd_output(
 )
 
 add_dependencies(all_ql_tests_bit  top-120-13-ql-chandalar_bit)
+add_dependencies(all_ql_tests_bit_v top-120-13-ql-chandalar_bit_v)
 add_dependencies(all_ql_tests_prog top-120-13-ql-chandalar_jlink)
 add_dependencies(all_ql_tests_prog top-120-13-ql-chandalar_openocd)
 

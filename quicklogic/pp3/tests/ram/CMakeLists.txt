@@ -22,6 +22,7 @@ add_dependencies(all_quick_tests ram-ql-chandalar_jlink)
 add_dependencies(all_quick_tests ram-ql-chandalar_openocd)
 
 add_dependencies(all_ql_tests_bit ram-ql-chandalar_bit)
+add_dependencies(all_ql_tests_bit_v ram-ql-chandalar_bit_v)
 add_dependencies(all_ql_tests_prog ram-ql-chandalar_jlink)
 add_dependencies(all_ql_tests_prog ram-ql-chandalar_openocd)
 

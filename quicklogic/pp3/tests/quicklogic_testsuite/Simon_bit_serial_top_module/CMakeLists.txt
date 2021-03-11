@@ -22,6 +22,7 @@ add_openocd_output(
 )
 
 add_dependencies(all_ql_tests_bit  simon-bit-serial-ql-chandalar_bit)
+add_dependencies(all_ql_tests_bit_v simon-bit-serial-ql-chandalar_bit_v)
 add_dependencies(all_ql_tests_prog simon-bit-serial-ql-chandalar_jlink)
 add_dependencies(all_ql_tests_prog simon-bit-serial-ql-chandalar_openocd)
 add_dependencies(all_quick_tests simon-bit-serial-ql-chandalar_analysis)
