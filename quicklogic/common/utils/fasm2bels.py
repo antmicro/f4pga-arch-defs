@@ -699,8 +699,9 @@ class Fasm2Bels(object):
             # Group GMUX input pin connections by GMUX cell names
             gmux_connections = defaultdict(lambda: dict())
             for cell_pin, conn in self.designconnections[loc].items():
-                cell, pin = cell_pin.split("_", maxsplit=1)
-                gmux_connections[cell][pin] = conn
+                if cell_pin.startswith("GMUX"):
+                    cell, pin = cell_pin.split("_", maxsplit=1)
+                    gmux_connections[cell][pin] = conn
 
             # Examine each GMUX config
             for gmux, connections in gmux_connections.items():
@@ -793,8 +794,9 @@ class Fasm2Bels(object):
             # Group QMUX input pin connections by QMUX cell names
             qmux_connections = defaultdict(lambda: dict())
             for cell_pin, conn in self.designconnections[loc].items():
-                cell, pin = cell_pin.split("_", maxsplit=1)
-                qmux_connections[cell][pin] = conn
+                if cell_pin.startswith("QMUX"):
+                    cell, pin = cell_pin.split("_", maxsplit=1)
+                    qmux_connections[cell][pin] = conn
 
             # Examine each QMUX config
             for qmux, connections in qmux_connections.items():

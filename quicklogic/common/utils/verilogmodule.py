@@ -194,6 +194,8 @@ class VModule(object):
             assign = "    assign {} = {};".format(parameters["IZ"], ioname)
         elif direction == 'output':
             assign = "    assign {} = {};".format(ioname, parameters["OQI"])
+        elif direction is None:
+            pass
         else:
             assert False, "Unknown IO configuration"
 
@@ -218,8 +220,12 @@ class VModule(object):
         str: Verilog entry
         '''
         if typ == 'BIDIR':
+
             # We do not emit the BIDIR cell for non inout IOs
-            if self.get_io_config(parameters) != 'inout':
+            direction = self.get_io_config(parameters)
+            if direction is None:
+                return ""
+            elif direction != 'inout':
                 return self.form_simple_assign(loc, parameters)
 
         params = []
@@ -617,7 +623,7 @@ class VModule(object):
         elif output_en:
             direction = 'output'
         else:
-            assert False, "Unknown IO configuration"
+            direction = None
 
         return direction
 
@@ -637,10 +643,12 @@ class VModule(object):
                     else:
                         direction = self.get_io_config(element.ios)
 
-                    name = self.get_io_name(eloc)
-                    self.ios[eloc] = VerilogIO(
-                        name=name, direction=direction, ioloc=eloc
-                    )
+                    # Add the input if used
+                    if direction is not None:
+                        name = self.get_io_name(eloc)
+                        self.ios[eloc] = VerilogIO(
+                            name=name, direction=direction, ioloc=eloc
+                        )
 
                     # keep the original wire name for generating the wireid
                     #wireid = Wire(name, "inout_pin", False)
