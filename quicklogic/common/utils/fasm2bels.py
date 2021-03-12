@@ -742,6 +742,16 @@ class Fasm2Bels(object):
                     clock_loc = self.get_clock_for_gmux(gmux, loc)
                     assert clock_loc is not None, gmux
 
+                    # Check if the clock pad is enabled. If not then discard
+                    # the GMUX
+                    bel_features = []
+                    for bel, features in self.interfaces.get(clock_loc, {}).items():
+                        for feature in features:
+                            bel_features.append("{}.{}".format(bel, feature))
+
+                    if "ASSP.ASSPInvPortAlias" not in bel_features:
+                        continue
+
                     # Connect it to the output wire of the GMUX
                     self.designconnections[clock_loc]["CLOCK0_IC"] = (
                         None, wire
@@ -755,6 +765,12 @@ class Fasm2Bels(object):
 
                 # IC selected
                 else:
+
+                    # Check if the IC pin has an active driver. If not then
+                    # discard the mux.
+                    if connections.get("IC", (None, None))[1] in \
+                       [None, "GND", "VCC"]:
+                        continue
 
                     # Create a wire for the GMUX output
                     wire = "{}_X{}Y{}".format(gmux, loc.x, loc.y)
@@ -844,6 +860,12 @@ class Fasm2Bels(object):
                 # Input from the routing network selected, create a new wire
                 if sel == 3:
 
+                    # Check if the HSCKIN input is connected to an active
+                    # driver. If not then discard the QMUX
+                    if connections.get("HSCKIN", (None, None))[1] in \
+                       [None, "GND", "VCC"]:
+                        continue
+
                     # Create a wire for the QMUX output
                     wire = "{}_X{}Y{}".format(qmux, loc.x, loc.y)
 
@@ -858,8 +880,12 @@ class Fasm2Bels(object):
                 # Input from a GMUX is selected, assign its wire here
                 else:
 
-                    # Use the wire of that GMUX
+                    # The GMUX is not active. Discard the QMUX
                     gmux_loc, gmux_cell, gmux_pin = sel_map[sel]
+                    if gmux_cell not in gmux_map:
+                        continue
+
+                    # Use the wire of that GMUX
                     wire = gmux_map[gmux_cell]
 
                     # The QMUX is implicit. Remove all connections to it
@@ -909,6 +935,10 @@ class Fasm2Bels(object):
                 # Find a QMUX driving this CAND cell
                 qmux_cell, qmux_loc = self.get_qmux_for_cand(cand, loc)
                 assert qmux_cell is not None, (cand, loc)
+
+                # The QMUX is not active, skip this one
+                if qmux_loc not in qmux_map:
+                    continue
 
                 # Get the wire
                 wire = qmux_map[qmux_loc][qmux_cell]
