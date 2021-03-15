@@ -19,6 +19,7 @@ jobs:
           submodules: true
       - name: Build
         run: |
+          sudo rm -rf /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
           sudo apt update
           sudo apt install -y g++-8 gcc-8 colordiff coreutils graphviz inkscape make git unzip cmake
           source ./.github/travis/common.sh
@@ -36,6 +37,7 @@ jobs:
           submodules: true
       - name: Architectures definitions installation
         run: |
+          sudo rm -rf /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
           sudo apt update
           sudo apt install -y g++-8 gcc-8 colordiff coreutils graphviz inkscape make git unzip cmake
           source ./.github/travis/common.sh
