@@ -46,6 +46,9 @@ class SwitchboxConfigBuilder:
             self.inp = {}
             self.sel = None
 
+            # Mux inputs driven by this node as keys
+            self.out = set()
+
     def __init__(self, switchbox):
         self.switchbox = switchbox
         self.nodes = {}
@@ -125,6 +128,15 @@ class SwitchboxConfigBuilder:
                     assert key == "GND" or key not in node.inp, key
                     node.inp[key] = pin_loc.pin_id
 
+                    # Get the SOURCE node
+                    key = pin.name
+                    assert key in nodes, key
+                    node = nodes[key]
+
+                    # Append the mux node as a sink
+                    key = (pin_loc.stage_id, pin_loc.switch_id, pin_loc.mux_id)
+                    node.out.add(key)
+
                 elif pin.direction == PinDirection.OUTPUT:
 
                     # Get the sink node
@@ -136,6 +148,15 @@ class SwitchboxConfigBuilder:
                     # Append reference to the mux
                     key = (pin_loc.stage_id, pin_loc.switch_id, pin_loc.mux_id)
                     node.inp[key] = 0
+
+                    # Get the mux node
+                    key = (pin_loc.stage_id, pin_loc.switch_id, pin_loc.mux_id)
+                    assert key in nodes, key
+                    node = nodes[key]
+
+                    # Append the sink as the mux sink
+                    key = pin.name
+                    node.out.add(key)
 
                 else:
                     assert False, pin.direction
@@ -157,6 +178,15 @@ class SwitchboxConfigBuilder:
             key = (conn.src.stage_id, conn.src.switch_id, conn.src.mux_id)
             node.inp[key] = conn.dst.pin_id
 
+            # Get the source node
+            key = (conn.src.stage_id, conn.src.switch_id, conn.src.mux_id)
+            assert key in nodes, key
+            node = nodes[key]
+
+            # Add the destination node to its outputs
+            key = (conn.dst.stage_id, conn.dst.switch_id, conn.dst.mux_id)
+            node.out.add(key)
+
     def stage_inputs(self, stage_type):
         """
         Yields inputs of the given stage type
@@ -175,66 +205,41 @@ class SwitchboxConfigBuilder:
             if node.type == self.NodeType.SINK:
                 yield node.key
 
-    def route_output(self, stage_type, output_name, net):
+    def propagate_input(self, stage_type, input_name):
         """
-        Routes the given output of a stage type to the given input net name.
-        Net names are initially input port names.
+        Recursively propagates a net from an input pin to all reachable
+        mux / sink nodes.
         """
 
         # Get the correct node list
         assert stage_type in self.nodes, stage_type
         nodes = self.nodes[stage_type]
 
-        def walk(node, path=None):
+        def walk(node):
 
-            # Initialize path
-            if path is None:
-                path = []
+            # Examine all driven nodes
+            for sink_key in node.out:
+                assert sink_key in nodes, sink_key
+                sink_node = nodes[sink_key]
 
-            # Append the current node to the path
-            path = [node.key] + path
+                # The sink is free
+                if sink_node.net is None:
 
-            # We've hit the net we want. Terminate
-            if node.net == net:
-                return path
+                    # Assign it to the net
+                    sink_node.net = node.net
+                    if sink_node.type == self.NodeType.MUX:
+                        sink_node.sel = sink_node.inp[node.key]
 
-            # Recurse for all upstream connections
-            for key, pin in node.inp.items():
+                    # Expand
+                    walk(sink_node)
 
-                # Recurse
-                assert key in nodes, key
-                res = walk(nodes[key], list(path))
+        # Find the source node
+        assert input_name in nodes, input_name
+        node = nodes[input_name]
 
-                # Got a path, terminate
-                if res:
-                    return res
-
-            # No path found
-            return None
-
-        # Find the sink node        
-        assert output_name in nodes, output_name
-        sink_node = nodes[output_name]
-
-        # Walk upstream
-        path = walk(sink_node)
-        if not path:
-            return False
-
-        # Mark the path
-        for node_key, drv_key in zip(path, [None] + path[:-1]):
-
-            # Set the net
-            assert node_key in nodes, key
-            node = nodes[node_key]
-            node.net = net
-
-            # Set selection
-            if drv_key is not None:
-                assert drv_key in node.inp, drv_key
-                node.sel = node.inp[drv_key]
-
-        return True
+        # Walk downstream
+        node.net = input_name
+        walk(node)
 
     def ripup(self, stage_type):
         """
@@ -245,6 +250,21 @@ class SwitchboxConfigBuilder:
             if node.type != self.NodeType.SOURCE:
                 node.net = None
                 node.sel = None
+
+    def check_nodes(self):
+        """
+        Check if all mux nodes have their selections set
+        """
+        result = True
+
+        for stage_type, nodes in self.nodes.items():
+            for key, node in nodes.items():
+
+                if node.type == self.NodeType.MUX and node.sel is None:
+                    result = False
+                    print("WARNING: mux unconfigured", key)
+
+        return result
 
     def fasm_features(self, loc):
         """
@@ -362,7 +382,7 @@ class SwitchboxConfigBuilder:
                 elif node.type == self.NodeType.MUX:
                     name = "{}_{}".format(stage_type, key2str(key))
                     dot.append("    subgraph \"cluster_{}\" {{".format(name))
-                    dot.append("      label=\"{}\";".format(str(key)))
+                    dot.append("      label=\"{}, sel={}\";".format(str(key), node.sel))
 
                     # Inputs
                     for drv_key, pin in node.inp.items():
@@ -536,6 +556,25 @@ def main():
     fully_routed = 0
     partially_routed = 0
 
+    def input_rank(pin):
+        """
+        Returns a rank of a switchbox input. Pins with the lowest rank should
+        be expanded first.
+        """
+        if pin.name == "GND":
+            return 0
+        elif pin.name == "VCC":
+            return 1
+        elif pin.type not in [SwitchboxPinType.HOP, SwitchboxPinType.GCLK]:
+            return 2
+        elif pin.type == SwitchboxPinType.HOP:
+            return 3
+        elif pin.type == SwitchboxPinType.GCLK:
+            return 4
+
+        return 99
+
+    # Process each switchbox type
     for switchbox in switchbox_types.values():
         print("", switchbox.type)
 
@@ -546,60 +585,17 @@ def main():
         # Initialize the builder
         builder = SwitchboxConfigBuilder(switchbox)
 
-        # Route all STREET outputs to GND
-        stage = "STREET"
-        for output in builder.stage_outputs(stage):
-            builder.route_output(stage, output, "GND")
+        # Sort the inputs according to their ranks.
+        inputs = sorted(switchbox.inputs.values(), key=input_rank)
 
-        # Identify all LC inputs of the HIGHWAY stage
-        stage = "HIGHWAY"
-        inputs = set([pin.name for pin in switchbox.inputs.values() \
-            if pin.type not in [SwitchboxPinType.HOP, SwitchboxPinType.GCLK ]])
-        inputs = list(inputs & set(builder.stage_inputs(stage)))
+        # Propagate them
+        for stage in ["STREET", "HIGHWAY"]:
+            for pin in inputs:
+                if pin.name in builder.stage_inputs(stage):
+                    builder.propagate_input(stage, pin.name)
 
-        # No imputs from tile, allow any
-        if not inputs:
-            print("  WARNING: No non-highway inputs to the {} stage".format(stage))
-            inputs = list(builder.stage_inputs(stage))
-
-        # Randomly route switchbox outputs to LC outputs. Shuffle lists each
-        # time so that if an unroutable situation happens once it is less
-        # likely that it would happen again.
-        outputs = list(builder.stage_outputs(stage))
-        routing_failed = False
-        for i in range(1):
-
-            if i > 0:
-                print("  Retry routing... ({})".format(i))
-
-            # Ripup if failed previously
-            if routing_failed:
-                builder.ripup(stage)
-
-            # This is the last retry, use all inputs
-            if i == 2:
-                print("  WARNING: Using all available inputs of the switchbox")
-                inputs = list(builder.stage_inputs(stage))
-
-            # Try
-            routing_failed = False
-            random.shuffle(outputs)
-            for output in builder.stage_outputs(stage):
-                random.shuffle(inputs)
-                for net in inputs:
-                    if builder.route_output(stage, output, net):
-                        break
-                else:
-                    print("  Routing failed: {}, {} -> {}".format(stage, output, net))
-                    routing_failed = True
-
-            # Success, terminate
-            if not routing_failed:
-                break
-
-        # Routing failed
-        else:
-            print("  ERROR: Routing failed after several retries!")
+        # Check if all nodes are configured
+        routing_failed = not builder.check_nodes()
 
         # Dump dot
         if args.dump_dot:
