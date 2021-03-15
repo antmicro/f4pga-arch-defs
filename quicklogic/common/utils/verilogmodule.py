@@ -190,6 +190,9 @@ class VModule(object):
 
         assign = ""
         direction = self.get_io_config(parameters)
+
+        print(direction, bloc, ioname, parameters)
+
         if direction == 'input':
             assign = "    assign {} = {};".format(parameters["IZ"], ioname)
         elif direction == 'output':
@@ -660,6 +663,11 @@ class VModule(object):
             direction = 'output'
         else:
             direction = None
+
+        # Output unrouted. Discard
+        if direction == 'input':
+            if 'IZ' not in ios:
+                return None
 
         return direction
 
