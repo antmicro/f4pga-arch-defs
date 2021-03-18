@@ -548,6 +548,8 @@ def main():
     data = import_data(xml_root)
     switchbox_types = data["switchbox_types"]
     switchbox_grid = data["switchbox_grid"]
+    tile_types = data["tile_types"]
+    tile_grid = data["tile_grid"]
 
     # Route switchboxes
     print("Making switchbox routes...")
@@ -622,6 +624,20 @@ def main():
     print(" Total switchboxes: {}".format(len(switchbox_grid)))
     print(" Fully routed     : {}".format(fully_routed))
     print(" Partially routed : {}".format(partially_routed))
+
+    # Power on all LOGIC cells
+    for loc, tile in tile_grid.items():
+
+        # Get the tile type object
+        tile_type = tile_types[tile.type]
+
+        # If this tile has a LOGIC cell then emit the FASM feature that
+        # enables its power
+        if "LOGIC" in tile_type.cells:
+            feature = "X{}Y{}.LOGIC.LOGIC.Ipwr_gates.J_pwr_st".format(
+                loc.x, loc.y
+            )
+            fasm.append(feature)
 
     # Write FASM
     print("Writing FASM file...")
