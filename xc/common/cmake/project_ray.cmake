@@ -738,3 +738,76 @@ function(PROJECT_RAY_TILE_CAPACITY)
     )
   add_file_target(FILE ${TILE_LOWER}.tile.xml GENERATED)
 endfunction()
+
+function(PRJRAY_GENERATE_PRIMITIVE)
+  # ~~~
+  # PRJRAY_GENERATE_PRIMITIVE(
+  #   PRJRAY_DB_DIR <datbase directory>
+  #   PRIMITIVE <primitive name>
+  #   [PRE_BUILT_PB_TYPE <pre-built pb_type XML>]
+  #   [FILTER_CLOCK_DELAYS <list of clocks to filter>]
+  #   )
+  # ~~~
+  #
+  # This function generates targets to build pb_types and models for
+  # primitives automatically.
+  #
+  # Arguments:
+  #   - PRJRAY_DB_DIR: directory to the device database
+  #   - PRIMITIVE: lower case primitive name
+  #   - PRE_BUILT_PB_TYPE: optional XML of a pre-written pb_type which has non-standard tags.
+  #   - FILTER_CLOCK_DELAYS: comma-separated list of clocks that need to be filtered when generating
+  #                          clock-related timing delays. Some ports do have multiple clock delay
+  #                          specifications. VPR can only accept one clock corresponding to a specific port.
+
+  set(options)
+  set(oneValueArgs PRJRAY_DB_DIR PRIMITIVE PRE_BUILT_PB_TYPE FILTER_CLOCK_DELAYS)
+  set(multiValueArgs)
+  cmake_parse_arguments(
+    PRJRAY_GENERATE_PRIMITIVE
+    "${options}"
+    "${oneValueArgs}"
+    "${multiValueArgs}"
+    ${ARGN}
+  )
+
+  set(DB_DIR ${PRJRAY_GENERATE_PRIMITIVE_PRJRAY_DB_DIR})
+  set(PRIMITIVE ${PRJRAY_GENERATE_PRIMITIVE_PRIMITIVE})
+  set(PRE_BUILT_PB_TYPE ${PRJRAY_GENERATE_PRIMITIVE_PRE_BUILT_PB_TYPE})
+  set(FILTER_CLOCK_DELAYS ${PRJRAY_GENERATE_PRIMITIVE_FILTER_CLOCK_DELAYS})
+
+  set(GENERATE_PRIMITIVE ${symbiflow-arch-defs_SOURCE_DIR}/utils/build_primitive_proto.py)
+  set(PB_TYPE_XML ${CMAKE_CURRENT_BINARY_DIR}/${PRIMITIVE}.pb_type.xml)
+  set(MODEL_XML ${CMAKE_CURRENT_BINARY_DIR}/${PRIMITIVE}.model.xml)
+
+  set(DEPS "")
+  set(EXTRA_ARGS "")
+  if(DEFINED PRE_BUILT_PB_TYPE)
+    list(APPEND DEPS ${PRE_BUILT_PB_TYPE})
+    add_file_target(FILE ${PRE_BUILT_PB_TYPE})
+    list(APPEND EXTRA_ARGS "--pre-built-pb-type" ${PRE_BUILT_PB_TYPE})
+  endif()
+
+  if(DEFINED FILTER_CLOCK_DELAYS)
+    list(APPEND EXTRA_ARGS "--filter-clock-delays" ${FILTER_CLOCK_DELAYS})
+  endif()
+
+  add_custom_command(
+    OUTPUT
+      ${PB_TYPE_XML}
+      ${MODEL_XML}
+    COMMAND
+      ${CMAKE_COMMAND} -E env PYTHONPATH=${PRJRAY_DIR}:${symbiflow-arch-defs_SOURCE_DIR}/utils
+      ${PYTHON3} ${GENERATE_PRIMITIVE}
+        --primitive ${PRIMITIVE}
+        --prjxray-db ${DB_DIR}
+        ${EXTRA_ARGS}
+      DEPENDS
+        ${DEPS}
+        ${GENERATE_PRIMITIVE}
+    )
+
+  add_file_target(FILE ${PRIMITIVE}.pb_type.xml GENERATED)
+  add_file_target(FILE ${PRIMITIVE}.model.xml GENERATED)
+
+endfunction()
