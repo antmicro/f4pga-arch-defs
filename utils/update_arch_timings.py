@@ -129,7 +129,11 @@ def get_bel_timings(element, timings, bels, corner, speed_type):
     else:
         bel = pb_chain[-1]
     location = pb_chain[-2]
-    site = remove_site_number(pb_chain[1])
+
+    # PCIe site has name with trailing number which must not be removed
+    site = pb_chain[1]
+    if not "PCIE" in site:
+        site = remove_site_number(pb_chain[1])
 
     result = find_timings(
         timings, bel, location, site, bels, corner, speed_type
