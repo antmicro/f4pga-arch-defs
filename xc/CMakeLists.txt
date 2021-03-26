@@ -20,6 +20,8 @@ if (${PRJXRAY_DB_DIR} STREQUAL "PRJXRAY_DB_DIR-NOTFOUND")
   message(FATAL_ERROR "Could not find the project xray database directory! Please provide it with the PRJXRAY_DB_DIR variable")
 endif ()
 
+set(XC7_TECHMAP_DIR "${symbiflow-arch-defs_SOURCE_DIR}/xc/xc7/techmap")
+
 add_subdirectory(common)
 
 # Create rapidwright target, and populate it with RAPIDWRIGHT_INSTALLED variable

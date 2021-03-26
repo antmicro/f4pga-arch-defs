@@ -11,6 +11,7 @@ some manual adjustments.
 import argparse
 import os
 import json
+import re
 import lxml.etree as ET
 
 from sdf_timing.sdfparse import parse
@@ -205,7 +206,31 @@ def build_model_prototype(ports, name, delay_data, filter_clock_delays):
     return models_xml
 
 
-def build_cells_prototypes(ports, attrs, name):
+def build_cells_prototypes(ports, attrs, name, cells_sim, cells_map):
+    module_regx = "module {}".format(name)
+    with open(cells_map, "r") as f:
+        data = f.read()
+        # Check if the module is already added
+        if re.search(module_regx, data) is not None:
+            print(
+                '*** WARNING *** Skipping generating cells_map for "{}"' \
+                ' primitive - module exists.'.format(
+                    name
+                ),
+            )
+            return
+    with open(cells_sim, "r") as f:
+        data = f.read()
+        # Check if the module is already added
+        if re.search(module_regx, data) is not None:
+            print(
+                '*** WARNING *** Skipping generating cells_sim for "{}"' \
+                ' primitive - module exists.'.format(
+                    name
+                ),
+            )
+            return
+
     verilog_sim_module = "module {}_VPR (\n".format(name.upper())
 
     ports_str = list()
@@ -281,11 +306,7 @@ def build_cells_prototypes(ports, attrs, name):
     verilog_map_module += "\n".join(port for port in init_ports_str)
     verilog_map_module += "  );\nendmodule"
 
-    with open("{}_cells_sim.v".format(name), "w") as f:
-        f.write(verilog_sim_module)
-
-    with open("{}_cells_map.v".format(name), "w") as f:
-        f.write(verilog_map_module)
+    return verilog_sim_module, verilog_map_module
 
 
 def get_delay_data(sdf_timings_dir, primitive, ports):
@@ -348,12 +369,15 @@ def main():
         "--prjxray-db", required=True, help="Path to prjxray-db directory"
     )
     parser.add_argument(
+        "--techmap-dir", required=True, help="Path to techmap directory"
+    )
+    parser.add_argument(
         "--primitive", required=True, help="Name of the primitive."
     )
     parser.add_argument(
-        "--build_cells",
+        "--build-cells",
         action="store_true",
-        help="Enable building also the cells_map and cells_sim files."
+        help="Enable building verilog models."
     )
     parser.add_argument(
         "--output-dir", default=os.getcwd(), help="Output directory."
@@ -406,7 +430,16 @@ def main():
         args.pre_built_pb_type
     )
     if args.build_cells:
-        build_cells_prototypes(ports, attrs, primitive)
+        assert os.path.exists(args.techmap_dir), (args.techmap_dir)
+        cells_sim = os.path.join(args.techmap_dir, "cells_sim.v")
+        cells_map = os.path.join(args.techmap_dir, "cells_map.v")
+        verilog_sim_module, verilog_map_module = build_cells_prototypes(ports, attrs, primitive, cells_sim, cells_map)
+        with open(cells_sim, "a") as f:
+            f.write("\n")
+            f.write(verilog_sim_module)
+        with open(cells_map, "a") as f:
+            f.write("\n")
+            f.write(verilog_map_module)
 
     model_file = "{}.model.xml".format(primitive)
     with open(os.path.join(args.output_dir, model_file), "w") as f:

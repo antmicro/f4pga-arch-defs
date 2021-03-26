@@ -12,6 +12,8 @@ add_custom_target(
 
 add_file_target(FILE "bels.json")
 
+add_subdirectory(${XC7_TECHMAP_DIR})
+
 include(arch.cmake)
 
 get_target_property_required(PYTEST env PYTEST)

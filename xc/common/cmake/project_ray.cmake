@@ -743,7 +743,9 @@ function(PRJRAY_GENERATE_PRIMITIVE)
   # ~~~
   # PRJRAY_GENERATE_PRIMITIVE(
   #   PRJRAY_DB_DIR <datbase directory>
+  #   TECHMAP_DIR <techmap directory>
   #   PRIMITIVE <primitive name>
+  #   [BUILD_CELLS]
   #   [PRE_BUILT_PB_TYPE <pre-built pb_type XML>]
   #   [FILTER_CLOCK_DELAYS <list of clocks to filter>]
   #   )
@@ -754,14 +756,16 @@ function(PRJRAY_GENERATE_PRIMITIVE)
   #
   # Arguments:
   #   - PRJRAY_DB_DIR: directory to the device database
+  #   - TECHMAP_DIR: directory to techmap verilogs
   #   - PRIMITIVE: lower case primitive name
+  #   - BUILD_CELLS: build verilog models and append them to cells_[sim|map].v
   #   - PRE_BUILT_PB_TYPE: optional XML of a pre-written pb_type which has non-standard tags.
   #   - FILTER_CLOCK_DELAYS: comma-separated list of clocks that need to be filtered when generating
   #                          clock-related timing delays. Some ports do have multiple clock delay
   #                          specifications. VPR can only accept one clock corresponding to a specific port.
 
-  set(options)
-  set(oneValueArgs PRJRAY_DB_DIR PRIMITIVE PRE_BUILT_PB_TYPE FILTER_CLOCK_DELAYS)
+  set(options BUILD_CELLS)
+  set(oneValueArgs PRJRAY_DB_DIR TECHMAP_DIR PRIMITIVE PRE_BUILT_PB_TYPE FILTER_CLOCK_DELAYS)
   set(multiValueArgs)
   cmake_parse_arguments(
     PRJRAY_GENERATE_PRIMITIVE
@@ -772,7 +776,9 @@ function(PRJRAY_GENERATE_PRIMITIVE)
   )
 
   set(DB_DIR ${PRJRAY_GENERATE_PRIMITIVE_PRJRAY_DB_DIR})
+  set(TECHMAP_DIR ${PRJRAY_GENERATE_PRIMITIVE_TECHMAP_DIR})
   set(PRIMITIVE ${PRJRAY_GENERATE_PRIMITIVE_PRIMITIVE})
+  set(BUILD_CELLS ${PRJRAY_GENERATE_PRIMITIVE_BUILD_CELLS})
   set(PRE_BUILT_PB_TYPE ${PRJRAY_GENERATE_PRIMITIVE_PRE_BUILT_PB_TYPE})
   set(FILTER_CLOCK_DELAYS ${PRJRAY_GENERATE_PRIMITIVE_FILTER_CLOCK_DELAYS})
 
@@ -782,6 +788,11 @@ function(PRJRAY_GENERATE_PRIMITIVE)
 
   set(DEPS "")
   set(EXTRA_ARGS "")
+
+  if(DEFINED BUILD_CELLS)
+    list(APPEND EXTRA_ARGS "--build-cells")
+  endif()
+
   if(DEFINED PRE_BUILT_PB_TYPE)
     list(APPEND DEPS ${PRE_BUILT_PB_TYPE})
     add_file_target(FILE ${PRE_BUILT_PB_TYPE})
@@ -801,6 +812,7 @@ function(PRJRAY_GENERATE_PRIMITIVE)
       ${PYTHON3} ${GENERATE_PRIMITIVE}
         --primitive ${PRIMITIVE}
         --prjxray-db ${DB_DIR}
+	--techmap-dir ${TECHMAP_DIR}
         ${EXTRA_ARGS}
       DEPENDS
         ${DEPS}
