@@ -1,2 +1,6 @@
-add_file_target(FILE pcie_2_1.model.xml SCANNER_TYPE xml)
-add_file_target(FILE pcie_2_1.pb_type.xml SCANNER_TYPE xml)
+prjray_generate_primitive(
+    PRJRAY_DB_DIR ${PRJXRAY_DB_DIR}
+    PRIMITIVE pcie_2_1
+    TECHMAP_DIR ${XC7_TECHMAP_DIR}
+    #FILTER_CLOCK_DELAYS
+)
