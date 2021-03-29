@@ -667,31 +667,39 @@ def import_site_as_tile(db, args):
     for outputs in root_element.iter('output'):
         ports[outputs.attrib['name']] = int(outputs.attrib['num_pins'])
 
+    equivalent_pins = args.equivalent_pins.split(",")
+
     interconnect_xml = ET.Element('interconnect')
 
     interconnect_xml.append(ET.Comment(" Tile->Site "))
     for site_pin in sorted(site_type.get_site_pins()):
-        site_type_pin = site_type.get_site_pin(site_pin)
-
-        port = find_port(site_type_pin.name, ports)
-        if port is None:
-            print(
-                "*** WARNING *** Didn't find port for name {} for site type {}"
-                .format(site_type_pin.name, site_type.type),
-                file=sys.stderr
-            )
-            continue
-
-        if site_type_pin.direction == prjxray.site_type.SitePinDirection.IN:
-            add_direct(
-                interconnect_xml,
-                input=object_ref(add_vpr_tile_prefix(tile_name), site_pin),
-                output=object_ref(site_name, **port)
-            )
-        elif site_type_pin.direction == prjxray.site_type.SitePinDirection.OUT:
-            pass
+        if site_pin in equivalent_pins:
+            site_pins = equivalent_pins
         else:
-            assert False, site_type_pin.direction
+            site_pins = [site_pin]
+
+        for pin in site_pins:
+            site_type_pin = site_type.get_site_pin(pin)
+
+            port = find_port(site_type_pin.name, ports)
+            if port is None:
+                print(
+                    "*** WARNING *** Didn't find port for name {} for site type {}"
+                    .format(site_type_pin.name, site_type.type),
+                    file=sys.stderr
+                )
+                continue
+
+            if site_type_pin.direction == prjxray.site_type.SitePinDirection.IN:
+                add_direct(
+                    interconnect_xml,
+                    input=object_ref(add_vpr_tile_prefix(tile_name), site_pin),
+                    output=object_ref(site_name, **port)
+                )
+            elif site_type_pin.direction == prjxray.site_type.SitePinDirection.OUT:
+                pass
+            else:
+                assert False, site_type_pin.direction
 
     interconnect_xml.append(ET.Comment(" Site->Tile "))
     for site_pin in sorted(site_type.get_site_pins()):
@@ -701,7 +709,7 @@ def import_site_as_tile(db, args):
         if port is None:
             print(
                 "*** WARNING *** Didn't find port for name {} for site type {}"
-                .format(site_type_pin.name, site_type),
+                .format(site_type_pin.name, site_type.type),
                 file=sys.stderr
             )
             continue
@@ -1470,6 +1478,14 @@ connection database in lue of Project X-Ray."""
     parser.add_argument(
         '--unused_wires',
         help="Comma seperated list of site wires to exclude in this tile."
+    )
+
+    parser.add_argument(
+        '--equivalent_pins',
+        default="",
+        help="""
+Comma separated list of ports which are equivalent and must
+have a fully-connected direct list."""
     )
 
     args = parser.parse_args()
