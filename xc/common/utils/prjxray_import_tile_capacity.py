@@ -94,7 +94,9 @@ def main():
 
         sites.append((site_type, site, input_wires, output_wires))
 
-    sites = sorted(sites, key=lambda site: (site[1].type, site[1].x, site[1].y))
+    sites = sorted(
+        sites, key=lambda site: (site[1].type, site[1].x, site[1].y)
+    )
 
     tile_xml = start_heterogeneous_tile(
         args.tile_type,
