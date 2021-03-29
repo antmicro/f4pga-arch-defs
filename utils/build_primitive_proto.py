@@ -22,6 +22,59 @@ INT = "INT"
 STR = "STR"
 
 
+def strip_trailing_number(signal):
+    trailing_rgx = '[0-9]*$'
+    res = re.search(trailing_rgx, signal)
+    if res is None:
+        return
+    index = res.group()
+
+    return signal.strip(index), index
+
+
+class DelayEntry():
+    def __init__(self, delay_name, delay_data):
+        self.__to_pin = {"name": delay_data["to_pin"], "index": None}
+        self.__from_pin = delay_data["from_pin"]
+        self.__type = delay_data["type"]
+        self.__delay_name = delay_name
+        self.__pin_port = self.__to_pin["name"]
+
+    def get_from_pin_name(self):
+        return self.__from_pin
+
+    def get_to_pin_name(self):
+        return self.__to_pin["name"]
+
+    def get_to_pin_index(self):
+        return self.__to_pin["index"]
+
+    def get_pin_port(self):
+        return self.__pin_port
+
+    def get_delay_name(self):
+        return self.__delay_name
+
+    def get_type(self):
+        return self.__type
+
+    def is_in_ports(self, ports):
+        if self.__pin_port not in ports:
+            stripped_port, index = strip_trailing_number(self.__pin_port)
+            if stripped_port is None:
+                return False
+            elif stripped_port in ports:
+                self.__pin_port = stripped_port
+                self.__to_pin["name"] = "{}[{}]".format(self.__pin_port, index)
+                self.__to_pin["index"] = index
+                dly_name, index = strip_trailing_number(self.__delay_name)
+                #self.__delay_name = "{}[{}]".format(dly_name, index)
+            else:
+                return False
+
+        return self.__from_pin in ports
+
+
 def is_clock_delay(pin, clock_ports):
     return any(pin == clock_port["name"] for clock_port in clock_ports)
 
@@ -84,7 +137,13 @@ def build_pb_type_prototype(
             ET.SubElement(pb_type_xml, port_type, port)
 
     delays = list()
-    for type, name, from_pin, to_pin in delay_data:
+    for delay in delay_data:
+        from_pin = delay.get_from_pin_name()
+        to_pin = delay.get_to_pin_name()
+        pin_port = delay.get_pin_port()
+        type = delay.get_type()
+        delay_name = delay.get_delay_name()
+
         is_clk_dly = is_clock_delay(from_pin, ports_dict["clock"])
 
         if is_clk_dly and from_pin in filter_clock_delays:
@@ -92,43 +151,43 @@ def build_pb_type_prototype(
 
         if type == "hold":
             assert is_clk_dly, from_pin
-            delay_name = "T_hold"
+            delay_type = "T_hold"
             delay_attrs = {
-                "value": "{%s}" % name,
+                "value": "{%s}" % delay_name,
                 "port": to_pin,
                 "clock": from_pin
             }
         elif type == "setup":
             assert is_clk_dly
-            delay_name = "T_setup"
+            delay_type = "T_setup"
             delay_attrs = {
-                "value": "{%s}" % name,
+                "value": "{%s}" % delay_name,
                 "port": to_pin,
                 "clock": from_pin
             }
         elif type == "iopath" and is_clk_dly:
-            delay_name = "T_clock_to_Q"
+            delay_type = "T_clock_to_Q"
             delay_attrs = {
-                "max": "{%s}" % name,
+                "max": "{%s}" % delay_name,
                 "port": to_pin,
                 "clock": from_pin
             }
         elif type == "iopath":
-            delay_name = "delay_constant"
+            delay_type = "delay_constant"
             delay_attrs = {
-                "max": "{%s}" % name,
+                "max": "{%s}" % delay_name,
                 "out_port": to_pin,
                 "in_port": from_pin
             }
         else:
             assert False, delay_data
 
-        port_name = to_pin if is_clk_dly else from_pin
+        port_name = pin_port if is_clk_dly else from_pin
 
-        delays.append((delay_name, delay_attrs, port_name))
+        delays.append((delay_type, delay_attrs, port_name))
 
-    for delay_name, delay_attrs, _ in sorted(delays, key=lambda port: port[0]):
-        ET.SubElement(pb_type_xml, delay_name, delay_attrs)
+    for delay_type, delay_attrs, _ in sorted(delays, key=lambda port: port[0]):
+        ET.SubElement(pb_type_xml, delay_type, delay_attrs)
 
     for attr_name, config in attrs.items():
         attr_type = config["type"]
@@ -180,7 +239,11 @@ def build_model_prototype(ports, name, delay_data, filter_clock_delays):
         elif input_type == "input":
             selected_ports = input_ports
 
-            for type, _, from_pin, to_pin in delay_data:
+            for delay in delay_data:
+                to_pin = delay.get_to_pin_name()
+                from_pin = delay.get_from_pin_name()
+                pin_port = delay.get_pin_port()
+
                 if type == "iopath" and port_name == from_pin:
                     if "combinational_sink_ports" not in attrs:
                         attrs["combinational_sink_ports"] = to_pin
@@ -188,16 +251,18 @@ def build_model_prototype(ports, name, delay_data, filter_clock_delays):
                         attrs["combinational_sink_ports"] += " {}".format(
                             to_pin
                         )
-                elif to_pin == port_name and from_pin not in filter_clock_delays:
+                elif pin_port == port_name and from_pin not in filter_clock_delays:
                     attrs["clock"] = from_pin
                     break
         else:
             selected_ports = output_ports
 
-            for type, _, from_pin, to_pin in delay_data:
+            for delay in delay_data:
+                from_pin = delay.get_from_pin_name()
+                pin_port = delay.get_pin_port()
                 is_clk_dly = is_clock_delay(from_pin, ports_dict["clock"])
 
-                if to_pin == port_name and is_clk_dly and from_pin not in filter_clock_delays:
+                if pin_port == port_name and is_clk_dly and from_pin not in filter_clock_delays:
                     attrs["clock"] = from_pin
 
         assert selected_ports is not None
@@ -318,7 +383,8 @@ def get_delay_data(sdf_timings_dir, primitive, ports):
     """
 
     bels = set()
-    primitive_delays = set()
+    primitive_delays = list()
+
     for filename in os.listdir(sdf_timings_dir):
         if not filename.endswith(".sdf"):
             continue
@@ -332,20 +398,13 @@ def get_delay_data(sdf_timings_dir, primitive, ports):
                 if instance != primitive:
                     continue
 
-                bels.add(cell)
+                bels.add("{}.{}".format(cell, instance))
 
                 for delay_name, delay_data in instance_data.items():
-                    to_pin = delay_data["to_pin"]
-                    from_pin = delay_data["from_pin"]
-                    type = delay_data["type"]
-
-                    if to_pin not in ports:
+                    delay_entry = DelayEntry(delay_name, delay_data)
+                    if not delay_entry.is_in_ports(ports):
                         continue
-
-                    if from_pin not in ports:
-                        continue
-
-                    primitive_delays.add((type, delay_name, from_pin, to_pin))
+                    primitive_delays.append(delay_entry)
 
     blk_tl_primitive = "BLK-TL-{}".format(primitive)
     bels_json = {primitive: {primitive: {blk_tl_primitive: list()}}}
@@ -370,6 +429,11 @@ def main():
     )
     parser.add_argument(
         "--techmap-dir", required=True, help="Path to techmap directory"
+    )
+    parser.add_argument(
+        "--bels-json",
+        required=True,
+        help="bels.json file used for updating timing info"
     )
     parser.add_argument(
         "--primitive", required=True, help="Name of the primitive."
@@ -433,7 +497,9 @@ def main():
         assert os.path.exists(args.techmap_dir), (args.techmap_dir)
         cells_sim = os.path.join(args.techmap_dir, "cells_sim.v")
         cells_map = os.path.join(args.techmap_dir, "cells_map.v")
-        verilog_sim_module, verilog_map_module = build_cells_prototypes(ports, attrs, primitive, cells_sim, cells_map)
+        verilog_sim_module, verilog_map_module = build_cells_prototypes(
+            ports, attrs, primitive, cells_sim, cells_map
+        )
         with open(cells_sim, "a") as f:
             f.write("\n")
             f.write(verilog_sim_module)
@@ -451,7 +517,11 @@ def main():
         xml_str = ET.tostring(pb_type_xml, pretty_print=True).decode("utf-8")
         f.write(xml_str)
 
-    with open(os.path.join(args.output_dir, "bels.json"), "w") as f:
+    with open(args.bels_json, "r") as f:
+        data = json.load(f)
+        bels_json.update(data)
+
+    with open(args.bels_json, "w") as f:
         json.dump(bels_json, f, indent=4)
 
 

@@ -744,6 +744,7 @@ function(PRJRAY_GENERATE_PRIMITIVE)
   # PRJRAY_GENERATE_PRIMITIVE(
   #   PRJRAY_DB_DIR <datbase directory>
   #   TECHMAP_DIR <techmap directory>
+  #   BELS_JSON <bels json file>
   #   PRIMITIVE <primitive name>
   #   [BUILD_CELLS]
   #   [PRE_BUILT_PB_TYPE <pre-built pb_type XML>]
@@ -757,6 +758,7 @@ function(PRJRAY_GENERATE_PRIMITIVE)
   # Arguments:
   #   - PRJRAY_DB_DIR: directory to the device database
   #   - TECHMAP_DIR: directory to techmap verilogs
+  #   - BELS_JSON: append generated bels.json used for timing info
   #   - PRIMITIVE: lower case primitive name
   #   - BUILD_CELLS: build verilog models and append them to cells_[sim|map].v
   #   - PRE_BUILT_PB_TYPE: optional XML of a pre-written pb_type which has non-standard tags.
@@ -765,7 +767,7 @@ function(PRJRAY_GENERATE_PRIMITIVE)
   #                          specifications. VPR can only accept one clock corresponding to a specific port.
 
   set(options BUILD_CELLS)
-  set(oneValueArgs PRJRAY_DB_DIR TECHMAP_DIR PRIMITIVE PRE_BUILT_PB_TYPE FILTER_CLOCK_DELAYS)
+  set(oneValueArgs PRJRAY_DB_DIR TECHMAP_DIR BELS_JSON PRIMITIVE PRE_BUILT_PB_TYPE FILTER_CLOCK_DELAYS)
   set(multiValueArgs)
   cmake_parse_arguments(
     PRJRAY_GENERATE_PRIMITIVE
@@ -777,6 +779,7 @@ function(PRJRAY_GENERATE_PRIMITIVE)
 
   set(DB_DIR ${PRJRAY_GENERATE_PRIMITIVE_PRJRAY_DB_DIR})
   set(TECHMAP_DIR ${PRJRAY_GENERATE_PRIMITIVE_TECHMAP_DIR})
+  set(BELS_JSON ${PRJRAY_GENERATE_PRIMITIVE_BELS_JSON})
   set(PRIMITIVE ${PRJRAY_GENERATE_PRIMITIVE_PRIMITIVE})
   set(BUILD_CELLS ${PRJRAY_GENERATE_PRIMITIVE_BUILD_CELLS})
   set(PRE_BUILT_PB_TYPE ${PRJRAY_GENERATE_PRIMITIVE_PRE_BUILT_PB_TYPE})
@@ -813,6 +816,7 @@ function(PRJRAY_GENERATE_PRIMITIVE)
         --primitive ${PRIMITIVE}
         --prjxray-db ${DB_DIR}
 	--techmap-dir ${TECHMAP_DIR}
+	--bels-json ${BELS_JSON}
         ${EXTRA_ARGS}
       DEPENDS
         ${DEPS}

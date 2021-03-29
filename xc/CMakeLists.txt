@@ -21,6 +21,7 @@ if (${PRJXRAY_DB_DIR} STREQUAL "PRJXRAY_DB_DIR-NOTFOUND")
 endif ()
 
 set(XC7_TECHMAP_DIR "${symbiflow-arch-defs_SOURCE_DIR}/xc/xc7/techmap")
+set(XC7_BELS_JSON "${symbiflow-arch-defs_SOURCE_DIR}/xc/xc7/bels.json")
 
 add_subdirectory(common)
 
