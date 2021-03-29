@@ -109,8 +109,14 @@ CLOCKS = {
     "GTPE2_CHANNEL_VPR":
         {
             "sources": frozenset(("TXOUTCLK", "RXOUTCLK")),
-            "sinks": frozenset(),
+            "sinks": frozenset(("SIGVALIDCLK", )),
             "type": "GTPE2_CHANNEL",
+        },
+    "FDPE_ZINI":
+        {
+            "sources": frozenset(("Q", )),
+            "sinks": frozenset(),
+            "type": "SLICEL",
         },
 }
 
@@ -429,6 +435,31 @@ class ClockPlacer(object):
                         self.clock_sources[sink_net] = []
 
                 self.clock_sources[sink_net].append(cname)
+
+        clocks_to_delete = set()
+        for clock, clock_data in self.clock_blocks.items():
+            if len(clock_data["source_nets"]) == 0:
+                continue
+
+            if clock_data["subckt"] == "BUFGCTRL_VPR":
+                continue
+
+            has_clock_sink = False
+            for source in clock_data["source_nets"]:
+                matching_clocks = any(
+                    source in other_clock_data["sink_nets"]
+                    for other_clock_data in self.clock_blocks.values()
+                )
+
+                if matching_clocks:
+                    has_clock_sink = True
+                    break
+
+            if not has_clock_sink:
+                clocks_to_delete.add(clock)
+
+        for clock in clocks_to_delete:
+            del self.clock_blocks[clock]
 
     def assign_cmts(self, vpr_grid, blocks, block_locs):
         """ Assign CMTs to subckt's that require it (e.g. BURF/PLL/MMCM). """
