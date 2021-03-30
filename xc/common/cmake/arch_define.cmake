@@ -53,6 +53,7 @@ function(ADD_XC_ARCH_DEFINE)
   else()
       set(PRJRAY_ARCH "${ADD_XC_ARCH_DEFINE_PRJRAY_ARCH}")
   endif()
+  set(FAMILY_DIR ${symbiflow-arch-defs_SOURCE_DIR}/xc/${FAMILY})
   set(PRJRAY_DIR ${ADD_XC_ARCH_DEFINE_PRJRAY_DIR})
   set(PRJRAY_DB_DIR ${ADD_XC_ARCH_DEFINE_PRJRAY_DB_DIR})
   set(PRJRAY_NAME ${ADD_XC_ARCH_DEFINE_PRJRAY_NAME})
@@ -60,7 +61,7 @@ function(ADD_XC_ARCH_DEFINE)
   set(YOSYS_SYNTH_SCRIPT ${ADD_XC_ARCH_DEFINE_YOSYS_SYNTH_SCRIPT})
   set(YOSYS_CONV_SCRIPT ${ADD_XC_ARCH_DEFINE_YOSYS_CONV_SCRIPT})
   set(YOSYS_UTILS_SCRIPT ${ADD_XC_ARCH_DEFINE_YOSYS_UTILS_SCRIPT})
-  set(YOSYS_TECHMAP ${symbiflow-arch-defs_SOURCE_DIR}/xc/${FAMILY}/techmap)
+  set(YOSYS_TECHMAP ${FAMILY_DIR}/techmap)
 
   # Notes on optimized flag settings:
   # These flags have been optimized for the ibex and baselitex designs.
@@ -97,7 +98,7 @@ function(ADD_XC_ARCH_DEFINE)
       )
 
   set(YOSYS_CELLS_SIM ${YOSYS_DATADIR}/xilinx/cells_sim.v)
-  set(VPR_CELLS_SIM ${symbiflow-arch-defs_SOURCE_DIR}/xc/${FAMILY}/techmap/cells_sim.v)
+  set(VPR_CELLS_SIM ${FAMILY_DIR}/techmap/cells_sim.v)
 
   get_file_target(YOSYS_CELLS_SIM_TARGET ${YOSYS_CELLS_SIM})
   if (NOT TARGET ${YOSYS_CELLS_SIM_TARGET})
