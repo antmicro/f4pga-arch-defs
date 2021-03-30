@@ -53,30 +53,37 @@ def find_port(pin_name, ports):
             'pin_idx': None,
         }
 
-    # Find trailing digits, which are assumed to be pin indicies, example:
-    # ADDRARDADDR13
-    m = re.search('([0-9]+)$', pin_name)
-    if m is None:
-        return None
+    # Scan ports to extract pin_name and pin_idx for bus-type ports.
+    # There may be ports which have one bit but are named as follows:
+    #   - PLLRSVD113
+    #   - PLLRSVD20
+    #
+    # This case might hint to having a huge bus-type port, but in reality
+    # these two pins correspond to two different ports, namely PLLRSVD1 and PLLRSVD2.
+    # We need to correctly assign the right prefix and pin idx in these kind of situations.
+    port_candidates = list()
+    for port in ports:
+        if pin_name.startswith(port):
+            possible_pin_idx = pin_name.replace(port, "")
 
-    prefix = pin_name[:-len(m.group(1))]
-    prefix_pin_idx = int(m.group(1))
+            m = re.search('^([0-9]+)', possible_pin_idx)
+            if m is None:
+                continue
+            else:
+                pin_idx = int(m.group(1))
+                pin_name = port
+                port_candidates.append((pin_idx, pin_name))
 
-    # check if signal name ends with number and has num_pins > 1
-    # e.g. RXOSINTID0 which has num_pins=4, the real prefix is
-    # RXOSINTID0 not RXOSINTID
-    for p in ports.keys():
-        if prefix in p and p.strip(prefix).isnumeric():
-            prefix = p
-            prefix_pin_idx = int(pin_name.replace(prefix, ""))
+    assert len(port_candidates) <= 1, port_candidates
 
-    if prefix in ports and prefix_pin_idx < ports[prefix]:
+    if port_candidates:
+        pin_idx, pin_name = port_candidates[0]
         return {
-            'pin_name': prefix,
-            'pin_idx': prefix_pin_idx,
+            'pin_name': pin_name,
+            'pin_idx': pin_idx,
         }
-    else:
-        return None
+
+    return None
 
 
 def object_ref(pb_name, pin_name, pin_idx=None):
