@@ -3,4 +3,5 @@ prjray_generate_primitive(
     PRIMITIVE pcie_2_1
     TECHMAP_DIR ${XC7_TECHMAP_DIR}
     BELS_JSON ${XC7_BELS_JSON}
+    BUILD_CELLS
 )
