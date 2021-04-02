@@ -22,6 +22,7 @@ tinyprog
 yapf==0.26.0
 fasm
 git+https://github.com/QuickLogic-Corp/quicklogic-fasm.git#egg=quicklogic_fasm
+git-lfs
 git+https://github.com/SymbiFlow/symbiflow-rr-graph.git#egg=rr-graph
 git+https://github.com/SymbiFlow/python-fpga-interchange.git#egg=python-fpga-interchange
 -e third_party/prjxray

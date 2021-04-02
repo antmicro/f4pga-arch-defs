@@ -22,7 +22,7 @@ add_dependencies(all_qlf_k4n8_tests_adder    io_reg_max_verify)
 
 add_custom_target(
   io_reg_max_verify
-  COMMAND egrep -q -i "iopad \+: 1034" ${ROUTE_LOG} 
-  COMMAND egrep -q -i "fle \+: 1032" ${ROUTE_LOG}
+  COMMAND egrep -q -i "iopad \+: 1034" ${ROUTE_LOG}
+  COMMAND egrep -q -i "fle \+: 1040" ${ROUTE_LOG}
   DEPENDS io_reg_max_test-umc22-adder_route
   )

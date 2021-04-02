@@ -21,7 +21,7 @@ echo -e "\nBelow are the supported commands: \n\
 \t>ql_symbiflow -synth -src <source_dir path> -d <device> -P <pinmap csv file> -t <top module name> -v <verilog file/files> -p <pcf file>\n\
  To run synthesis, pack, place and route:\n\
 \t>ql_symbiflow -compile -src <source_dir path> -d <device> -P <pinmap csv file> -t <top module name> -v <verilog file/files> -p <pcf file> -P <pinmap csv file> -s <SDC file> \n\
-Device supported:qlf_k4n8" || exit
+Devices supported:qlf_k4n8, qlf_k6n10 " || exit
 elif [[ $1 == "-v" || $1 == "--version" ]];then
         echo "Symbiflow Tool Version : ${VERSION}"
         exit
@@ -47,8 +47,9 @@ JSON=""
 PNR_CORNER="slow"
 ANALYSIS_CORNER="slow"
 COMPILE_EXTRA_ARGS=()
-
+DEVICE_CHECK="INVALID"
 OPT=""
+RUN_TILL=""
 for arg in $@; do
     case $arg in
 		-src|--source)
@@ -171,10 +172,17 @@ case ${DEVICE} in
 	qlf_k4n8)
         DEVICE="${DEVICE}_${DEVICE}"
 		FAMILY="qlf_k4n8"
+        DEVICE_CHECK="VALID"
 		;;
+	qlf_k6n10)
+        DEVICE="${DEVICE}_${DEVICE}"
+        FAMILY="qlf_k6n10"
+        DEVICE_CHECK="VALID"
+	        ;;
 	ql-eos-s3)
         DEVICE="${DEVICE}"
 		FAMILY="pp3"
+        DEVICE_CHECK="VALID"
 		;;
 	*)
 		echo "Unsupported device '${DEVICE}'"
@@ -223,28 +231,18 @@ fi
 fi
 
 if [[ $1 == "-compile" || $1 == "-post_verilog" ]]; then
-  # Allow no PCF/pinmap for some devices
-  if [[ ! "$DEVICE" =~ ^(qlf_k4n8_qlf_k4n8)$ ]]; then
-    if [ -z "$PCF" ]; then
-      echo "PCF file option is missing. Refer -h/--help"
-      exit 1
-    elif ! [ -f "$SOURCE/$PCF" ]; then
-      echo "The pcf file: $PCF is missing at: $SOURCE"
-      exit 1
-    fi
-  fi
   if [ -z "$DEVICE" ]; then
     echo "DEVICE name is missing. Refer -h/--help"
     exit 1
-  elif ! [[ "$DEVICE" =~ ^(qlf_k4n8_qlf_k4n8)$ ]]; then
-	  echo "Invalid Device name, supported qlf_k4n8"
+  elif ! [[ "$DEVICE_CHECK" =~ ^(VALID)$ ]]; then
+	  echo "Invalid Device name, supported qlf_k4n8/qlf_k6n10/pp3"
     exit 1
   fi
   if [ -z "$TOP" ]; then
     echo "TOP module name is missing. Refer -h/--help"
     exit 1
   fi
-  if [[  "$DEVICE" =~ ^(qlf_k4n8_qlf_k4n8)$ ]]; then
+  if [[  "$DEVICE_CHECK" =~ ^(VALID)$ ]]; then
     if [ -z "$PART" ]; then
 	   if [ -n "$PCF" ];then
 	     echo "Error: pcf file cannot be used without declaring PINMAP CSV file"
@@ -479,5 +477,4 @@ fi
 
 
 ###############################################################################################
-
 

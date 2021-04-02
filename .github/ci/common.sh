@@ -50,20 +50,23 @@ fi
 function make_target() {
   target=$1
 
-  if [ ! -v MAKE_JOBS ]; then
-    export MAKE_JOBS=$(nproc)
-    echo "Setting MAKE_JOBS to $MAKE_JOBS"
-  fi;
+  if [ -z ${MAKE_JOBS} ]; then
+    JOBS=$(nproc)
+    echo "Setting JOBS to ${JOBS}"
+  else
+	JOBS=${MAKE_JOBS}
+    echo "JOBS set to ${JOBS}"
+  fi
 
-  export VPR_NUM_WORKERS=${MAKE_JOBS}
+  export VPR_NUM_WORKERS=${JOBS}
 
   start_section "symbiflow.$target" "$2"
   make_status=0
-  make -k -j${MAKE_JOBS} $target || make_status=$?
+  make -k -j${JOBS} $target || make_status=$?
   end_section "symbiflow.$target"
 
   # When the build fails, produce the failure output in a clear way
-  if [ ${MAKE_JOBS} -ne 1 -a $make_status -ne 0 ]; then
+  if [ ${JOBS} -ne 1 -a $make_status -ne 0 ]; then
     start_section "symbiflow.failure" "${RED}Build failure output..${NC}"
     make -j1 $target
     end_section "symbiflow.failure"
