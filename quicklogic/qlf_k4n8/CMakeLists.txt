@@ -42,6 +42,8 @@ quicklogic_define_qlf_arch(
 add_subdirectory(devices)
 include(boards.cmake)
 
+include(../common/cmake/post_pnr_equivalence_test.cmake)
+
 add_subdirectory(tests)
 
 # Define toolchain installation target
