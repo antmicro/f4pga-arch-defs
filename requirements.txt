@@ -40,3 +40,4 @@ third_party/pythondata-software-compiler_rt
 git+https://github.com/lowRISC/edalize.git@ot
 git+https://github.com/lowRISC/fusesoc.git@ot
 mako
+git+https://github.com/QuickLogic-Corp/ql_fasm@e7d0f2f#egg=qlf_fasm
