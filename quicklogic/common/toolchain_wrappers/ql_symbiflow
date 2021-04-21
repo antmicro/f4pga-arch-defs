@@ -21,6 +21,8 @@ echo -e "\nBelow are the supported commands: \n\
 \t>ql_symbiflow -synth -src <source_dir path> -d <device> -P <pinmap csv file> -t <top module name> -v <verilog file/files> -p <pcf file>\n\
  To run synthesis, pack, place and route:\n\
 \t>ql_symbiflow -compile -src <source_dir path> -d <device> -P <pinmap csv file> -t <top module name> -v <verilog file/files> -p <pcf file> \n\
+To dump the post_verilog file: \n\
+\t>ql_symbiflow -compile -src <source_dir path> -d <device> -P <package> -t <top> -v <verilog file/files> -p <pcf file> -dump post_verilog \n\
 Device supported:qlf_k4n8" || exit
 elif [[ $1 == "-v" || $1 == "--version" ]];then
         echo "Symbiflow Tool Version : ${VERSION}"
@@ -367,14 +369,16 @@ else
 	CURR_DIR="${PWD}/${SOURCE}"
 fi
 
-if [[ -f $SOURCE/$PART ]];then
+if [ -n "$PART" ]; then
+    if [[ -f $SOURCE/$PART ]];then
 	CSV_PATH=`realpath $SOURCE/$PART`
-elif [[ -f $PART ]];then
+    elif [[ -f $PART ]];then
         CSV_PATH=`realpath $PART` 
-else
+    else
       echo "invalid csv file/path"
       exit 1
-fi	
+    fi
+fi
 
 export PART=${CSV_PATH}
 
@@ -438,7 +442,8 @@ fi
 \${BUILDDIR}/\${TOP_FINAL}.route: \${BUILDDIR}/\${TOP_FINAL}.place\n\
 	cd \${BUILDDIR} && symbiflow_route -e \${TOP_FINAL}.eblif -f \${FAMILY} -d \${DEVICE} -s \${SDC} 2>&1 > $LOG_FILE\n\
 \n\
-\${BUILDDIR}/\${TOP}.post_v: \${BUILDDIR}/\${TOP}.route\n\
+\${BUILDDIR}/\${TOP}.post_v: \${BUILDDIR}/\${TOP_FINAL}.route\n\
+	cd \${BUILDDIR} && symbiflow_analysis -e \${TOP_FINAL}.eblif -f \${FAMILY} -d \${DEVICE} -s \${SDC} 2>&1 > $LOG_FILE\n\
 " >>$MAKE_FILE
 
 if [ "$HAVE_FASM2BELS" != 0 ]; then
@@ -448,8 +453,6 @@ if [ "$HAVE_FASM2BELS" != 0 ]; then
 fi
 
 echo -e "\
-	cd \${BUILDDIR} && symbiflow_analysis -e \${TOP}.eblif -f \${FAMILY} -d \${DEVICE} -s \${SDC} 2>&1 > $LOG_FILE\n\
-\n\
 clean:\n\
 	rm -rf \${BUILDDIR}\n\
 " >>$MAKE_FILE
@@ -461,22 +464,22 @@ rm -f $SOURCE/f_list_temp $SOURCE/v_list_tmp $SOURCE/v_list
 if [ $1 == "-synth" ]; then
   echo -e "Performing Synthesis " 
   cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.eblif || exit
-elif [ $1 == "-compile" ]; then
+elif [[ ! -z "$OUT" && $1 == "-compile" ]];then
+	if [[ " ${OUT_ARR[@]} " =~ " post_verilog " ]];then
+		cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.post_v || exit
+	fi
+else
+  if [ $1 == "-compile" ]; then
   echo -e "Running Synth->Pack->Place->Route"
-
   # FIXME: No bitstream for qlf_k4n8
-  if [ "${FAMILY}" == "qlf_k4n8" ]; then
-    cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP_FINAL}.route  || exit
-  else
-    cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP_FINAL}.bit  || exit
-  fi
-
-  if [ ! -z "$OUT" ]; then
-    if [[ " ${OUT_ARR[@]} " =~ " post_verilog " ]]; then
-     cd $SOURCE;make -f Makefile.symbiflow  ${BUILDDIR}/${TOP}.post_v || exit
-    fi
+	  if [ "${FAMILY}" == "qlf_k4n8" ]; then
+    		cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP_FINAL}.route  || exit
+  	  else
+    		cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP_FINAL}.bit  || exit
+  	  fi
   fi
 fi
+
 
 ###############################################################################################
 
