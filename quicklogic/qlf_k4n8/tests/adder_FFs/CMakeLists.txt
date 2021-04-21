@@ -17,5 +17,5 @@ add_fpga_target(
   EXPLICIT_ADD_FILE_TARGET
   )
 
-add_dependencies(all_qlf_k4n8_tests_no_adder adder_FFs-umc22-no-adder_route)
-add_dependencies(all_qlf_k4n8_tests_adder    adder_FFs-umc22-adder_route)
+add_dependencies(all_qlf_k4n8_tests_no_adder adder_FFs-umc22-no-adder_bit)
+add_dependencies(all_qlf_k4n8_tests_adder    adder_FFs-umc22-adder_bit)
