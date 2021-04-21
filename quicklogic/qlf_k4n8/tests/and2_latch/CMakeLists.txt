@@ -3,6 +3,7 @@ add_file_target(FILE and2_latch.pcf)
 
 add_fpga_target(
   NAME and2_latch-umc22-no-adder
+  TOP and2_latch
   BOARD qlf_k4n8-qlf_k4n8_umc22_board
   SOURCES and2_latch.v
   INPUT_IO_FILE and2_latch.pcf
@@ -12,6 +13,7 @@ add_fpga_target(
 
 add_fpga_target(
   NAME and2_latch-umc22-adder
+  TOP and2_latch
   BOARD qlf_k4n8-qlf_k4n8_umc22_board
   SOURCES and2_latch.v
   INPUT_IO_FILE and2_latch.pcf

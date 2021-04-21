@@ -3,6 +3,7 @@ add_file_target(FILE and2.pcf)
 
 add_fpga_target(
   NAME and2-umc22-no-adder
+  TOP and2
   BOARD qlf_k4n8-qlf_k4n8_umc22_board
   SOURCES and2.v
   INPUT_IO_FILE and2.pcf
@@ -12,6 +13,7 @@ add_fpga_target(
 
 add_fpga_target(
   NAME and2-umc22-adder
+  TOP and2
   BOARD qlf_k4n8-qlf_k4n8_umc22_board
   SOURCES and2.v
   INPUT_IO_FILE and2.pcf

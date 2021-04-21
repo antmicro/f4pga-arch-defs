@@ -3,6 +3,7 @@ add_file_target(FILE bin2bcd.pcf)
 
 add_fpga_target(
   NAME bin2bcd-umc22-no-adder
+  TOP bin2bcd
   BOARD qlf_k4n8-qlf_k4n8_umc22_board
   SOURCES bin2bcd.v
   INPUT_IO_FILE bin2bcd.pcf
@@ -12,6 +13,7 @@ add_fpga_target(
 
 add_fpga_target(
   NAME bin2bcd-umc22-adder
+  TOP bin2bcd
   BOARD qlf_k4n8-qlf_k4n8_umc22_board
   SOURCES bin2bcd.v
   INPUT_IO_FILE bin2bcd.pcf

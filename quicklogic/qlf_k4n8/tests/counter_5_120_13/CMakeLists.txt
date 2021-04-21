@@ -2,6 +2,7 @@ add_file_target(FILE counter_5_120_13.v SCANNER_TYPE verilog)
 
 add_fpga_target(
   NAME counter_5_120_13-umc22-no-adder
+  TOP counter_5_120_13
   BOARD qlf_k4n8-qlf_k4n8_umc22_board
   SOURCES counter_5_120_13.v
   EXPLICIT_ADD_FILE_TARGET
@@ -10,6 +11,7 @@ add_fpga_target(
 
 add_fpga_target(
   NAME counter_5_120_13-umc22-adder
+  TOP counter_5_120_13
   BOARD qlf_k4n8-qlf_k4n8_umc22_board
   SOURCES counter_5_120_13.v
   EXPLICIT_ADD_FILE_TARGET

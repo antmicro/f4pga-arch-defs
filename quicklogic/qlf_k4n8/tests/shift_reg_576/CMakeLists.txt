@@ -2,6 +2,7 @@ add_file_target(FILE shift_reg_576.v SCANNER_TYPE verilog)
 
 add_fpga_target(
   NAME shift_reg_576-umc22-no-adder
+  TOP shift_reg_576
   BOARD qlf_k4n8-qlf_k4n8_umc22_board
   SOURCES shift_reg_576.v
   EXPLICIT_ADD_FILE_TARGET
@@ -10,6 +11,7 @@ add_fpga_target(
 
 add_fpga_target(
   NAME shift_reg_576-umc22-adder
+  TOP shift_reg_576
   BOARD qlf_k4n8-qlf_k4n8_umc22_board
   SOURCES shift_reg_576.v
   EXPLICIT_ADD_FILE_TARGET

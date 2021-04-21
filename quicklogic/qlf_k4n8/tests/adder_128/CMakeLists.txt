@@ -2,6 +2,7 @@ add_file_target(FILE adder_128.v SCANNER_TYPE verilog)
 
 add_fpga_target(
   NAME adder_128-umc22-no-adder
+  TOP adder_128
   BOARD qlf_k4n8-qlf_k4n8_umc22_board
   SOURCES adder_128.v
   EXPLICIT_ADD_FILE_TARGET
@@ -10,6 +11,7 @@ add_fpga_target(
 
 add_fpga_target(
   NAME adder_128-umc22-adder
+  TOP adder_128
   BOARD qlf_k4n8-qlf_k4n8_umc22_board
   SOURCES adder_128.v
   EXPLICIT_ADD_FILE_TARGET

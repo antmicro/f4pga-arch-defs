@@ -2,6 +2,7 @@ add_file_target(FILE io_reg.v SCANNER_TYPE verilog)
 
 add_fpga_target(
   NAME io_reg-umc22-no-adder
+  TOP io_reg
   BOARD qlf_k4n8-qlf_k4n8_umc22_board
   SOURCES io_reg.v
   EXPLICIT_ADD_FILE_TARGET
@@ -10,6 +11,7 @@ add_fpga_target(
 
 add_fpga_target(
   NAME io_reg-umc22-adder
+  TOP io_reg
   BOARD qlf_k4n8-qlf_k4n8_umc22_board
   SOURCES io_reg.v
   EXPLICIT_ADD_FILE_TARGET

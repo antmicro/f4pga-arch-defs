@@ -5,6 +5,7 @@ add_file_target(FILE mux.v SCANNER_TYPE verilog)
 
 add_fpga_target(
   NAME io_reg_tc1-umc22-no-adder
+  TOP io_reg_tc1
   BOARD qlf_k4n8-qlf_k4n8_umc22_board
   SOURCES demux.v mux.v io_reg_tc1.v
   EXPLICIT_ADD_FILE_TARGET
@@ -13,6 +14,7 @@ add_fpga_target(
 
 add_fpga_target(
   NAME io_reg_tc1-umc22-adder
+  TOP io_reg_tc1
   BOARD qlf_k4n8-qlf_k4n8_umc22_board
   SOURCES demux.v mux.v io_reg_tc1.v
   EXPLICIT_ADD_FILE_TARGET

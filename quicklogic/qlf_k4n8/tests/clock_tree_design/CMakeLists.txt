@@ -3,6 +3,7 @@ add_file_target(FILE clock_tree_design.pcf)
 
 add_fpga_target(
   NAME clock_tree_design-umc22-no-adder
+  TOP clock_tree_design
   BOARD qlf_k4n8-qlf_k4n8_umc22_board
   SOURCES clock_tree_design.v
   INPUT_IO_FILE clock_tree_design.pcf
@@ -12,6 +13,7 @@ add_fpga_target(
 
 add_fpga_target(
   NAME clock_tree_design-umc22-adder
+  TOP clock_tree_design
   BOARD qlf_k4n8-qlf_k4n8_umc22_board
   SOURCES clock_tree_design.v
   INPUT_IO_FILE clock_tree_design.pcf
