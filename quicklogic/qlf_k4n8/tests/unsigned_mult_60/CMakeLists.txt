@@ -3,6 +3,7 @@ add_file_target(FILE unsigned_mult_60.pcf)
 
 add_fpga_target(
   NAME unsigned_mult_60-umc22-no-adder
+  TOP unsigned_mult_60
   BOARD qlf_k4n8-qlf_k4n8_umc22_board
   SOURCES unsigned_mult_60.v
   INPUT_IO_FILE unsigned_mult_60.pcf
@@ -12,6 +13,7 @@ add_fpga_target(
 
 add_fpga_target(
   NAME unsigned_mult_60-umc22-adder
+  TOP unsigned_mult_60
   BOARD qlf_k4n8-qlf_k4n8_umc22_board
   SOURCES unsigned_mult_60.v
   INPUT_IO_FILE unsigned_mult_60.pcf
