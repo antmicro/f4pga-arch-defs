@@ -398,6 +398,7 @@ if ! [ -z "$SDC" ]; then
             exit 1
          else
 	    SDC_MAKE="\${current_dir}/$SDC"
+	    cp ${CURR_DIR}/$SDC ${CURR_DIR}/build/${TOP}.sdc
          fi
 else
   	 touch ${CURR_DIR}/build/${TOP}_dummy.sdc

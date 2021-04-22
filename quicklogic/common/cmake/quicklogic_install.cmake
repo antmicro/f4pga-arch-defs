@@ -63,6 +63,12 @@ function(DEFINE_QL_TOOLCHAIN_TARGET)
   install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/${FAMILY}/tests/counter_16bit/counter_16bit_tb.v
           DESTINATION share/symbiflow/tests/counter_16bit
           PERMISSIONS WORLD_READ OWNER_WRITE OWNER_READ GROUP_READ)
+  install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/${FAMILY}/tests/counter_16bit/counter_16bit.pcf
+	  DESTINATION share/symbiflow/tests/counter_16bit
+          PERMISSIONS WORLD_READ OWNER_WRITE OWNER_READ GROUP_READ)
+  install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/${FAMILY}/tests/counter_16bit/pinmap_qlf_k4n8_umc22.csv
+	  DESTINATION share/symbiflow/tests/counter_16bit
+	  PERMISSIONS WORLD_READ OWNER_WRITE OWNER_READ GROUP_READ)
   install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/${FAMILY}/tests/counter_16bit/counter_16bit.sdc
           DESTINATION share/symbiflow/tests/counter_16bit
           PERMISSIONS WORLD_READ OWNER_WRITE OWNER_READ GROUP_READ)
@@ -75,9 +81,13 @@ function(DEFINE_QL_TOOLCHAIN_TARGET)
   install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/common/utils/pinmap_parse.py
           DESTINATION bin/python
           PERMISSIONS WORLD_READ OWNER_WRITE OWNER_READ GROUP_READ)
+  
+  install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/${FAMILY}/utils/create_lib.py
+	  DESTINATION bin/python
+	  PERMISSIONS WORLD_READ OWNER_WRITE OWNER_READ GROUP_READ)
 
   install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/utils/vpr_io_place.py
-      DESTINATION bin/python
+          DESTINATION bin/python
           PERMISSIONS WORLD_READ OWNER_WRITE OWNER_READ GROUP_READ)
 
   install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/utils/vpr_place_constraints.py
