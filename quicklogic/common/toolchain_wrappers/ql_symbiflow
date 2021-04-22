@@ -416,7 +416,7 @@ PCF := $PCF_MAKE\n\
 SDC := $SDC_MAKE\n\
 BUILDDIR := build\n\n\
 
-all: \${BUILDDIR}/\${TOP_FINAL}.route\n\
+all: \${BUILDDIR}/\${TOP}.bit\n\
 \n\
 \${BUILDDIR}/\${TOP}.eblif: \${VERILOG} \${PCF}\n\
   ifneq (\"\$(wildcard \$(HEX_FILES))\",\"\")\n\
@@ -444,6 +444,12 @@ fi
 \n\
 \${BUILDDIR}/\${TOP}.post_v: \${BUILDDIR}/\${TOP_FINAL}.route\n\
 	cd \${BUILDDIR} && symbiflow_analysis -e \${TOP_FINAL}.eblif -f \${FAMILY} -d \${DEVICE} -s \${SDC} 2>&1 > $LOG_FILE\n\
+\n\
+\${BUILDDIR}/\${TOP}.fasm: \${BUILDDIR}/\${TOP_FINAL}.route\n\
+	cd \${BUILDDIR} && symbiflow_write_fasm -e \${TOP_FINAL}.eblif -f \${FAMILY} -d \${DEVICE} -s \${SDC} 2>&1 > $LOG_FILE\n\
+\n\
+\${BUILDDIR}/\${TOP}.bit: \${BUILDDIR}/\${TOP}.fasm\n\
+	cd \${BUILDDIR} && symbiflow_generate_bitstream -d \${FAMILY} -f \${TOP}.fasm -b \${TOP}.bit 2>&1 > $LOG_FILE\n\
 " >>$MAKE_FILE
 
 if [ "$HAVE_FASM2BELS" != 0 ]; then
@@ -470,13 +476,8 @@ elif [[ ! -z "$OUT" && $1 == "-compile" ]];then
 	fi
 else
   if [ $1 == "-compile" ]; then
-  echo -e "Running Synth->Pack->Place->Route"
-  # FIXME: No bitstream for qlf_k4n8
-	  if [ "${FAMILY}" == "qlf_k4n8" ]; then
-    		cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP_FINAL}.route  || exit
-  	  else
-    		cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP_FINAL}.bit  || exit
-  	  fi
+  echo -e "Running Synth->Pack->Place->Route->FASM->bitstream"
+  	cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.bit  || exit
   fi
 fi
 
