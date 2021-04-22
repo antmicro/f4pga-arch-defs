@@ -79,10 +79,21 @@ function(QUICKLOGIC_DEFINE_QLF_ARCH)
       \${QUIET_CMD} \${FASM_TO_BIT} \
         --db-root ${QLF_FPGA_DATABASE_DIR}/${ARCH}/fasm_database \
         --assemble \
+        --format 4byte \
         \${OUT_FASM} \
         \${OUT_BITSTREAM} "
 
-    NO_BIT_TO_BIN
+    BIN_EXTENSION bin
+    BIT_TO_BIN ${QLF_FASM}
+    BIT_TO_BIN_CMD "${CMAKE_COMMAND} -E env \
+      PYTHONPATH=${symbiflow-arch-defs_BINARY_DIR}/env/conda/lib/python3.7/site-packages \
+      \${QUIET_CMD} \${FASM_TO_BIT} \
+        --db-root ${QLF_FPGA_DATABASE_DIR}/${ARCH}/fasm_database \
+        --assemble \
+        --format txt \
+        \${OUT_FASM} \
+        \${OUT_BIN} "
+
     NO_BIT_TO_V
     NO_BIT_TIME
     USE_FASM
