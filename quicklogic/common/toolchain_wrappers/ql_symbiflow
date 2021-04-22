@@ -449,7 +449,8 @@ fi
 	cd \${BUILDDIR} && symbiflow_write_fasm -e \${TOP_FINAL}.eblif -f \${FAMILY} -d \${DEVICE} -s \${SDC} 2>&1 > $LOG_FILE\n\
 \n\
 \${BUILDDIR}/\${TOP}.bit: \${BUILDDIR}/\${TOP}.fasm\n\
-	cd \${BUILDDIR} && symbiflow_generate_bitstream -d \${FAMILY} -f \${TOP}.fasm -b \${TOP}.bit 2>&1 > $LOG_FILE\n\
+	cd \${BUILDDIR} && symbiflow_generate_bitstream -d \${FAMILY} -f \${TOP}.fasm -r 4byte -b \${TOP}.bit 2>&1 > $LOG_FILE\n\
+	cd \${BUILDDIR} && symbiflow_generate_bitstream -d \${FAMILY} -f \${TOP}.fasm -r txt -b \${TOP}.bin 2>&1 > $LOG_FILE\n\
 " >>$MAKE_FILE
 
 if [ "$HAVE_FASM2BELS" != 0 ]; then

@@ -4,8 +4,8 @@ set -e
 MYPATH=`realpath $0`
 MYPATH=`dirname ${MYPATH}`
 
-OPTS=d:f:b:
-LONGOPTS=device:,fasm:,bit:
+OPTS=d:f:r:b:
+LONGOPTS=device:,fasm:,format:,bit:
 
 PARSED_OPTS=`getopt --options=${OPTS} --longoptions=${LONGOPTS} --name $0 -- "$@"`
 eval set -- "${PARSED_OPTS}"
@@ -13,6 +13,7 @@ eval set -- "${PARSED_OPTS}"
 DEVICE=""
 FASM=""
 BIT=""
+BIT_FORMAT="4byte"
 
 while true; do
 	case "$1" in
@@ -22,6 +23,10 @@ while true; do
 			;;
 		-f|--fasm)
 			FASM=$2
+			shift 2
+			;;
+		-r|--format)
+			BIT_FORMAT=$2
 			shift 2
 			;;
 		-b|--bit)
@@ -53,5 +58,5 @@ QLF_FASM=`which qlf_fasm`
 
 DB_ROOT=`realpath ${MYPATH}/../share/symbiflow/fasm_database/${DEVICE}`
 
-${QLF_FASM} --db-root ${DB_ROOT} --assemble $FASM $BIT
+${QLF_FASM} --db-root ${DB_ROOT} --format ${BIT_FORMAT} --assemble $FASM $BIT
 
