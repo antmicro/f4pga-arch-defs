@@ -19,7 +19,8 @@ textx
 tinyfpgab
 tinyprog
 yapf==0.26.0
-fasm
+#fasm
+git+https://github.com/antmicro/fasm@fa9a02bd84f4bb93da8476e5718517216ec78d1f#egg=fasm
 git+https://github.com/SymbiFlow/symbiflow-rr-graph.git#egg=rr-graph
 git+https://github.com/SymbiFlow/python-fpga-interchange.git#egg=python-fpga-interchange
 -e third_party/prjxray

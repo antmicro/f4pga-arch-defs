@@ -33,6 +33,7 @@ conda install $CONDA_FLAGS make lxml simplejson intervaltree git pip
 conda activate
 pip install python-constraint
 pip install serial
+pip install git+https://github.com/antmicro/fasm@fa9a02bd84f4bb93da8476e5718517216ec78d1f#egg=fasm # Install fasm with print() instead of warn()
 pip install git+https://github.com/QuickLogic-Corp/quicklogic-fasm@318abca
 pip install git+https://github.com/QuickLogic-Corp/ql_fasm@e7d0f2fdf5c404b621b24e78fdea51fcb1937672
 conda deactivate
