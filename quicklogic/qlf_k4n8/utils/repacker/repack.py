@@ -731,11 +731,6 @@ def repack_netlist_cell(
     if rule.mode_bits:
         repacked_cell.parameters["MODE"] = rule.mode_bits
 
-    # If the cell is an IOB output cell then set its name via cname. Such cells
-    # do not drive any nets hence VPR cannot name them automatically
-    if cell.type == "$output":
-        repacked_cell.cname = repacked_cell.name
-
     # Check for unconnected ports that should be tied to some default nets
     if def_map:
         for key, net in def_map.items():
@@ -760,6 +755,10 @@ def syncrhonize_attributes_and_parameters(eblif, packed_netlist):
 
         # This is a leaf
         if block.is_leaf and not block.is_open:
+
+            if any(block.instance.startswith(inst)
+                   for inst in ["outpad", "inpad"]):
+                return
 
             # Find matching cell
             cell = eblif.find_cell(block.name)
@@ -847,11 +846,6 @@ def expand_port_maps(rules, clb_pbtypes):
                 port_map[src_pin] = dst_pin
 
         rule.port_map = port_map
-
-        # DEBUG
-#        logging.debug(" ", rule.src, "->", rule.dst)
-#        for k, v in rule.port_map.items():
-#            logging.debug("  ", k, "->", v)
 
     return rules
 
@@ -1072,13 +1066,6 @@ def main():
     logging.info("Loading BLIF/EBLIF circuit netlist...")
     eblif = Eblif.from_file(args.eblif_in)
 
-    # Convert top-level inputs to cells
-    eblif.convert_ports_to_cells()
-
-    # Optional dump
-    if args.dump_netlist:
-        eblif.to_file("netlist.io_cells.eblif")
-
     # Clean the netlist
     logging.info("Cleaning circuit netlist...")
 
@@ -1090,6 +1077,13 @@ def main():
     # Optional dump
     if args.dump_netlist:
         eblif.to_file("netlist.cleaned.eblif")
+
+    # Convert top-level inputs to cells
+    eblif.convert_ports_to_cells()
+
+    # Optional dump
+    if args.dump_netlist:
+        eblif.to_file("netlist.io_cells.eblif")
 
     # Load the packed netlist XML
     logging.info("Loading VPR packed netlist...")
@@ -1187,7 +1181,9 @@ def main():
 
             # There must be only a single repack target per block
             if len(candidates) > 1:
-                logging.critical("Multiple repack targets found!")
+                logging.critical(
+                    "Multiple repack targets found! {}".format(candidates)
+                )
                 exit(-1)
 
             # Store concrete correspondence
@@ -1222,13 +1218,12 @@ def main():
             src_pbtype = clb_pbtype.find(src_path)
             assert src_pbtype is not None, src_path
 
-            #            # Get the source BLIF model
-            #            assert src_pbtype.blif_model is not None
-            #            src_blif_model = src_pbtype.blif_model
-
             # Get the destination BLIF model
             assert dst_pbtype.blif_model is not None, dst_pbtype.name
             dst_blif_model = dst_pbtype.blif_model.split(maxsplit=1)[-1]
+
+            if dst_blif_model in [".input", ".output"]:
+                continue
 
             # Get the model object
             assert dst_blif_model in models, dst_blif_model
@@ -1237,10 +1232,6 @@ def main():
             # Find the cell in the netlist
             assert src_block.name in eblif.cells, src_block.name
             cell = eblif.cells[src_block.name]
-
-            # If the cell is an IOB then mark the top-level port to be removed
-            if cell.type in ["$input", "$output"]:
-                removed_ios.add(cell.name)
 
             # Store the leaf block name so that it can be restored after
             # repacking
@@ -1335,12 +1326,6 @@ def main():
             with open(fname, "w") as fp:
                 fp.write(graph.dump_dot(color_by="net", nets_only=True))
 
-    # Remove top-level ports from the packed netlist
-    for name in removed_ios:
-        for tag, ports in packed_netlist.ports.items():
-            if name in ports:
-                ports.remove(name)
-
     # Optional dump
     if args.dump_netlist:
         eblif.to_file("netlist.repacked.eblif")
@@ -1352,13 +1337,23 @@ def main():
     repack_time = time.perf_counter() - repack_time
     writeout_time = time.perf_counter()
 
+    # FIXME: The below code absorbs buffer LUTs because it couldn't be done
+    # in the beginning to preserve output names. However the code has evolved
+    # and now should correctly handle absorption of output nets into input
+    # nets not only the opposite as it did before. So theoretically the buffer
+    # absorption below may be removed and the invocation at the beginning of
+    # the flow changed to use outputs=True.
+
+    # Convert cells into top-level ports
+    eblif.convert_cells_to_ports()
+
     # Clean the circuit netlist again. Need to do it here again as LUT buffers
     # driving top-level inputs couldn't been swept before repacking as it
     # would cause top-level port renaming.
     logging.info("Cleaning repacked circuit netlist...")
     if absorb_buffer_luts:
 
-        net_map = netlist_cleaning.absorb_buffer_luts(eblif)
+        net_map = netlist_cleaning.absorb_buffer_luts(eblif, outputs=True)
 
         # Synchronize packed netlist net names
         for block in packed_netlist.blocks.values():
@@ -1367,9 +1362,6 @@ def main():
     # Optional dump
     if args.dump_netlist:
         eblif.to_file("netlist.repacked_and_cleaned.eblif")
-
-    # Convert cells into top-level ports
-    eblif.convert_cells_to_ports()
 
     # Write the circuit netlist
     logging.info("Writing EBLIF circuit netlist...")
