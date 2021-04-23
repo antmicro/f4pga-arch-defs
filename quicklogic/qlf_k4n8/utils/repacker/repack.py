@@ -731,11 +731,6 @@ def repack_netlist_cell(
     if rule.mode_bits:
         repacked_cell.parameters["MODE"] = rule.mode_bits
 
-    # If the cell is an IOB output cell then set its name via cname. Such cells
-    # do not drive any nets hence VPR cannot name them automatically
-    if cell.type == "$output":
-        repacked_cell.cname = repacked_cell.name
-
     # Check for unconnected ports that should be tied to some default nets
     if def_map:
         for key, net in def_map.items():
@@ -760,6 +755,9 @@ def syncrhonize_attributes_and_parameters(eblif, packed_netlist):
 
         # This is a leaf
         if block.is_leaf and not block.is_open:
+
+            if any(block.instance.startswith(inst) for inst in ["outpad", "inpad"]):
+                return
 
             # Find matching cell
             cell = eblif.find_cell(block.name)
@@ -847,11 +845,6 @@ def expand_port_maps(rules, clb_pbtypes):
                 port_map[src_pin] = dst_pin
 
         rule.port_map = port_map
-
-        # DEBUG
-#        logging.debug(" ", rule.src, "->", rule.dst)
-#        for k, v in rule.port_map.items():
-#            logging.debug("  ", k, "->", v)
 
     return rules
 
@@ -1222,29 +1215,24 @@ def main():
             src_pbtype = clb_pbtype.find(src_path)
             assert src_pbtype is not None, src_path
 
-            #            # Get the source BLIF model
-            #            assert src_pbtype.blif_model is not None
-            #            src_blif_model = src_pbtype.blif_model
-
             # Get the destination BLIF model
             assert dst_pbtype.blif_model is not None, dst_pbtype.name
             dst_blif_model = dst_pbtype.blif_model.split(maxsplit=1)[-1]
-
-            # Get the model object
-            assert dst_blif_model in models, dst_blif_model
-            model = models[dst_blif_model]
 
             # Find the cell in the netlist
             assert src_block.name in eblif.cells, src_block.name
             cell = eblif.cells[src_block.name]
 
-            # If the cell is an IOB then mark the top-level port to be removed
-            if cell.type in ["$input", "$output"]:
-                removed_ios.add(cell.name)
-
             # Store the leaf block name so that it can be restored after
             # repacking
             leaf_block_names[dst_path] = cell.name
+
+            if dst_blif_model in [".input", ".output"]:
+                continue
+
+            # Get the model object
+            assert dst_blif_model in models, dst_blif_model
+            model = models[dst_blif_model]
 
             # Repack it
             repack_netlist_cell(
@@ -1334,12 +1322,6 @@ def main():
             fname = "graph_repacked_{}.dot".format(clb_block.instance)
             with open(fname, "w") as fp:
                 fp.write(graph.dump_dot(color_by="net", nets_only=True))
-
-    # Remove top-level ports from the packed netlist
-    for name in removed_ios:
-        for tag, ports in packed_netlist.ports.items():
-            if name in ports:
-                ports.remove(name)
 
     # Optional dump
     if args.dump_netlist:
