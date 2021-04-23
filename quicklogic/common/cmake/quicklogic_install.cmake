@@ -130,10 +130,10 @@ function(DEFINE_QL_TOOLCHAIN_TARGET)
           DESTINATION share/symbiflow/techmaps/${FAMILY})
 
   # install lib files
-  install(DIRECTORY ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/${FAMILY}/devices/umc22/.
-	  DESTINATION "share/symbiflow/arch/${DEVICE}_${PACKAGE}/lib"
+  install(DIRECTORY ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/${FAMILY}/devices/umc22/
+	  DESTINATION "share/symbiflow/arch/${FAMILY}-${FAMILY}_umc22_${FAMILY}-${FAMILY}_umc22/lib"
 	  FILES_MATCHING 
-	  PATTERN ".csv"
+	  PATTERN "*.csv"
 	  PATTERN "*.txt"
 	  PATTERN "*.json"
 	  PATTERN "*.xml")
