@@ -81,7 +81,7 @@ def absorb_buffer_luts(netlist, outputs=False):
             for net in net_map:
                 if net_map[net] == net_inp:
                     net_map[net] = net_out
-    
+
             net_map[net_inp] = net_out
 
         # A regular buffer
@@ -92,12 +92,12 @@ def absorb_buffer_luts(netlist, outputs=False):
                 for port, net in c.ports.items():
                     if net == net_out:
                         c.ports[port] = net_inp
-    
+
             # Update net map
             for net in net_map:
                 if net_map[net] == net_out:
                     net_map[net] = net_inp
-    
+
             net_map[net_out] = net_inp
 
         # Remove the cell

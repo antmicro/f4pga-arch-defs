@@ -756,7 +756,8 @@ def syncrhonize_attributes_and_parameters(eblif, packed_netlist):
         # This is a leaf
         if block.is_leaf and not block.is_open:
 
-            if any(block.instance.startswith(inst) for inst in ["outpad", "inpad"]):
+            if any(block.instance.startswith(inst)
+                   for inst in ["outpad", "inpad"]):
                 return
 
             # Find matching cell
