@@ -24,6 +24,8 @@ make_target lint_python "Check code style"
 
 make_target test_python "Run Python unit tests"
 
+make_target check_verilog "Check verilog code formatting"
+
 make_target all_merged_arch_xmls "Build all arch XMLs"
 
 start_section "symbiflow.build_all_rrgraph_xmls" "Build all rrgraph XMLs."
