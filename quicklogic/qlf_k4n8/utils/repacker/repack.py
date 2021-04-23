@@ -1065,13 +1065,6 @@ def main():
     logging.info("Loading BLIF/EBLIF circuit netlist...")
     eblif = Eblif.from_file(args.eblif_in)
 
-    # Convert top-level inputs to cells
-    eblif.convert_ports_to_cells()
-
-    # Optional dump
-    if args.dump_netlist:
-        eblif.to_file("netlist.io_cells.eblif")
-
     # Clean the netlist
     logging.info("Cleaning circuit netlist...")
 
@@ -1083,6 +1076,13 @@ def main():
     # Optional dump
     if args.dump_netlist:
         eblif.to_file("netlist.cleaned.eblif")
+
+    # Convert top-level inputs to cells
+    eblif.convert_ports_to_cells()
+
+    # Optional dump
+    if args.dump_netlist:
+        eblif.to_file("netlist.io_cells.eblif")
 
     # Load the packed netlist XML
     logging.info("Loading VPR packed netlist...")
@@ -1334,13 +1334,23 @@ def main():
     repack_time = time.perf_counter() - repack_time
     writeout_time = time.perf_counter()
 
+    # FIXME: The below code absorbs buffer LUTs because it couldn't be done
+    # in the beginning to preserve output names. However the code has evolved
+    # and now should correctly handle absorption of output nets into input
+    # nets not only the opposite as it did before. So theoretically the buffer
+    # absorption below may be removed and the invocation at the beginning of
+    # the flow changed to use outputs=True.
+
+    # Convert cells into top-level ports
+    eblif.convert_cells_to_ports()
+
     # Clean the circuit netlist again. Need to do it here again as LUT buffers
     # driving top-level inputs couldn't been swept before repacking as it
     # would cause top-level port renaming.
     logging.info("Cleaning repacked circuit netlist...")
     if absorb_buffer_luts:
 
-        net_map = netlist_cleaning.absorb_buffer_luts(eblif)
+        net_map = netlist_cleaning.absorb_buffer_luts(eblif, outputs=True)
 
         # Synchronize packed netlist net names
         for block in packed_netlist.blocks.values():
@@ -1349,9 +1359,6 @@ def main():
     # Optional dump
     if args.dump_netlist:
         eblif.to_file("netlist.repacked_and_cleaned.eblif")
-
-    # Convert cells into top-level ports
-    eblif.convert_cells_to_ports()
 
     # Write the circuit netlist
     logging.info("Writing EBLIF circuit netlist...")
