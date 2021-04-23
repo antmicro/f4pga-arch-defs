@@ -113,6 +113,14 @@ add_custom_target(
   COMMAND ${symbiflow-arch-defs_SOURCE_DIR}/common/python_health_helper.sh -l -p "${FLAKE8}"
   )
 
+add_custom_target(
+  check_verilog
+  COMMAND ${symbiflow-arch-defs_SOURCE_DIR}/common/verilog_health_helper.sh -c
+  )
+add_custom_target(
+  format_verilog
+  COMMAND ${symbiflow-arch-defs_SOURCE_DIR}/common/verilog_health_helper.sh -f
+  )
 
 add_custom_target(all_ice40_demos)
 add_dependencies(all_ice40_demos
