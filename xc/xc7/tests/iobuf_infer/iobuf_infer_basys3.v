@@ -38,48 +38,47 @@ SW2 SW1 SW0 | LED1 LED0
 
 // ============================================================================
 
-module top
-(
-input  wire clk,
+module top (
+    input wire clk,
 
-input  wire rx,
-output wire tx,
+    input  wire rx,
+    output wire tx,
 
-input  wire [15:0] sw,
-output wire [15:0] led,
+    input  wire [15:0] sw,
+    output wire [15:0] led,
 
-input  wire jc1,
-inout  wire jc2,
-output wire jc3,
-input  wire jc4  // unused
+    input  wire jc1,
+    inout  wire jc2,
+    output wire jc3,
+    input  wire jc4  // unused
 );
 
-// ============================================================================
-// IOBUF (to be swferred)
-wire io_i;
-wire io_o;
-wire io_t;
+  // ============================================================================
+  // IOBUF (to be swferred)
+  wire io_i;
+  wire io_o;
+  wire io_t;
 
-assign io_o = jc2;
-assign jc2  = (io_t == 1'b0) ? io_i : 1'bz;
+  assign io_o = jc2;
+  assign jc2 = (io_t == 1'b0) ? io_i : 1'bz;
 
-// ============================================================================
+  // ============================================================================
 
-// SW0 controls IOBUF.I
-assign io_i = sw[0];
-// SW1 controls IOBUF.T
-assign io_t = sw[1];
-// SW2 controls OBUF.I (JC.3)
-assign jc3  = sw[2];
+  // SW0 controls IOBUF.I
+  assign io_i = sw[0];
+  // SW1 controls IOBUF.T
+  assign io_t = sw[1];
+  // SW2 controls OBUF.I (JC.3)
+  assign jc3 = sw[2];
 
-// LED0 swdicates IOBUF.O
-assign led[0] = io_o;
+  // LED0 swdicates IOBUF.O
+  assign led[0] = io_o;
 
-// LED1 is connected to JC.1
-assign led[1] = jc1;
+  // LED1 is connected to JC.1
+  assign led[1] = jc1;
 
-// Unused IOs - SW->LED passthrough.
-assign led[15:2] = {sw[15:3], 1'd0};
+  // Unused IOs - SW->LED passthrough.
+  assign led[15:2] = {sw[15:3], 1'd0};
 
 endmodule
 

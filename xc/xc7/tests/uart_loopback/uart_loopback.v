@@ -1,13 +1,13 @@
 module top (
-	input  wire clk,
+    input wire clk,
 
-	input  wire rx,
-	output wire tx,
+    input  wire rx,
+    output wire tx,
 
-	input  wire rst,
-	input  wire led  // unused
+    input wire rst,
+    input wire led  // unused
 );
 
-	assign tx = rx;
+  assign tx = rx;
 
 endmodule

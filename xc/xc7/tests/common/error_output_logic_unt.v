@@ -10,24 +10,24 @@ module top (
     output [15:0] led
 );
 
-ERROR_OUTPUT_LOGIC #(
-    .ADDR_WIDTH(10),
-    .DATA_WIDTH(1)
-) unt (
-    .rst(sw[0]),
-    .clk(clk),
-    .loop_complete(sw[1]),
-    .error_detected(sw[2]),
-    .error_state(sw[4:3]),
-    .error_address(sw[14:5]),
-    .expected_data(sw[15]),
-    .actual_data({1'b0}),
-    .tx_data_accepted(rx),
-    .tx_data_ready(led[8]),
-    .tx_data(led[7:0])
-);
+  ERROR_OUTPUT_LOGIC #(
+      .ADDR_WIDTH(10),
+      .DATA_WIDTH(1)
+  ) unt (
+      .rst(sw[0]),
+      .clk(clk),
+      .loop_complete(sw[1]),
+      .error_detected(sw[2]),
+      .error_state(sw[4:3]),
+      .error_address(sw[14:5]),
+      .expected_data(sw[15]),
+      .actual_data({1'b0}),
+      .tx_data_accepted(rx),
+      .tx_data_ready(led[8]),
+      .tx_data(led[7:0])
+  );
 
-assign led[15:9] = sw[15:9];
-assign tx = sw[0];
+  assign led[15:9] = sw[15:9];
+  assign tx = sw[0];
 
 endmodule

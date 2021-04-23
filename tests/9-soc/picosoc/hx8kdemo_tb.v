@@ -20,50 +20,50 @@
 `timescale 1 ns / 1 ps
 `include "spiflash.v"
 module testbench;
-	reg clk;
-	always #5 clk = (clk === 1'b0);
+  reg clk;
+  always #5 clk = (clk === 1'b0);
 
-	initial begin
-		$dumpfile("testbench.vcd");
-		$dumpvars(0, testbench);
+  initial begin
+    $dumpfile("testbench.vcd");
+    $dumpvars(0, testbench);
 
-		repeat (6) begin
-			repeat (50000) @(posedge clk);
-			$display("+50000 cycles");
-		end
-		$finish;
-	end
+    repeat (6) begin
+      repeat (50000) @(posedge clk);
+      $display("+50000 cycles");
+    end
+    $finish;
+  end
 
-	wire [7:0] leds;
+  wire [7:0] leds;
 
-	wire flash_csb;
-	wire flash_clk;
-	wire flash_io0;
-	wire flash_io1;
-	wire flash_io2;
-	wire flash_io3;
+  wire flash_csb;
+  wire flash_clk;
+  wire flash_io0;
+  wire flash_io1;
+  wire flash_io2;
+  wire flash_io3;
 
-	always @(leds) begin
-		#1 $display("%b", leds);
-	end
+  always @(leds) begin
+    #1 $display("%b", leds);
+  end
 
-	hx8kdemo uut (
-		.clk      (clk      ),
-		.leds     (leds     ),
-		.flash_csb(flash_csb),
-		.flash_clk(flash_clk),
-		.flash_io0(flash_io0),
-		.flash_io1(flash_io1)/*,
+  hx8kdemo uut (
+      .clk      (clk),
+      .leds     (leds),
+      .flash_csb(flash_csb),
+      .flash_clk(flash_clk),
+      .flash_io0(flash_io0),
+      .flash_io1(flash_io1)  /*,
 		.flash_io2(flash_io2),
 		.flash_io3(flash_io3)*/
-	);
+  );
 
-	spiflash spiflash (
-		.csb(flash_csb),
-		.clk(flash_clk),
-		.io0(flash_io0),
-		.io1(flash_io1),
-		.io2(flash_io2),
-		.io3(flash_io3)
-	);
+  spiflash spiflash (
+      .csb(flash_csb),
+      .clk(flash_clk),
+      .io0(flash_io0),
+      .io1(flash_io1),
+      .io2(flash_io2),
+      .io3(flash_io3)
+  );
 endmodule

@@ -3,16 +3,21 @@
 //
 // Version 1.0 : Initial Creation
 //
-module counter_16bit_top (clk, reset, enable, count);
-input clk, reset, enable;
-output [15:0] count;
-reg [15:0] count;                                   
+module counter_16bit_top (
+    clk,
+    reset,
+    enable,
+    count
+);
+  input clk, reset, enable;
+  output [15:0] count;
+  reg [15:0] count;
 
-always @ (posedge clk)
-if (reset == 1'b1) begin
-  count <= 0;
-end else if ( enable == 1'b1) begin
-  count <= count + 1;
-end
+  always @(posedge clk)
+    if (reset == 1'b1) begin
+      count <= 0;
+    end else if (enable == 1'b1) begin
+      count <= count + 1;
+    end
 
-endmodule  
+endmodule

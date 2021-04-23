@@ -1,14 +1,17 @@
-module top(
-  input  wire clk,
-	input  wire [15:0] sw,
-	output wire [15:0] led,
+module top (
+    input wire clk,
+    input wire [15:0] sw,
+    output wire [15:0] led,
 
-  input  wire rx,
-  output wire tx
+    input  wire rx,
+    output wire tx
 );
 
   wire gclk;
-  BUFG bufg(.I(clk), .O(gclk));
+  BUFG bufg (
+      .I(clk),
+      .O(gclk)
+  );
 
   (* LOC="SLICE_X29Y45" *)
   FDCE #(
