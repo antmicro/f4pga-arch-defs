@@ -106,9 +106,12 @@ def main():
     with open(args.csv, newline='') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
-            csv_pin_data.add(row['port_name'])
-            if row['Associated Clock'] is not None:
-                assoc_clk[row['port_name']] = row['Associated Clock'].strip()
+            # define properties for scalar pins
+            scalar_port_names = vec_to_scalar(row['port_name'])
+            for port in scalar_port_names:
+                csv_pin_data.add(port)
+                if row['Associated Clock'] is not None:
+                    assoc_clk[port] = row['Associated Clock'].strip()
 
     port_names = parse_xml(args.xml)
     create_lib(
