@@ -133,7 +133,6 @@ function(DEFINE_QL_TOOLCHAIN_TARGET)
   install(DIRECTORY ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/${FAMILY}/devices/umc22/
 	  DESTINATION "share/symbiflow/arch/${FAMILY}-${FAMILY}_umc22_${FAMILY}-${FAMILY}_umc22/lib"
 	  FILES_MATCHING 
-	  PATTERN "*.csv"
 	  PATTERN "*.txt"
 	  PATTERN "*.json"
 	  PATTERN "*.xml")
