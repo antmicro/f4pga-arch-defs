@@ -23,7 +23,7 @@ function(DEFINE_QL_TOOLCHAIN_TARGET)
     return()
   endif ()
 
-  set(WRAPPERS env symbiflow_generate_constraints symbiflow_pack symbiflow_place symbiflow_route symbiflow_synth ql_symbiflow symbiflow_analysis symbiflow_repack symbiflow_write_fasm symbiflow_generate_bitstream)
+  set(WRAPPERS env symbiflow_generate_constraints symbiflow_pack symbiflow_place symbiflow_route symbiflow_synth ql_symbiflow symbiflow_analysis symbiflow_repack symbiflow_write_fasm symbiflow_generate_bitstream symbiflow_generate_libfile)
 
   # Export VPR arguments
   list(JOIN VPR_BASE_ARGS " " VPR_BASE_ARGS)
