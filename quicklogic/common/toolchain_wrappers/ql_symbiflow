@@ -20,9 +20,7 @@ echo -e "\nBelow are the supported commands: \n\
  To synthesize and dump a eblif file:\n\
 \t>ql_symbiflow -synth -src <source_dir path> -d <device> -P <pinmap csv file> -t <top module name> -v <verilog file/files> -p <pcf file>\n\
  To run synthesis, pack, place and route:\n\
-\t>ql_symbiflow -compile -src <source_dir path> -d <device> -P <pinmap csv file> -t <top module name> -v <verilog file/files> -p <pcf file> \n\
-To dump the post_verilog file: \n\
-\t>ql_symbiflow -compile -src <source_dir path> -d <device> -P <package> -t <top> -v <verilog file/files> -p <pcf file> -dump post_verilog \n\
+\t>ql_symbiflow -compile -src <source_dir path> -d <device> -P <pinmap csv file> -t <top module name> -v <verilog file/files> -p <pcf file> -P <pinmap csv file> -s <SDC file> \n\
 Device supported:qlf_k4n8" || exit
 elif [[ $1 == "-v" || $1 == "--version" ]];then
         echo "Symbiflow Tool Version : ${VERSION}"
