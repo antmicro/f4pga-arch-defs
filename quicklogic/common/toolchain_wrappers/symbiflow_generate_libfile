@@ -25,4 +25,4 @@ PINMAP_XML=`realpath ${ARCH_DIR}/${PINMAPXML}`
 INTF_XML=`realpath ${ARCH_DIR}/lib/${INTERFACEXML}`
 CREATE_LIB=`realpath ${MYPATH}/python/create_lib.py`
 
-python3 ${CREATE_LIB} -n ${DEV}_te_OP72_SSM40 -m $DEVICE_1 -c $PART -x $INTF_XML -d qlf_k4n8 -t ${ARCH_DIR}/lib
+python3 ${CREATE_LIB} -n ${DEV}_te_OP72_SSM40 -m $DEVICE_1 -c $PART -x $INTF_XML -d qlf_k4n8 -l ${DEV}_te_OP72_SSM40.lib -t ${ARCH_DIR}/lib
