@@ -1,35 +1,35 @@
 {
     "input_used": {
-        "cap": "0.01686",
-        "max_tran": "0.2000"
+        "cap": "0.091201",
+        "max_tran": "1.473468"
     },
     "output_used": {
-        "cap": "0.013646",
-        "max_tran": "0.2000"
+        "cap": "0.041022",
+        "max_tran": "1.473468"
     },
     "input_unused": {
-        "cap": "0.01686",
-        "max_tran": "0.2000"
+        "cap": "0.091201",
+        "max_tran": "1.473468"
     },
     "output_unused": {
-        "cap": "0.013646",
-        "max_tran": "0.2000"
+        "cap": "0.041022",
+        "max_tran": "1.473468"
     },
     "reset_timing": {
-        "cell_fall_val": "4.6000",
-        "fall_tran_val": "0.2000"
+        "cell_fall_val": "3.24",
+        "fall_tran_val": "0.20"
     },
     "output_timing": {
-        "rising_edge_cell_rise_val": "2.59",
-        "rising_edge_cell_fall_val": "2.59",
-        "rising_edge_rise_tran_val": "0.85",
-        "rising_edge_fall_tran_val": "0.85"
+        "rising_edge_cell_rise_val": "2.911447",
+        "rising_edge_cell_fall_val": "2.657051",
+        "rising_edge_rise_tran_val": "0.361017",
+        "rising_edge_fall_tran_val": "0.33357"
     },
     "input_timing": {
-        "setup_rising_rise_constraint_val": "-2.1",
-        "setup_rising_fall_constraint_val": "-2.1",
-        "hold_rising_rise_constraint_val": "2.21",
-        "hold_rising_fall_constraint_val": "2.21"
+        "setup_rising_rise_constraint_val": "-1.32584",
+        "setup_rising_fall_constraint_val": "-1.294489",
+        "hold_rising_rise_constraint_val": "1.463397",
+        "hold_rising_fall_constraint_val": "1.255785"
 
     }
 }

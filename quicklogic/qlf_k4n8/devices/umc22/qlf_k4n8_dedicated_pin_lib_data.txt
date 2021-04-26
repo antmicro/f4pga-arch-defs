@@ -1,1845 +1,2309 @@
 pin (FB_PD_N) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			} 
-		pin (IO_ISOL_N) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;	 
-			} 
-		pin (PROG_CLK) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;	
-			} 			 
-		pin (PRESET_N) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;	
-			timing () {
-				related_pin : "PROG_CLK" ;
-				timing_type : recovery_rising;
-				timing_sense : negative_unate;
-				rise_constraint (scalar) {
-					values(7.5);
-				} 
-			}
-		}	 			 
-		pin (CCFF_HEAD[31]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-			related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-		pin (CCFF_HEAD[30]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-		pin (CCFF_HEAD[29]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-		pin (CCFF_HEAD[28]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-		pin (CCFF_HEAD[27]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-		pin (CCFF_HEAD[26]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-		pin (CCFF_HEAD[25]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-		pin (CCFF_HEAD[24]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-		pin (CCFF_HEAD[23]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-		pin (CCFF_HEAD[22]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-		pin (CCFF_HEAD[21]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-		pin (CCFF_HEAD[20]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-		pin (CCFF_HEAD[19]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-		pin (CCFF_HEAD[18]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-		pin (CCFF_HEAD[17]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-		pin (CCFF_HEAD[16]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-		pin (CCFF_HEAD[15]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-		pin (CCFF_HEAD[14]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-		pin (CCFF_HEAD[13]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-		pin (CCFF_HEAD[12]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-		pin (CCFF_HEAD[11]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-		pin (CCFF_HEAD[10]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-		pin (CCFF_HEAD[9]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-		pin (CCFF_HEAD[8]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-		pin (CCFF_HEAD[7]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-		pin (CCFF_HEAD[6]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-		pin (CCFF_HEAD[5]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-		pin (CCFF_HEAD[4]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-		pin (CCFF_HEAD[3]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-		pin (CCFF_HEAD[2]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-		pin (CCFF_HEAD[1]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-		pin (CCFF_HEAD[0]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-		pin (CFG_DONE) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;		
-			} 
-		pin (FB_SCAN_CLK) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;			
-			} 
-		pin (FB_SCAN_RESET_N) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;	
-			timing () {
-				related_pin : "PROG_CLK" ;
-				timing_type : recovery_rising;
-				timing_sense : negative_unate;
-				rise_constraint (scalar) {
-					values(7.5);
-				} 
-			}
-	        }		 		 
-		pin (FB_SCAN_IN[3]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-		pin (FB_SCAN_IN[2]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-		pin (FB_SCAN_IN[1]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-		pin (FB_SCAN_IN[0]) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : setup_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : hold_rising;
-				rise_constraint (scalar) {
-					values(7.5);
-				}
-				fall_constraint (scalar) {
-					values(7.5);
-				}
-			}
-		}
-			 			 			 		 
-		pin (DEBUG_EN) {
-			is_isolated : true;				
-			 direction : input;
-			 capacitance : 0.00115;
-			 max_transition : 0.85;	
-			} 			 			 			 		 
-		pin (TEST_EN) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;	
-			} 		 			 			 		 
-		pin (SCAN_MODE) {
-			is_isolated : true;				
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;	
-			}			 			 		 
-		pin (DFT_CFG_DONE) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			}
-		pin (CCFF_TAIL[31]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (CCFF_TAIL[30]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (CCFF_TAIL[29]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (CCFF_TAIL[28]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (CCFF_TAIL[27]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (CCFF_TAIL[26]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (CCFF_TAIL[25]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (CCFF_TAIL[24]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (CCFF_TAIL[23]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (CCFF_TAIL[22]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (CCFF_TAIL[21]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (CCFF_TAIL[20]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (CCFF_TAIL[19]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (CCFF_TAIL[18]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (CCFF_TAIL[17]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (CCFF_TAIL[16]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (CCFF_TAIL[15]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (CCFF_TAIL[14]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (CCFF_TAIL[13]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (CCFF_TAIL[12]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (CCFF_TAIL[11]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (CCFF_TAIL[10]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (CCFF_TAIL[9]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (CCFF_TAIL[8]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (CCFF_TAIL[7]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (CCFF_TAIL[6]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (CCFF_TAIL[5]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (CCFF_TAIL[4]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (CCFF_TAIL[3]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (CCFF_TAIL[2]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (CCFF_TAIL[1]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (CCFF_TAIL[0]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "PROG_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (FB_SCAN_OUT[3]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "FB_SCAN_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (FB_SCAN_OUT[2]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "FB_SCAN_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (FB_SCAN_OUT[1]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "FB_SCAN_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (FB_SCAN_OUT[0]) {
-			is_isolated : true;				
-			direction : output;
-			capacitance : 0.963161;
-			max_transition : 0.85;
-			timing () {
-				related_pin : "FB_SCAN_CLK";
-				timing_type : rising_edge;
-				cell_rise (scalar) {
-					values(7.5);
-				}
-				rise_transition (scalar) {
-					values(0.85);
-				}
-				cell_fall (scalar) {
-					values(7.5);
-				}
-				fall_transition (scalar) {
-					values(0.85);
-				}
-			}
-		}
-		pin (RESET_N) {
-			is_isolated : true;
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-			timing () {
-					related_pin : "CLK[0]" ;
-					timing_type : recovery_rising;
-					timing_sense : negative_unate;
-					rise_constraint (scalar) {
-							values(7.5);
-					}
-			}
-		}
-		pin (CLK0) {
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-		}
-		pin (CLK1) {
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-		}
-		pin (CLK2) {
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-		}
-		pin (CLK3) {
-			direction : input;
-			capacitance : 0.00115;
-			max_transition : 0.85;
-		}
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.004583 ;
+        }
+        pin (IO_ISOL_N) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.002748 ;
+        }
+        pin (PROG_CLK) {
+            is_isolated : true ;
+            direction : input ;
+            clock : true ;
+            max_transition : 1.473468 ;
+            capacitance : 0.003852 ;
+            min_pulse_width_low : 0.622222 ;
+            min_pulse_width_high : 0.572281 ;
+        }
+        pin (PRESET_N) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.004750 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : recovery_rising ;
+                timing_sense : negative_unate ;
+                rise_constraint (scalar) {
+                    values(2.772084) ;
+                }
+            }
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : removal_rising ;
+                timing_sense : negative_unate ;
+                rise_constraint (scalar) {
+                    values(1.791196) ;
+                }
+            }
+        }
+        pin (CCFF_HEAD[31]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 5.000000 ;
+            capacitance : 0.000000 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-3.053317) ;
+                }
+                fall_constraint (scalar) {
+                    values(-3.053317) ;
+                }
+            }
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(5.019872) ;
+                }
+                fall_constraint (scalar) {
+                    values(5.019872) ;
+                }
+            }
+        }
+        pin (CCFF_HEAD[30]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 5.000000 ;
+            capacitance : 0.000000 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-3.053317) ;
+                }
+                fall_constraint (scalar) {
+                    values(-3.053317) ;
+                }
+            }
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(5.019872) ;
+                }
+                fall_constraint (scalar) {
+                    values(5.019872) ;
+                }
+            }
+        }
+        pin (CCFF_HEAD[29]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 5.000000 ;
+            capacitance : 0.000000 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-3.053317) ;
+                }
+                fall_constraint (scalar) {
+                    values(-3.053317) ;
+                }
+            }
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(5.019872) ;
+                }
+                fall_constraint (scalar) {
+                    values(5.019872) ;
+                }
+            }
+        }
+        pin (CCFF_HEAD[28]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 5.000000 ;
+            capacitance : 0.000000 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-3.053317) ;
+                }
+                fall_constraint (scalar) {
+                    values(-3.053317) ;
+                }
+            }
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(5.019872) ;
+                }
+                fall_constraint (scalar) {
+                    values(5.019872) ;
+                }
+            }
+        }
+        pin (CCFF_HEAD[27]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 5.000000 ;
+            capacitance : 0.000000 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-3.053317) ;
+                }
+                fall_constraint (scalar) {
+                    values(-3.053317) ;
+                }
+            }
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(5.019872) ;
+                }
+                fall_constraint (scalar) {
+                    values(5.019872) ;
+                }
+            }
+        }
+        pin (CCFF_HEAD[26]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 5.000000 ;
+            capacitance : 0.000000 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-3.053317) ;
+                }
+                fall_constraint (scalar) {
+                    values(-3.053317) ;
+                }
+            }
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(5.019872) ;
+                }
+                fall_constraint (scalar) {
+                    values(5.019872) ;
+                }
+            }
+        }
+        pin (CCFF_HEAD[25]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 5.000000 ;
+            capacitance : 0.000000 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-3.053317) ;
+                }
+                fall_constraint (scalar) {
+                    values(-3.053317) ;
+                }
+            }
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(5.019872) ;
+                }
+                fall_constraint (scalar) {
+                    values(5.019872) ;
+                }
+            }
+        }
+        pin (CCFF_HEAD[24]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 5.000000 ;
+            capacitance : 0.000000 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-3.053317) ;
+                }
+                fall_constraint (scalar) {
+                    values(-3.053317) ;
+                }
+            }
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(5.019872) ;
+                }
+                fall_constraint (scalar) {
+                    values(5.019872) ;
+                }
+            }
+        }
+        pin (CCFF_HEAD[23]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.041047 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-1.199317) ;
+                }
+                fall_constraint (scalar) {
+                    values(-0.985788) ;
+                }
+            }
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(1.468291) ;
+                }
+                fall_constraint (scalar) {
+                    values(1.281689) ;
+                }
+            }
+        }
+        pin (CCFF_HEAD[22]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.079100 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-0.830304) ;
+                }
+                fall_constraint (scalar) {
+                    values(-0.562680) ;
+                }
+            }
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(1.133043) ;
+                }
+                fall_constraint (scalar) {
+                    values(0.901700) ;
+                }
+            }
+        }
+        pin (CCFF_HEAD[21]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.080839 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-0.944069) ;
+                }
+                fall_constraint (scalar) {
+                    values(-0.690183) ;
+                }
+            }
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(1.234480) ;
+                }
+                fall_constraint (scalar) {
+                    values(1.017331) ;
+                }
+            }
+        }
+        pin (CCFF_HEAD[20]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.073408 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-1.040565) ;
+                }
+                fall_constraint (scalar) {
+                    values(-0.798153) ;
+                }
+            }
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(1.321047) ;
+                }
+                fall_constraint (scalar) {
+                    values(1.115747) ;
+                }
+            }
+        }
+        pin (CCFF_HEAD[19]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.058694 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-0.932820) ;
+                }
+                fall_constraint (scalar) {
+                    values(-0.685872) ;
+                }
+            }
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(1.217408) ;
+                }
+                fall_constraint (scalar) {
+                    values(1.007416) ;
+                }
+            }
+        }
+        pin (CCFF_HEAD[18]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.002715 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-0.592079) ;
+                }
+                fall_constraint (scalar) {
+                    values(-0.239806) ;
+                }
+            }
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(0.888912) ;
+                }
+                fall_constraint (scalar) {
+                    values(0.573731) ;
+                }
+            }
+        }
+        pin (CCFF_HEAD[17]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.047232 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-1.034407) ;
+                }
+                fall_constraint (scalar) {
+                    values(-0.797398) ;
+                }
+            }
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(1.310081) ;
+                }
+                fall_constraint (scalar) {
+                    values(1.110360) ;
+                }
+            }
+        }
+        pin (CCFF_HEAD[16]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.042473 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-1.061469) ;
+                }
+                fall_constraint (scalar) {
+                    values(-0.827734) ;
+                }
+            }
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(1.334401) ;
+                }
+                fall_constraint (scalar) {
+                    values(1.138030) ;
+                }
+            }
+        }
+        pin (CCFF_HEAD[15]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.034078 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-1.084629) ;
+                }
+                fall_constraint (scalar) {
+                    values(-0.850820) ;
+                }
+            }
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(1.357627) ;
+                }
+                fall_constraint (scalar) {
+                    values(1.161180) ;
+                }
+            }
+        }
+        pin (CCFF_HEAD[14]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.027678 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-1.168649) ;
+                }
+                fall_constraint (scalar) {
+                    values(-0.947896) ;
+                }
+            }
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(1.430701) ;
+                }
+                fall_constraint (scalar) {
+                    values(1.247635) ;
+                }
+            }
+        }
+        pin (CCFF_HEAD[13]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.019688 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-1.201878) ;
+                }
+                fall_constraint (scalar) {
+                    values(-0.985666) ;
+                }
+            }
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(1.460124) ;
+                }
+                fall_constraint (scalar) {
+                    values(1.281712) ;
+                }
+            }
+        }
+        pin (CCFF_HEAD[12]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.002477 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-1.198144) ;
+                }
+                fall_constraint (scalar) {
+                    values(-0.978144) ;
+                }
+            }
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(1.434974) ;
+                }
+                fall_constraint (scalar) {
+                    values(1.254644) ;
+                }
+            }
+        }
+        pin (CCFF_HEAD[11]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.002666 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-1.288367) ;
+                }
+                fall_constraint (scalar) {
+                    values(-1.089189) ;
+                }
+            }
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(1.535479) ;
+                }
+                fall_constraint (scalar) {
+                    values(1.374002) ;
+                }
+            }
+        }
+        pin (CCFF_HEAD[10]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.008721 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-1.268093) ;
+                }
+                fall_constraint (scalar) {
+                    values(-1.064468) ;
+                }
+            }
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(1.517643) ;
+                }
+                fall_constraint (scalar) {
+                    values(1.351818) ;
+                }
+            }
+        }
+        pin (CCFF_HEAD[9]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.013144 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-1.219859) ;
+                }
+                fall_constraint (scalar) {
+                    values(-1.006145) ;
+                }
+            }
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(1.476010) ;
+                }
+                fall_constraint (scalar) {
+                    values(1.300159) ;
+                }
+            }
+        }
+        pin (CCFF_HEAD[8]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.025701 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-1.167321) ;
+                }
+                fall_constraint (scalar) {
+                    values(-0.945493) ;
+                }
+            }
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(1.430276) ;
+                }
+                fall_constraint (scalar) {
+                    values(1.246107) ;
+                }
+            }
+        }
+        pin (CCFF_HEAD[7]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.027938 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-1.174431) ;
+                }
+                fall_constraint (scalar) {
+                    values(-0.955464) ;
+                }
+            }
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(1.434983) ;
+                }
+                fall_constraint (scalar) {
+                    values(1.253748) ;
+                }
+            }
+        }
+        pin (CCFF_HEAD[6]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.003420 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-0.783092) ;
+                }
+                fall_constraint (scalar) {
+                    values(-0.475712) ;
+                }
+            }
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(1.073587) ;
+                }
+                fall_constraint (scalar) {
+                    values(0.803840) ;
+                }
+            }
+        }
+        pin (CCFF_HEAD[5]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.048650 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-1.054805) ;
+                }
+                fall_constraint (scalar) {
+                    values(-0.821439) ;
+                }
+            }
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(1.327427) ;
+                }
+                fall_constraint (scalar) {
+                    values(1.131434) ;
+                }
+            }
+        }
+        pin (CCFF_HEAD[4]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.055289 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-1.057100) ;
+                }
+                fall_constraint (scalar) {
+                    values(-0.828702) ;
+                }
+            }
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(1.325556) ;
+                }
+                fall_constraint (scalar) {
+                    values(1.134653) ;
+                }
+            }
+        }
+        pin (CCFF_HEAD[3]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.080339 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-1.108110) ;
+                }
+                fall_constraint (scalar) {
+                    values(-0.878043) ;
+                }
+            }
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(1.377957) ;
+                }
+                fall_constraint (scalar) {
+                    values(1.185344) ;
+                }
+            }
+        }
+        pin (CCFF_HEAD[2]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.075801 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-1.111049) ;
+                }
+                fall_constraint (scalar) {
+                    values(-0.879570) ;
+                }
+            }
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(1.382081) ;
+                }
+                fall_constraint (scalar) {
+                    values(1.188021) ;
+                }
+            }
+        }
+        pin (CCFF_HEAD[1]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.096272 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-1.044279) ;
+                }
+                fall_constraint (scalar) {
+                    values(-0.812078) ;
+                }
+            }
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(1.315015) ;
+                }
+                fall_constraint (scalar) {
+                    values(1.120236) ;
+                }
+            }
+        }
+        pin (CCFF_HEAD[0]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.002815 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-0.288086) ;
+                }
+                fall_constraint (scalar) {
+                    values(0.125283) ;
+                }
+            }
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(0.628499) ;
+                }
+                fall_constraint (scalar) {
+                    values(0.250648) ;
+                }
+            }
+        }
+        pin (CFG_DONE) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.012737 ;
+        }
+        pin (FB_SCAN_CLK) {
+            is_isolated : true ;
+            direction : input ;
+            clock : true ;
+            max_transition : 1.473468 ;
+            capacitance : 0.003257 ;
+            min_pulse_width_low : 0.622222 ;
+            min_pulse_width_high : 0.572281 ;
+        }
+        pin (FB_SCAN_RESET_N) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.004358 ;
+            timing () {
+                related_pin : "FB_SCAN_CLK" ;
+                timing_type : recovery_rising ;
+                timing_sense : negative_unate ;
+                rise_constraint (scalar) {
+                    values(2.772084) ;
+                }
+            }
+            timing () {
+                related_pin : "FB_SCAN_CLK" ;
+                timing_type : removal_rising ;
+                timing_sense : negative_unate ;
+                rise_constraint (scalar) {
+                    values(1.791196) ;
+                }
+            }
+        }
+        pin (FB_SCAN_IN[3]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.002656 ;
+            timing () {
+                related_pin : "FB_SCAN_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-0.5) ;
+                }
+                fall_constraint (scalar) {
+                    values(-0.2) ;
+                }
+            }
+            timing () {
+                related_pin : "FB_SCAN_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(1.55) ;
+                }
+                fall_constraint (scalar) {
+                    values(1.40) ;
+                }
+            }
+        }
+        pin (FB_SCAN_IN[2]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.002866 ;
+            timing () {
+                related_pin : "FB_SCAN_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-0.5) ;
+                }
+                fall_constraint (scalar) {
+                    values(-0.2) ;
+                }
+            }
+            timing () {
+                related_pin : "FB_SCAN_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(1.55) ;
+                }
+                fall_constraint (scalar) {
+                    values(1.40) ;
+                }
+            }
+        }
+        pin (FB_SCAN_IN[1]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.002374 ;
+            timing () {
+                related_pin : "FB_SCAN_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-0.5) ;
+                }
+                fall_constraint (scalar) {
+                    values(-0.2) ;
+                }
+            }
+            timing () {
+                related_pin : "FB_SCAN_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(1.55) ;
+                }
+                fall_constraint (scalar) {
+                    values(1.40) ;
+                }
+            }
+        }
+        pin (FB_SCAN_IN[0]) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.002505 ;
+            timing () {
+                related_pin : "FB_SCAN_CLK" ;
+                timing_type : setup_rising ;
+                rise_constraint (scalar) {
+                    values(-0.5) ;
+                }
+                fall_constraint (scalar) {
+                    values(-0.2) ;
+                }
+            }
+            timing () {
+                related_pin : "FB_SCAN_CLK" ;
+                timing_type : hold_rising ;
+                rise_constraint (scalar) {
+                    values(1.55) ;
+                }
+                fall_constraint (scalar) {
+                    values(1.40) ;
+                }
+            }
+        }
+        pin (DEBUG_EN) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.247486 ;
+        }
+        pin (TEST_EN) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.186236 ;
+        }
+        pin (SCAN_MODE) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.030177 ;
+        }
+        pin (DFT_CFG_DONE) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.012541 ;
+        }
+        pin (CCFF_TAIL[31]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.000153 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(5.630843) ;
+                }
+                rise_transition (scalar) {
+                    values(0.2) ;
+                }
+                cell_fall (scalar) {
+                    values(5.630843) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+            timing () {
+                related_pin : "PRESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (CCFF_TAIL[30]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.000244 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(5.630843) ;
+                }
+                rise_transition (scalar) {
+                    values(0.2) ;
+                }
+                cell_fall (scalar) {
+                    values(5.630843) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+            timing () {
+                related_pin : "PRESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (CCFF_TAIL[29]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.000329 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(5.630843) ;
+                }
+                rise_transition (scalar) {
+                    values(0.2) ;
+                }
+                cell_fall (scalar) {
+                    values(5.630843) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+            timing () {
+                related_pin : "PRESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (CCFF_TAIL[28]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.000083 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(5.630843) ;
+                }
+                rise_transition (scalar) {
+                    values(0.2) ;
+                }
+                cell_fall (scalar) {
+                    values(5.630843) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+            timing () {
+                related_pin : "PRESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (CCFF_TAIL[27]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.000210 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(5.630843) ;
+                }
+                rise_transition (scalar) {
+                    values(0.2) ;
+                }
+                cell_fall (scalar) {
+                    values(5.630843) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+            timing () {
+                related_pin : "PRESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (CCFF_TAIL[26]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.000090 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(5.630843) ;
+                }
+                rise_transition (scalar) {
+                    values(0.2) ;
+                }
+                cell_fall (scalar) {
+                    values(5.630843) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+            timing () {
+                related_pin : "PRESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (CCFF_TAIL[25]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.000223 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(5.630843) ;
+                }
+                rise_transition (scalar) {
+                    values(0.2) ;
+                }
+                cell_fall (scalar) {
+                    values(5.630843) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+            timing () {
+                related_pin : "PRESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (CCFF_TAIL[24]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.000403 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(5.630843) ;
+                }
+                rise_transition (scalar) {
+                    values(0.2) ;
+                }
+                cell_fall (scalar) {
+                    values(5.630843) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+            timing () {
+                related_pin : "PRESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (CCFF_TAIL[23]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.000418 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(3.696212) ;
+                }
+                rise_transition (scalar) {
+                    values(1.223143) ;
+                }
+                cell_fall (scalar) {
+                    values(3.934693) ;
+                }
+                fall_transition (scalar) {
+                    values(1.487498) ;
+                }
+            }
+            timing () {
+                related_pin : "PRESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (CCFF_TAIL[22]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.065746 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(3.817514) ;
+                }
+                rise_transition (scalar) {
+                    values(1.895885) ;
+                }
+                cell_fall (scalar) {
+                    values(3.995641) ;
+                }
+                fall_transition (scalar) {
+                    values(2.107848) ;
+                }
+            }
+            timing () {
+                related_pin : "PRESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (CCFF_TAIL[21]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.058597 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(3.712511) ;
+                }
+                rise_transition (scalar) {
+                    values(1.852472) ;
+                }
+                cell_fall (scalar) {
+                    values(3.880434) ;
+                }
+                fall_transition (scalar) {
+                    values(2.072779) ;
+                }
+            }
+            timing () {
+                related_pin : "PRESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (CCFF_TAIL[20]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.050416 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(3.620232) ;
+                }
+                rise_transition (scalar) {
+                    values(1.795150) ;
+                }
+                cell_fall (scalar) {
+                    values(3.782200) ;
+                }
+                fall_transition (scalar) {
+                    values(2.016092) ;
+                }
+            }
+            timing () {
+                related_pin : "PRESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (CCFF_TAIL[19]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.041691 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(3.370100) ;
+                }
+                rise_transition (scalar) {
+                    values(1.740632) ;
+                }
+                cell_fall (scalar) {
+                    values(3.523851) ;
+                }
+                fall_transition (scalar) {
+                    values(1.972741) ;
+                }
+            }
+            timing () {
+                related_pin : "PRESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (CCFF_TAIL[18]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.055403 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(3.285489) ;
+                }
+                rise_transition (scalar) {
+                    values(1.719077) ;
+                }
+                cell_fall (scalar) {
+                    values(3.426783) ;
+                }
+                fall_transition (scalar) {
+                    values(1.952431) ;
+                }
+            }
+            timing () {
+                related_pin : "PRESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (CCFF_TAIL[17]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.032083 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(3.223579) ;
+                }
+                rise_transition (scalar) {
+                    values(1.550420) ;
+                }
+                cell_fall (scalar) {
+                    values(3.373251) ;
+                }
+                fall_transition (scalar) {
+                    values(1.795594) ;
+                }
+            }
+            timing () {
+                related_pin : "PRESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (CCFF_TAIL[16]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.035134 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(3.024592) ;
+                }
+                rise_transition (scalar) {
+                    values(1.547604) ;
+                }
+                cell_fall (scalar) {
+                    values(3.139560) ;
+                }
+                fall_transition (scalar) {
+                    values(1.796717) ;
+                }
+            }
+            timing () {
+                related_pin : "PRESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (CCFF_TAIL[15]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.031469 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(2.946404) ;
+                }
+                rise_transition (scalar) {
+                    values(1.513887) ;
+                }
+                cell_fall (scalar) {
+                    values(3.053100) ;
+                }
+                fall_transition (scalar) {
+                    values(1.759414) ;
+                }
+            }
+            timing () {
+                related_pin : "PRESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (CCFF_TAIL[14]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.019846 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(2.770326) ;
+                }
+                rise_transition (scalar) {
+                    values(1.379672) ;
+                }
+                cell_fall (scalar) {
+                    values(2.861488) ;
+                }
+                fall_transition (scalar) {
+                    values(1.636404) ;
+                }
+            }
+            timing () {
+                related_pin : "PRESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (CCFF_TAIL[13]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.017633 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(2.713907) ;
+                }
+                rise_transition (scalar) {
+                    values(1.373102) ;
+                }
+                cell_fall (scalar) {
+                    values(2.796096) ;
+                }
+                fall_transition (scalar) {
+                    values(1.628974) ;
+                }
+            }
+            timing () {
+                related_pin : "PRESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (CCFF_TAIL[12]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.005207 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(2.616428) ;
+                }
+                rise_transition (scalar) {
+                    values(1.280446) ;
+                }
+                cell_fall (scalar) {
+                    values(2.696631) ;
+                }
+                fall_transition (scalar) {
+                    values(1.539485) ;
+                }
+            }
+            timing () {
+                related_pin : "PRESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (CCFF_TAIL[11]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.000737 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(2.736695) ;
+                }
+                rise_transition (scalar) {
+                    values(1.224199) ;
+                }
+                cell_fall (scalar) {
+                    values(2.845641) ;
+                }
+                fall_transition (scalar) {
+                    values(1.489956) ;
+                }
+            }
+            timing () {
+                related_pin : "PRESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (CCFF_TAIL[10]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.003843 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(2.865282) ;
+                }
+                rise_transition (scalar) {
+                    values(1.257486) ;
+                }
+                cell_fall (scalar) {
+                    values(2.990630) ;
+                }
+                fall_transition (scalar) {
+                    values(1.519551) ;
+                }
+            }
+            timing () {
+                related_pin : "PRESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (CCFF_TAIL[9]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.009680 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(2.899307) ;
+                }
+                rise_transition (scalar) {
+                    values(1.305288) ;
+                }
+                cell_fall (scalar) {
+                    values(3.023128) ;
+                }
+                fall_transition (scalar) {
+                    values(1.563861) ;
+                }
+            }
+            timing () {
+                related_pin : "PRESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (CCFF_TAIL[8]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.010770 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(3.057482) ;
+                }
+                rise_transition (scalar) {
+                    values(1.342743) ;
+                }
+                cell_fall (scalar) {
+                    values(3.201966) ;
+                }
+                fall_transition (scalar) {
+                    values(1.601549) ;
+                }
+            }
+            timing () {
+                related_pin : "PRESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (CCFF_TAIL[7]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.015885 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(3.067661) ;
+                }
+                rise_transition (scalar) {
+                    values(1.407595) ;
+                }
+                cell_fall (scalar) {
+                    values(3.206376) ;
+                }
+                fall_transition (scalar) {
+                    values(1.662781) ;
+                }
+            }
+            timing () {
+                related_pin : "PRESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (CCFF_TAIL[6]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.027863 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(3.172660) ;
+                }
+                rise_transition (scalar) {
+                    values(1.448477) ;
+                }
+                cell_fall (scalar) {
+                    values(3.322731) ;
+                }
+                fall_transition (scalar) {
+                    values(1.699637) ;
+                }
+            }
+            timing () {
+                related_pin : "PRESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (CCFF_TAIL[5]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.029512 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(3.323426) ;
+                }
+                rise_transition (scalar) {
+                    values(1.469216) ;
+                }
+                cell_fall (scalar) {
+                    values(3.498085) ;
+                }
+                fall_transition (scalar) {
+                    values(1.716834) ;
+                }
+            }
+            timing () {
+                related_pin : "PRESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (CCFF_TAIL[4]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.037813 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(3.567497) ;
+                }
+                rise_transition (scalar) {
+                    values(1.555182) ;
+                }
+                cell_fall (scalar) {
+                    values(3.766701) ;
+                }
+                fall_transition (scalar) {
+                    values(1.797766) ;
+                }
+            }
+            timing () {
+                related_pin : "PRESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (CCFF_TAIL[3]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.044255 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(3.791360) ;
+                }
+                rise_transition (scalar) {
+                    values(1.614184) ;
+                }
+                cell_fall (scalar) {
+                    values(3.996207) ;
+                }
+                fall_transition (scalar) {
+                    values(1.849419) ;
+                }
+            }
+            timing () {
+                related_pin : "PRESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (CCFF_TAIL[2]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.045665 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(4.006023) ;
+                }
+                rise_transition (scalar) {
+                    values(1.689829) ;
+                }
+                cell_fall (scalar) {
+                    values(4.234153) ;
+                }
+                fall_transition (scalar) {
+                    values(1.927265) ;
+                }
+            }
+            timing () {
+                related_pin : "PRESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (CCFF_TAIL[1]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.049247 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(3.924801) ;
+                }
+                rise_transition (scalar) {
+                    values(1.738110) ;
+                }
+                cell_fall (scalar) {
+                    values(4.136895) ;
+                }
+                fall_transition (scalar) {
+                    values(1.971539) ;
+                }
+            }
+            timing () {
+                related_pin : "PRESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (CCFF_TAIL[0]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.060992 ;
+            timing () {
+                related_pin : "PROG_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(4.104146) ;
+                }
+                rise_transition (scalar) {
+                    values(1.764498) ;
+                }
+                cell_fall (scalar) {
+                    values(4.326328) ;
+                }
+                fall_transition (scalar) {
+                    values(1.994563) ;
+                }
+            }
+            timing () {
+                related_pin : "PRESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (FB_SCAN_OUT[3]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.039998 ;
+            timing () {
+                related_pin : "FB_SCAN_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(3.871817) ;
+                }
+                rise_transition (scalar) {
+                    values(1.615390) ;
+                }
+                cell_fall (scalar) {
+                    values(4.089092) ;
+                }
+                fall_transition (scalar) {
+                    values(1.856347) ;
+                }
+            }
+            timing () {
+                related_pin : "FB_SCAN_RESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (FB_SCAN_OUT[2]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.008710 ;
+            timing () {
+                related_pin : "FB_SCAN_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(3.108362) ;
+                }
+                rise_transition (scalar) {
+                    values(1.286042) ;
+                }
+                cell_fall (scalar) {
+                    values(3.270825) ;
+                }
+                fall_transition (scalar) {
+                    values(1.545475) ;
+                }
+            }
+            timing () {
+                related_pin : "FB_SCAN_RESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (FB_SCAN_OUT[1]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.023900 ;
+            timing () {
+                related_pin : "FB_SCAN_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(2.836377) ;
+                }
+                rise_transition (scalar) {
+                    values(1.459459) ;
+                }
+                cell_fall (scalar) {
+                    values(2.930233) ;
+                }
+                fall_transition (scalar) {
+                    values(1.708460) ;
+                }
+            }
+            timing () {
+                related_pin : "FB_SCAN_RESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (FB_SCAN_OUT[0]) {
+            is_isolated : true ;
+            direction : output ;
+            max_transition : 1.473468 ;
+            capacitance : 0.045596 ;
+            timing () {
+                related_pin : "FB_SCAN_CLK" ;
+                timing_type : rising_edge ;
+                cell_rise (scalar) {
+                    values(3.480165) ;
+                }
+                rise_transition (scalar) {
+                    values(1.837226) ;
+                }
+                cell_fall (scalar) {
+                    values(3.640743) ;
+                }
+                fall_transition (scalar) {
+                    values(2.062735) ;
+                }
+            }
+            timing () {
+                related_pin : "FB_SCAN_RESET_N" ;
+                timing_type : clear ;
+                cell_fall (scalar) {
+                    values(3.24) ;
+                }
+                fall_transition (scalar) {
+                    values(0.2) ;
+                }
+            }
+        }
+        pin (RESET_N) {
+            is_isolated : true ;
+            direction : input ;
+            max_transition : 1.473468 ;
+            capacitance : 0.135145 ;
+            timing () {
+                related_pin : "CLK3" ;
+                timing_type : recovery_rising ;
+                timing_sense : negative_unate ;
+                rise_constraint (scalar) {
+                    values(0.801434) ;
+                }
+            }
+            timing () {
+                related_pin : "CLK3" ;
+                timing_type : removal_rising ;
+                timing_sense : negative_unate ;
+                rise_constraint (scalar) {
+                    values(0.259297) ;
+                }
+            }
+            timing () {
+                related_pin : "CLK2" ;
+                timing_type : recovery_rising ;
+                timing_sense : negative_unate ;
+                rise_constraint (scalar) {
+                    values(0.801434) ;
+                }
+            }
+            timing () {
+                related_pin : "CLK2" ;
+                timing_type : removal_rising ;
+                timing_sense : negative_unate ;
+                rise_constraint (scalar) {
+                    values(0.259297) ;
+                }
+            }
+            timing () {
+                related_pin : "CLK1" ;
+                timing_type : recovery_rising ;
+                timing_sense : negative_unate ;
+                rise_constraint (scalar) {
+                    values(0.801434) ;
+                }
+            }
+            timing () {
+                related_pin : "CLK1" ;
+                timing_type : removal_rising ;
+                timing_sense : negative_unate ;
+                rise_constraint (scalar) {
+                    values(0.259297) ;
+                }
+            }
+            timing () {
+                related_pin : "CLK0" ;
+                timing_type : recovery_rising ;
+                timing_sense : negative_unate ;
+                rise_constraint (scalar) {
+                    values(0.801434) ;
+                }
+            }
+            timing () {
+                related_pin : "CLK0" ;
+                timing_type : removal_rising ;
+                timing_sense : negative_unate ;
+                rise_constraint (scalar) {
+                    values(0.259297) ;
+                }
+            }
+        }
+        pin (CLK0) {
+            direction : input ;
+            clock : true ;
+            max_transition : 1.473468 ;
+            capacitance : 0.007560 ;
+            min_pulse_width_low : 0.090724 ;
+            min_pulse_width_high : 0.062928 ;
+        }
+        pin (CLK1) {
+            direction : input ;
+            clock : true ;
+            max_transition : 1.473468 ;
+            capacitance : 0.005193 ;
+            min_pulse_width_low : 0.090724 ;
+            min_pulse_width_high : 0.062928 ;
+        }
+        pin (CLK2) {
+            direction : input ;
+            clock : true ;
+            max_transition : 1.473468 ;
+            capacitance : 0.006889 ;
+            min_pulse_width_low : 0.090724 ;
+            min_pulse_width_high : 0.062928 ;
+        }
+        pin (CLK3) {
+            direction : input ;
+            clock : true ;
+            max_transition : 1.473468 ;
+            capacitance : 0.004512 ;
+            min_pulse_width_low : 0.090724 ;
+            min_pulse_width_high : 0.062928 ;
+        }
+        pg_pin (VDDAON) {
+            direction : input;
+            voltage_name : "VDD";
+            pg_type : primary_power;
+        }
+        pg_pin (VSS) {
+            direction : input;
+            voltage_name : "VSS";
+            pg_type : primary_ground;
+        }
+        pg_pin (VDD) {
+            direction : input
+            voltage_name : "VDD";
+            pg_type : primary_power;
+        }

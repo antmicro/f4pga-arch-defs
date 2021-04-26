@@ -10,6 +10,8 @@ library({lib_name}) {
     voltage_unit : "1V" ;
     current_unit : "1mA" ;
     leakage_power_unit : "1pW" ;
+    voltage_map (VDD, 0.72);
+    voltage_map (VSS, 0);
     pulling_resistance_unit : "1kohm" ;
 
     default_inout_pin_cap        : 0.01686 ;
