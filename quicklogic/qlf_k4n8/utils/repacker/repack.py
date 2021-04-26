@@ -706,7 +706,7 @@ def repack_netlist_cell(
         # Pad with 0s to match LUT width
         assert (1 << lut_width) >= len(init), (lut_width, init)
         pad_len = (1 << lut_width) - len(init)
-        init = "0" * pad_len + init
+        init = init + "0" * pad_len
 
         repacked_cell.parameters["LUT"] = init
 
@@ -726,6 +726,14 @@ def repack_netlist_cell(
 
         init = str(cell.init) * (1 << max_width)
         repacked_cell.parameters["LUT"] = init
+
+    # Process parameters for "adder_lut4"
+    if cell.type == "adder_lut4":
+
+        # Remap the Cin mux select to MODE
+        if "IN2_IS_CIN" in cell.parameters:
+            repacked_cell.parameters["MODE"] = cell.parameters["IN2_IS_CIN"]
+            del repacked_cell.parameters["IN2_IS_CIN"]
 
     # If the rule contains mode bits then append the MODE parameter to the cell
     if rule.mode_bits:
