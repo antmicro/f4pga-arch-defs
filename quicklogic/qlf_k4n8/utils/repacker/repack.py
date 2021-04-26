@@ -1102,7 +1102,6 @@ def main():
     # Process netlist CLBs
     logging.info("Processing CLBs...")
 
-    removed_ios = set()
     leaf_block_names = {}
 
     route_through_net_ids = {}

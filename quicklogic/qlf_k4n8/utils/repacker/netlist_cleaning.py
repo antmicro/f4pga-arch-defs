@@ -38,7 +38,8 @@ def absorb_buffer_luts(netlist, outputs=False):
 
             # Must not be driving any top-level outputs unless explicitly
             # allowed
-            if net_out in netlist.outputs and not outputs:
+            if (net_inp in netlist.inputs
+                    or net_out in netlist.outputs) and not outputs:
                 return False
 
             return True
