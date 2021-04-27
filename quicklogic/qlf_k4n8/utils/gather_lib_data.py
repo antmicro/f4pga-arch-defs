@@ -4,6 +4,7 @@ Gather data from given lib file. This data is then used to populate JSON file
 that has delay numbers for some parameters related to F2A and A2F pins.
 """
 import argparse
+from collections import defaultdict
 
 # =============================================================================
 
@@ -42,10 +43,7 @@ def f2a_process_lib_data(lib_fp):
     """
     Process F2A pin lib_data
     """
-    rising_edge_cell_rise_val = set()
-    rising_edge_cell_fall_val = set()
-    rising_edge_rise_tran_val = set()
-    rising_edge_fall_tran_val = set()
+    f2a_data = defaultdict(set)
     max_transition = set()
     capacitance = set()
     for f2a_line in lib_fp:
@@ -55,11 +53,9 @@ def f2a_process_lib_data(lib_fp):
 
             for pin_line in lib_fp:
                 if pin_line.find("rising_edge") != -1:
-                    rising_edge_cell_rise_val, rising_edge_cell_fall_val, \
-                rising_edge_rise_tran_val, rising_edge_fall_tran_val = f2a_timing_type(
+                    f2a_data = f2a_timing_type(
                     lib_fp, pin_line, "rising_edge",
-                    rising_edge_cell_rise_val, rising_edge_cell_fall_val,
-                    rising_edge_rise_tran_val, rising_edge_fall_tran_val
+                    f2a_data
                     )
                 elif pin_line.find("max_transition") != -1:
                     val_list = pin_line.split(' : ')
@@ -87,29 +83,29 @@ def f2a_process_lib_data(lib_fp):
             print(
                 'F2A {} least_val: {}, highest_val: {}'.format(
                     "rising_edge_cell_rise_val",
-                    next(iter(sorted(rising_edge_cell_rise_val))),
-                    sorted(rising_edge_cell_rise_val).pop()
+                    next(iter(sorted(f2a_data['rising_edge_cell_rise']))),
+                    sorted(f2a_data['rising_edge_cell_rise']).pop()
                 )
             )
             print(
                 'F2A {} least_val: {}, highest_val: {}'.format(
                     "rising_edge_cell_fall_val",
-                    next(iter(sorted(rising_edge_cell_fall_val))),
-                    sorted(rising_edge_cell_fall_val).pop()
+                    next(iter(sorted(f2a_data['rising_edge_cell_fall']))),
+                    sorted(f2a_data['rising_edge_cell_fall']).pop()
                 )
             )
             print(
                 'F2A {} least_val: {}, highest_val: {}'.format(
                     "rising_edge_rise_tran_val",
-                    next(iter(sorted(rising_edge_rise_tran_val))),
-                    sorted(rising_edge_rise_tran_val).pop()
+                    next(iter(sorted(f2a_data['rising_edge_rise_tran']))),
+                    sorted(f2a_data['rising_edge_rise_tran']).pop()
                 )
             )
             print(
                 'F2A {} least_val: {}, highest_val: {}'.format(
                     "rising_edge_fall_tran_val",
-                    next(iter(sorted(rising_edge_fall_tran_val))),
-                    sorted(rising_edge_fall_tran_val).pop()
+                    next(iter(sorted(f2a_data['rising_edge_fall_tran']))),
+                    sorted(f2a_data['rising_edge_fall_tran']).pop()
                 )
             )
             break
@@ -122,10 +118,7 @@ def a2f_process_lib_data(lib_fp):
     """
     Process A2F pin lib_data
     """
-    setup_rising_rise_constraint_val = set()
-    setup_rising_fall_constraint_val = set()
-    hold_rising_rise_constraint_val = set()
-    hold_rising_fall_constraint_val = set()
+    a2f_data = defaultdict(set)
 
     max_transition = set()
     capacitance = set()
@@ -136,16 +129,14 @@ def a2f_process_lib_data(lib_fp):
 
             for pin_line in lib_fp:
                 if pin_line.find("setup_rising") != -1:
-                    setup_rising_rise_constraint_val, setup_rising_fall_constraint_val = a2f_timing_type(
+                    a2f_data = a2f_timing_type(
                         lib_fp, pin_line, "setup_rising",
-                        setup_rising_rise_constraint_val,
-                        setup_rising_fall_constraint_val
+                        a2f_data
                     )
                 elif pin_line.find("hold_rising") != -1:
-                    hold_rising_rise_constraint_val, hold_rising_fall_constraint_val = a2f_timing_type(
+                    a2f_data = a2f_timing_type(
                         lib_fp, pin_line, "hold_rising",
-                        hold_rising_rise_constraint_val,
-                        hold_rising_fall_constraint_val
+                        a2f_data
                     )
                 elif pin_line.find("max_transition") != -1:
                     val_list = pin_line.split(' : ')
@@ -173,29 +164,29 @@ def a2f_process_lib_data(lib_fp):
             print(
                 'A2F {} least_val: {}, highest_val: {}'.format(
                     "setup_rising_rise_constraint_val",
-                    next(iter(sorted(setup_rising_rise_constraint_val))),
-                    sorted(setup_rising_rise_constraint_val).pop()
+                    next(iter(sorted(a2f_data['setup_rising_rise_constraint']))),
+                    sorted(a2f_data['setup_rising_rise_constraint']).pop()
                 )
             )
             print(
                 'A2F {} least_val: {}, highest_val: {}'.format(
                     "setup_rising_fall_constraint_val",
-                    next(iter(sorted(setup_rising_fall_constraint_val))),
-                    sorted(setup_rising_fall_constraint_val).pop()
+                    next(iter(sorted(a2f_data['setup_rising_fall_constraint']))),
+                    sorted(a2f_data['setup_rising_fall_constraint']).pop()
                 )
             )
             print(
                 'A2F {} least_val: {}, highest_val: {}'.format(
                     "hold_rising_rise_constraint_val",
-                    next(iter(sorted(hold_rising_rise_constraint_val))),
-                    sorted(hold_rising_rise_constraint_val).pop()
+                    next(iter(sorted(a2f_data['hold_rising_rise_constraint']))),
+                    sorted(a2f_data['hold_rising_rise_constraint']).pop()
                 )
             )
             print(
                 'A2F {} least_val: {}, highest_val: {}'.format(
                     "hold_rising_fall_constraint_val",
-                    next(iter(sorted(hold_rising_fall_constraint_val))),
-                    sorted(hold_rising_fall_constraint_val).pop()
+                    next(iter(sorted(a2f_data['hold_rising_fall_constraint']))),
+                    sorted(a2f_data['hold_rising_fall_constraint']).pop()
                 )
             )
             break
@@ -204,7 +195,7 @@ def a2f_process_lib_data(lib_fp):
 # =============================================================================
 
 
-def a2f_timing_type(lib_fp, pin_line, type_str, rise_value, fall_value):
+def a2f_timing_type(lib_fp, pin_line, type_str, a2f_data):
     """
     Collect A2F pin data
     """
@@ -228,8 +219,14 @@ def a2f_timing_type(lib_fp, pin_line, type_str, rise_value, fall_value):
 
                             val_set = populate_set(val_line, val_set)
 
-                        rise_value.add(sorted(val_set).pop())
-                        #rise_value.add(next(iter(sorted(val_set))))
+                        if type_str == "setup_rising":
+                            a2f_data['setup_rising_rise_constraint'].add(
+                                sorted(val_set).pop()
+                            )
+                        else:
+                            a2f_data['hold_rising_rise_constraint'].add(
+                                sorted(val_set).pop()
+                            )
                         break
                 break
 
@@ -250,21 +247,26 @@ def a2f_timing_type(lib_fp, pin_line, type_str, rise_value, fall_value):
                                 break
 
                             val_set = populate_set(val_line, val_set)
-                        fall_value.add(sorted(val_set).pop())
-                        #fall_value.add(next(iter(sorted(val_set))))
+
+                        if type_str == "setup_rising":
+                            a2f_data['setup_rising_fall_constraint'].add(
+                                sorted(val_set).pop()
+                            )
+                        else:
+                            a2f_data['hold_rising_fall_constraint'].add(
+                                sorted(val_set).pop()
+                            )
                         break
                 break
 
-    return rise_value, fall_value
+    return a2f_data
 
 
 # =============================================================================
 
 
 def f2a_timing_type(
-        lib_fp, pin_line, type_str, rising_edge_cell_rise_val,
-        rising_edge_cell_fall_val, rising_edge_rise_tran_val,
-        rising_edge_fall_tran_val
+        lib_fp, pin_line, type_str, f2a_data
 ):
     """
     Collect F2A pin data
@@ -289,10 +291,13 @@ def f2a_timing_type(
 
                             val_set = populate_set(val_line, val_set)
 
-                        rising_edge_cell_rise_val.add(
-                            sorted(val_set).pop()
-                            #next(iter(sorted(val_set)))
-                        )
+                        f2a_data['rising_edge_cell_rise'].add(
+                            sorted(val_set).pop())
+
+                        #rising_edge_cell_rise_val.add(
+                        #    sorted(val_set).pop()
+                        #next(iter(sorted(val_set)))
+                        #)
                         break
                 break
 
@@ -313,10 +318,13 @@ def f2a_timing_type(
                                 break
 
                             val_set = populate_set(val_line, val_set)
-                        rising_edge_cell_fall_val.add(
-                            sorted(val_set).pop()
-                            #next(iter(sorted(val_set)))
-                        )
+
+                        f2a_data['rising_edge_cell_fall'].add(
+                            sorted(val_set).pop())
+                        #rising_edge_cell_fall_val.add(
+                        #    sorted(val_set).pop()
+                        #next(iter(sorted(val_set)))
+                        #)
                         break
                 break
 
@@ -337,10 +345,13 @@ def f2a_timing_type(
                                 break
 
                             val_set = populate_set(val_line, val_set)
-                        rising_edge_rise_tran_val.add(
-                            sorted(val_set).pop()
-                            #next(iter(sorted(val_set)))
-                        )
+
+                        f2a_data['rising_edge_rise_tran'].add(
+                            sorted(val_set).pop())
+                        #rising_edge_rise_tran_val.add(
+                        #    sorted(val_set).pop()
+                        #next(iter(sorted(val_set)))
+                        #)
                         break
                 break
 
@@ -361,14 +372,17 @@ def f2a_timing_type(
                                 break
 
                             val_set = populate_set(val_line, val_set)
-                        rising_edge_fall_tran_val.add(
-                            sorted(val_set).pop()
-                            #next(iter(sorted(val_set)))
-                        )
+
+                        f2a_data['rising_edge_fall_tran'].add(
+                            sorted(val_set).pop())
+                        #rising_edge_fall_tran_val.add(
+                        #    sorted(val_set).pop()
+                        #next(iter(sorted(val_set)))
+                        #)
                         break
                 break
 
-    return rising_edge_cell_rise_val, rising_edge_cell_fall_val, rising_edge_rise_tran_val, rising_edge_fall_tran_val
+    return f2a_data
 
 
 # =============================================================================
