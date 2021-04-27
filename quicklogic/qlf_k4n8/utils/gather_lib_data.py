@@ -298,10 +298,6 @@ def f2a_timing_type(lib_fp, pin_line, type_str, f2a_data):
                             sorted(val_set).pop()
                         )
 
-                        #rising_edge_cell_rise_val.add(
-                        #    sorted(val_set).pop()
-                        #next(iter(sorted(val_set)))
-                        #)
                         break
                 break
 
@@ -326,10 +322,6 @@ def f2a_timing_type(lib_fp, pin_line, type_str, f2a_data):
                         f2a_data['rising_edge_cell_fall'].add(
                             sorted(val_set).pop()
                         )
-                        #rising_edge_cell_fall_val.add(
-                        #    sorted(val_set).pop()
-                        #next(iter(sorted(val_set)))
-                        #)
                         break
                 break
 
@@ -354,10 +346,6 @@ def f2a_timing_type(lib_fp, pin_line, type_str, f2a_data):
                         f2a_data['rising_edge_rise_tran'].add(
                             sorted(val_set).pop()
                         )
-                        #rising_edge_rise_tran_val.add(
-                        #    sorted(val_set).pop()
-                        #next(iter(sorted(val_set)))
-                        #)
                         break
                 break
 
@@ -382,10 +370,6 @@ def f2a_timing_type(lib_fp, pin_line, type_str, f2a_data):
                         f2a_data['rising_edge_fall_tran'].add(
                             sorted(val_set).pop()
                         )
-                        #rising_edge_fall_tran_val.add(
-                        #    sorted(val_set).pop()
-                        #next(iter(sorted(val_set)))
-                        #)
                         break
                 break
 
