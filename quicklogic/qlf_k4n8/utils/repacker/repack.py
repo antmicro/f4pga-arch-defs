@@ -706,7 +706,10 @@ def repack_netlist_cell(
         # Pad with 0s to match LUT width
         assert (1 << lut_width) >= len(init), (lut_width, init)
         pad_len = (1 << lut_width) - len(init)
-        init = init + "0" * pad_len
+        init = "0" * pad_len + init
+
+        # Reverse LUT bit order
+        init = init[::-1]
 
         repacked_cell.parameters["LUT"] = init
 
@@ -734,6 +737,9 @@ def repack_netlist_cell(
         if "IN2_IS_CIN" in cell.parameters:
             repacked_cell.parameters["MODE"] = cell.parameters["IN2_IS_CIN"]
             del repacked_cell.parameters["IN2_IS_CIN"]
+
+        # Reverse LUT bit order
+        repacked_cell.parameters["LUT"] = repacked_cell.parameters["LUT"][::-1]
 
     # If the rule contains mode bits then append the MODE parameter to the cell
     if rule.mode_bits:
