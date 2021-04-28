@@ -2302,7 +2302,7 @@ pin (FB_PD_N) {
             voltage_name : "VSS";
             pg_type : primary_ground;
         }
-        pg_pin (VDD) {
+        pg_pin (VDDCORE) {
             direction : input
             voltage_name : "VDD";
             pg_type : primary_power;

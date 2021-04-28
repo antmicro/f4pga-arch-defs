@@ -22,8 +22,8 @@
     "output_timing": {
         "rising_edge_cell_rise_val": "3.13029",
         "rising_edge_cell_fall_val": "2.87035",
-        "rising_edge_rise_tran_val": "0.733056",
-        "rising_edge_fall_tran_val": "0.71935"
+        "rising_edge_rise_tran_val": "0.738346",
+        "rising_edge_fall_tran_val": "0.725622"
     },
     "input_timing": {
         "setup_rising_rise_constraint_val": "-1.058843",
