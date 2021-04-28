@@ -132,7 +132,8 @@ def a2f_process_lib_data(lib_fp):
             for pin_line in lib_fp:
                 if pin_line.find("setup_rising") != -1:
                     a2f_data_max, a2f_data_min = a2f_timing_type(
-                        lib_fp, pin_line, "setup_rising", a2f_data_max, a2f_data_min
+                        lib_fp, pin_line, "setup_rising", a2f_data_max,
+                        a2f_data_min
                     )
                 elif pin_line.find("hold_rising") != -1:
                     a2f_data_max, a2f_data_min = a2f_timing_type(
@@ -166,7 +167,11 @@ def a2f_process_lib_data(lib_fp):
                 'A2F {} least_val: {}, highest_val: {}'.format(
                     "setup_rising_rise_constraint_val",
                     next(
-                        iter(sorted(a2f_data_min['setup_rising_rise_constraint']))
+                        iter(
+                            sorted(
+                                a2f_data_min['setup_rising_rise_constraint']
+                            )
+                        )
                     ),
                     sorted(a2f_data_max['setup_rising_rise_constraint']).pop()
                 )
@@ -175,7 +180,11 @@ def a2f_process_lib_data(lib_fp):
                 'A2F {} least_val: {}, highest_val: {}'.format(
                     "setup_rising_fall_constraint_val",
                     next(
-                        iter(sorted(a2f_data_min['setup_rising_fall_constraint']))
+                        iter(
+                            sorted(
+                                a2f_data_min['setup_rising_fall_constraint']
+                            )
+                        )
                     ),
                     sorted(a2f_data_max['setup_rising_fall_constraint']).pop()
                 )
@@ -184,7 +193,11 @@ def a2f_process_lib_data(lib_fp):
                 'A2F {} least_val: {}, highest_val: {}'.format(
                     "hold_rising_rise_constraint_val",
                     next(
-                        iter(sorted(a2f_data_min['hold_rising_rise_constraint']))
+                        iter(
+                            sorted(
+                                a2f_data_min['hold_rising_rise_constraint']
+                            )
+                        )
                     ),
                     sorted(a2f_data_max['hold_rising_rise_constraint']).pop()
                 )
@@ -193,7 +206,11 @@ def a2f_process_lib_data(lib_fp):
                 'A2F {} least_val: {}, highest_val: {}'.format(
                     "hold_rising_fall_constraint_val",
                     next(
-                        iter(sorted(a2f_data_min['hold_rising_fall_constraint']))
+                        iter(
+                            sorted(
+                                a2f_data_min['hold_rising_fall_constraint']
+                            )
+                        )
                     ),
                     sorted(a2f_data_max['hold_rising_fall_constraint']).pop()
                 )
