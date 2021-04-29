@@ -17,6 +17,7 @@ RULES=${ARCH_DIR}/${DEVICE_1}.repacking_rules.json
 python3 ${REPACK} \
   --vpr-arch ${ARCH_DEF} \
   --repacking-rules ${RULES} \
+  --repacking-constraints $JSON \
   --eblif-in ${DESIGN}.eblif \
   --net-in ${DESIGN}.net \
   --place-in ${DESIGN}.place \

@@ -43,6 +43,7 @@ SDC=""
 OUT=()
 ROUTE_FLAG0=""
 MAX_CRITICALITY="0.0"
+JSON=""
 
 VERILOGLIST=0
 PCFNAME=0
@@ -54,6 +55,7 @@ PARTNAME=0
 SDCNAME=0
 OUTNAME=0
 ROUTE_NAME0=0
+JSON_NAME=0
 
 for arg_v in $@; do
 	echo $arg_v
@@ -69,6 +71,7 @@ for arg_v in $@; do
 			SDCNAME=0
 			OUTNAME=0
 			ROUTE_NAME0=0
+			JSON_NAME=0
 			;;
 		-t|--top)
 			VERILOGLIST=0
@@ -81,6 +84,7 @@ for arg_v in $@; do
 			SDCNAME=0
 			OUTNAME=0
 			ROUTE_NAME0=0
+			JSON_NAME=0
 			;;
 		-v|--verilog)
 			VERILOGLIST=1
@@ -93,6 +97,7 @@ for arg_v in $@; do
 			SDCNAME=0
 			OUTNAME=0
 			ROUTE_NAME0=0
+			JSON_NAME=0
 			;;
 		-d|--device)
 			VERILOGLIST=0
@@ -105,6 +110,7 @@ for arg_v in $@; do
 			SDCNAME=0
 			OUTNAME=0
 			ROUTE_NAME0=0
+			JSON_NAME=0
 			;;
 		-h|--help)
 			VERILOGLIST=0
@@ -117,6 +123,7 @@ for arg_v in $@; do
 			SDCNAME=0
 			OUTNAME=0
 			ROUTE_NAME0=0
+			JSON_NAME=0
 			;;
 		-p|--pcf)
 			VERILOGLIST=0
@@ -129,6 +136,7 @@ for arg_v in $@; do
 			SDCNAME=0
 			OUTNAME=0
 			ROUTE_NAME0=0
+			JSON_NAME=0
 			;;
 		-P|--part)
 			VERILOGLIST=0
@@ -141,6 +149,20 @@ for arg_v in $@; do
 			SDCNAME=0
 			OUTNAME=0
 			ROUTE_NAME0=0
+			JSON_NAME=0
+			;;
+		-j|--json)
+			VERILOGLIST=0
+			PCFNAME=0
+			TOPNAME=0
+			SOURCEDIR=0
+			HELPNAME=0
+			DEVICENAME=0
+			PARTNAME=1
+			SDCNAME=0
+			ROUTE_NAME0=0
+			OUTNAME=0
+			JSON_NAME=1
 			;;
 		-s|--sdc)
 			VERILOGLIST=0
@@ -153,6 +175,7 @@ for arg_v in $@; do
 			SDCNAME=1
 			OUTNAME=0
 			ROUTE_NAME0=0
+			JSON_NAME=0
 			;;
 		-r|--route_type)
 			VERILOGLIST=0
@@ -165,6 +188,7 @@ for arg_v in $@; do
 			SDCNAME=0
 			OUTNAME=0
 			ROUTE_NAME0=1
+			JSON_NAME=0
 			;;
 		-dump)
 			VERILOGLIST=0
@@ -177,6 +201,7 @@ for arg_v in $@; do
 			SDCNAME=0
 			OUTNAME=1
 			ROUTE_NAME0=0
+			JSON_NAME=0
 			;;
 		-synth|-compile)
 			VERILOGLIST=0
@@ -189,6 +214,7 @@ for arg_v in $@; do
 			SDCNAME=0
 			OUTNAME=0
 			ROUTE_NAME0=0
+			JSON_NAME=0
 			;;
 
 		*)
@@ -214,6 +240,8 @@ for arg_v in $@; do
             	esac
 			elif [ $PCFNAME -eq 1 ]; then
 				PCF="$arg_v"
+			elif [ $JSON_NAME -eq 1 ]; then
+			       JSON="$arg_v"
 			elif [ $SDCNAME -eq 1 ]; then
 				SDC="$arg_v"
 			elif [ $ROUTE_NAME0 -eq 1 ]; then
@@ -356,6 +384,7 @@ else
 fi
 
 export PCF_FILE=$PCF
+export JSON=$JSON
 export TOP_F=$TOP
 export PINMAP_FILE=$PINMAPCSV
 export MAX_CRITICALITY=$MAX_CRITICALITY
@@ -378,7 +407,18 @@ if [ -n "$PART" ]; then
     fi
 fi
 
+if [[ -f $SOURCE/$JSON ]];then
+	JSON_PATH=`realpath $SOURCE/$JSON`
+elif [[ -f $JSON ]];then
+	JSON_PATH=`realpath $JSON`
+else
+	echo "Invalid json file/path"
+	exit 1
+fi
+
+
 export PART=${CSV_PATH}
+export JSON=${JSON_PATH}
 
 MAKE_FILE=${CURR_DIR}/Makefile.symbiflow
 LOG_FILE=${CURR_DIR}/${BUILDDIR}/${TOP}.log
@@ -406,6 +446,7 @@ fi
 echo -e ".PHONY:\${BUILDDIR}\n 
 current_dir := $CURR_DIR\n\
 TOP := $TOP\n\
+JSON := $JSON\n\
 TOP_FINAL := $TOP_FINAL\n\
 VERILOG := $VERILOG_LIST \n\
 PARTNAME := $PART\n\
@@ -424,32 +465,32 @@ all: \${BUILDDIR}/\${TOP}.bit\n\
 	cd \${BUILDDIR} && symbiflow_synth -t \${TOP} -v \${VERILOG} -f \${FAMILY} -d \${DEVICE} -p \${PCF} 2>&1 > $LOG_FILE\n\
 \n\
 \${BUILDDIR}/\${TOP}.net: \${BUILDDIR}/\${TOP}.eblif\n\
-	cd \${BUILDDIR} && symbiflow_pack -e \${TOP}.eblif -f \${FAMILY} -d \${DEVICE} -s \${SDC} 2>&1 > $LOG_FILE\n\
+	cd \${BUILDDIR} && symbiflow_pack -e \${TOP}.eblif -f \${FAMILY} -d \${DEVICE} -s \${SDC} 2>&1 >> $LOG_FILE\n\
 \n\
 \${BUILDDIR}/\${TOP}.place: \${BUILDDIR}/\${TOP}.net \${PCF}\n\
-	cd \${BUILDDIR} && symbiflow_place -e \${TOP}.eblif -f \${FAMILY} -d \${DEVICE} -p \${PCF} -n \${TOP}.net -P \${PARTNAME} -s \${SDC} 2>&1 > $LOG_FILE\n\
+	cd \${BUILDDIR} && symbiflow_place -e \${TOP}.eblif -f \${FAMILY} -d \${DEVICE} -p \${PCF} -n \${TOP}.net -P \${PARTNAME} -s \${SDC} 2>&1 >> $LOG_FILE\n\
 " >$MAKE_FILE
 
 if [ "$TOP" != "$TOP_FINAL" ]; then
     echo -e "\
 \${BUILDDIR}/\${TOP_FINAL}.place: \${BUILDDIR}/\${TOP}.eblif \${BUILDDIR}/\${TOP}.net \${BUILDDIR}/\${TOP}.place\n\
-	cd \${BUILDDIR} && symbiflow_repack -e \${TOP}.eblif -n \${TOP}.net -f \${FAMILY} -d \${DEVICE} 2>&1 > $LOG_FILE\n\
+	cd \${BUILDDIR} && symbiflow_repack -e \${TOP}.eblif -n \${TOP}.net -f \${FAMILY} -d \${DEVICE} -j \${JSON} 2>&1 >> $LOG_FILE\n\
     " >>$MAKE_FILE
 fi
 
     echo -e "\
 \${BUILDDIR}/\${TOP_FINAL}.route: \${BUILDDIR}/\${TOP_FINAL}.place\n\
-	cd \${BUILDDIR} && symbiflow_route -e \${TOP_FINAL}.eblif -f \${FAMILY} -d \${DEVICE} -s \${SDC} 2>&1 > $LOG_FILE\n\
+	cd \${BUILDDIR} && symbiflow_route -e \${TOP_FINAL}.eblif -f \${FAMILY} -d \${DEVICE} -s \${SDC} 2>&1 >> $LOG_FILE\n\
 \n\
 \${BUILDDIR}/\${TOP}.post_v: \${BUILDDIR}/\${TOP_FINAL}.route\n\
-	cd \${BUILDDIR} && symbiflow_analysis -e \${TOP_FINAL}.eblif -f \${FAMILY} -d \${DEVICE} -s \${SDC} 2>&1 > $LOG_FILE\n\
+	cd \${BUILDDIR} && symbiflow_analysis -e \${TOP_FINAL}.eblif -f \${FAMILY} -d \${DEVICE} -s \${SDC} 2>&1 >> $LOG_FILE\n\
 \n\
 \${BUILDDIR}/\${TOP}.fasm: \${BUILDDIR}/\${TOP_FINAL}.route\n\
-	cd \${BUILDDIR} && symbiflow_write_fasm -e \${TOP_FINAL}.eblif -f \${FAMILY} -d \${DEVICE} -s \${SDC} 2>&1 > $LOG_FILE\n\
+	cd \${BUILDDIR} && symbiflow_write_fasm -e \${TOP_FINAL}.eblif -f \${FAMILY} -d \${DEVICE} -s \${SDC} 2>&1 >> $LOG_FILE\n\
 \n\
 \${BUILDDIR}/\${TOP}.bit: \${BUILDDIR}/\${TOP}.fasm\n\
-	cd \${BUILDDIR} && symbiflow_generate_bitstream -d \${FAMILY} -f \${TOP}.fasm -r 4byte -b \${TOP}.bit 2>&1 > $LOG_FILE\n\
-	cd \${BUILDDIR} && symbiflow_generate_bitstream -d \${FAMILY} -f \${TOP}.fasm -r txt -b \${TOP}.bin 2>&1 > $LOG_FILE\n\
+	cd \${BUILDDIR} && symbiflow_generate_bitstream -d \${FAMILY} -f \${TOP}.fasm -r 4byte -b \${TOP}.bit 2>&1 >> $LOG_FILE\n\
+	cd \${BUILDDIR} && symbiflow_generate_bitstream -d \${FAMILY} -f \${TOP}.fasm -r txt -b \${TOP}.bin 2>&1 >> $LOG_FILE\n\
 " >>$MAKE_FILE
 
 if [ "$HAVE_FASM2BELS" != 0 ]; then
