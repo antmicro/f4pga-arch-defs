@@ -412,8 +412,7 @@ if [[ -f $SOURCE/$JSON ]];then
 elif [[ -f $JSON ]];then
 	JSON_PATH=`realpath $JSON`
 else
-	echo "Invalid json file/path"
-	exit 1
+	JSON_PATH=""
 fi
 
 
@@ -472,10 +471,17 @@ all: \${BUILDDIR}/\${TOP}.bit\n\
 " >$MAKE_FILE
 
 if [ "$TOP" != "$TOP_FINAL" ]; then
+	if [ -z "$JSON" ];then
+    echo -e "\
+\${BUILDDIR}/\${TOP_FINAL}.place: \${BUILDDIR}/\${TOP}.eblif \${BUILDDIR}/\${TOP}.net \${BUILDDIR}/\${TOP}.place\n\
+	cd \${BUILDDIR} && symbiflow_repack -e \${TOP}.eblif -n \${TOP}.net -f \${FAMILY} -d \${DEVICE} 2>&1 >> $LOG_FILE\n\
+    " >>$MAKE_FILE
+      else
     echo -e "\
 \${BUILDDIR}/\${TOP_FINAL}.place: \${BUILDDIR}/\${TOP}.eblif \${BUILDDIR}/\${TOP}.net \${BUILDDIR}/\${TOP}.place\n\
 	cd \${BUILDDIR} && symbiflow_repack -e \${TOP}.eblif -n \${TOP}.net -f \${FAMILY} -d \${DEVICE} -j \${JSON} 2>&1 >> $LOG_FILE\n\
     " >>$MAKE_FILE
+       fi
 fi
 
     echo -e "\
