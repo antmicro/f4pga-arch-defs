@@ -20,7 +20,7 @@
       "pin": "clk[3]",
       "net": "OPEN"
     },
-	{
+    {
       "tile": "io",
       "pin": "clk[0]",
       "net": "clk"
