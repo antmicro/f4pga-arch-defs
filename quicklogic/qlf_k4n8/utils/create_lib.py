@@ -152,8 +152,8 @@ def create_lib(
     str_rep_date = curr_str.replace("{curr_date}", curr_date)
     str1 = str_rep_date.replace("{cell_name}", cell_name)
 
-    a2f_pin_list = [None]*len(port_names['A2F'])
-    f2a_pin_list = [None]*len(port_names['F2A'])
+    a2f_pin_list = [None] * len(port_names['A2F'])
+    f2a_pin_list = [None] * len(port_names['F2A'])
     for port in port_names['A2F']:
         pin_dir = "input"
         pin_used = False
@@ -190,7 +190,6 @@ def create_lib(
         else:
             print("ERROR: No index present in F2A port: '{}'\n".format(port))
 
-
     lib_data = ""
     a2f_bus_name = ""
     if len(a2f_pin_list) > 0:
@@ -217,18 +216,24 @@ def create_lib(
                         curr_str += form_in_timing_group(
                             clk_name, val, common_lib_data
                         )
-            curr_str += "\n{}}} /* end of pin {} */\n".format(add_tab(3), pin.name)
+            curr_str += "\n{}}} /* end of pin {} */\n".format(
+                add_tab(3), pin.name
+            )
             lib_data += curr_str
         else:
             curr_str = "\n{}pin ({}) {{".format(add_tab(3), pin.name)
             cap = common_lib_data["input_unused"]['cap']
             max_tran = common_lib_data["input_unused"]['max_tran']
             curr_str += form_pin_header(pin.dir, cap, max_tran)
-            curr_str += "\n{}}} /* end of pin {} */\n".format(add_tab(3), pin.name)
+            curr_str += "\n{}}} /* end of pin {} */\n".format(
+                add_tab(3), pin.name
+            )
             lib_data += curr_str
 
     if len(a2f_pin_list) > 0:
-        lib_data += "\n{}}} /* end of bus {} */\n".format(add_tab(2), a2f_bus_name)
+        lib_data += "\n{}}} /* end of bus {} */\n".format(
+            add_tab(2), a2f_bus_name
+        )
 
     f2a_bus_name = ""
     if len(f2a_pin_list) > 0:
@@ -257,18 +262,23 @@ def create_lib(
                 curr_str += form_out_reset_timing_group(
                     "RESET_N", "positive_unate", "clear", common_lib_data
                 )
-            curr_str += "\n{}}} /* end of pin {} */\n".format(add_tab(3), pin.name)
+            curr_str += "\n{}}} /* end of pin {} */\n".format(
+                add_tab(3), pin.name
+            )
             lib_data += curr_str
         else:
             curr_str = "\n{}pin ({}) {{".format(add_tab(3), pin.name)
             cap = common_lib_data["output_unused"]['cap']
             max_tran = common_lib_data["output_unused"]['max_tran']
             curr_str += form_pin_header(pin.dir, cap, max_tran)
-            curr_str += "\n{}}} /* end of pin {} */\n".format(add_tab(3), pin.name)
+            curr_str += "\n{}}} /* end of pin {} */\n".format(
+                add_tab(3), pin.name
+            )
             lib_data += curr_str
     if len(f2a_pin_list) > 0:
-        lib_data += "\n{}}} /* end of bus {} */\n".format(add_tab(2), f2a_bus_name)
-
+        lib_data += "\n{}}} /* end of bus {} */\n".format(
+            add_tab(2), f2a_bus_name
+        )
 
     dedicated_pin_tmpl = template_data_path + "/" + device_name + '_dedicated_pin_lib_data.txt'
     dedicated_pin_lib_file = os.path.join(curr_dir, dedicated_pin_tmpl)
@@ -283,6 +293,7 @@ def create_lib(
 
 # =============================================================================
 
+
 def port_index(port):
     """
     Returns index in the port name like gfpga_pad_IO_A2F[1248]
@@ -294,6 +305,7 @@ def port_index(port):
         index = int(match.group("index"))
 
     return index
+
 
 def form_pin_header(direction, cap, max_tran):
     '''
@@ -318,17 +330,12 @@ def form_out_reset_timing_group(
     cell_fall_val = common_lib_data["reset_timing"]['cell_fall_val']
     fall_tran_val = common_lib_data["reset_timing"]['fall_tran_val']
     curr_str = "\n{}timing () {{\n{}related_pin : \"{}\";".format(
-        add_tab(4),
-        add_tab(5),
-        reset_name
+        add_tab(4), add_tab(5), reset_name
     )
     curr_str += "\n{}timing_sense : {};".format(add_tab(5), timing_sense)
     curr_str += "\n{}timing_type : {};".format(add_tab(5), timing_type)
     curr_str += "\n{}cell_fall (scalar) {{\n{}values({});\n{}}}".format(
-        add_tab(5),
-        add_tab(6),
-        cell_fall_val,
-        add_tab(5)
+        add_tab(5), add_tab(6), cell_fall_val, add_tab(5)
     )
     curr_str += "\n{}fall_transition (scalar) {{\n{}values({});\n{}}}".format(
         add_tab(5), add_tab(6), fall_tran_val, add_tab(5)
@@ -353,25 +360,17 @@ def form_out_timing_group(clk_name, timing_type, common_lib_data):
     fall_tran_val = common_lib_data["output_timing"
                                     ]['rising_edge_fall_tran_val']
     curr_str = "\n{}timing () {{\n{}related_pin : \"{}\";".format(
-        add_tab(4),
-        add_tab(5),
-        clk_name
+        add_tab(4), add_tab(5), clk_name
     )
     curr_str += "\n{}timing_type : {};".format(add_tab(5), timing_type)
     curr_str += "\n{}cell_rise (scalar) {{\n{}values({});\n{}}}".format(
-        add_tab(5),
-        add_tab(6),
-        cell_rise_val,
-        add_tab(5)
+        add_tab(5), add_tab(6), cell_rise_val, add_tab(5)
     )
     curr_str += "\n{}rise_transition (scalar) {{\n{}values({});\n{}}}".format(
         add_tab(5), add_tab(6), rise_tran_val, add_tab(5)
     )
     curr_str += "\n{}cell_fall (scalar) {{\n{}values({});\n{}}}".format(
-        add_tab(5),
-        add_tab(6),
-        cell_fall_val,
-        add_tab(5)
+        add_tab(5), add_tab(6), cell_fall_val, add_tab(5)
     )
     curr_str += "\n{}fall_transition (scalar) {{\n{}values({});\n{}}}".format(
         add_tab(5), add_tab(6), fall_tran_val, add_tab(5)
@@ -382,14 +381,17 @@ def form_out_timing_group(clk_name, timing_type, common_lib_data):
 
 # =============================================================================
 
+
 def add_tab(num_tabs):
     """
     Add given number of tabs and return the string
     """
-    curr_str = "\t"*num_tabs
+    curr_str = "\t" * num_tabs
     return curr_str
 
+
 # =============================================================================
+
 
 def form_in_timing_group(clk_name, timing_type, common_lib_data):
     '''
@@ -409,9 +411,7 @@ def form_in_timing_group(clk_name, timing_type, common_lib_data):
             'hold_rising_fall_constraint_val']
 
     curr_str = "\n{}timing () {{\n{}related_pin : \"{}\";".format(
-        add_tab(4),
-        add_tab(5),
-        clk_name
+        add_tab(4), add_tab(5), clk_name
     )
     curr_str += "\n{}timing_type : {};".format(add_tab(5), timing_type)
     curr_str += "\n{}rise_constraint (scalar) {{\n{}values({});\n{}}}".format(
