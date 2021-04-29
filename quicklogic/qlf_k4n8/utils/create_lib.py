@@ -242,7 +242,7 @@ def create_lib(
             f2a_bus_name = f2a_pin_list[0].name[0:pos]
             lib_data += "\n{}bus ( {} ) {{\n".format(add_tab(2), f2a_bus_name)
             lib_data += "\n{}bus_type   : BUS1536_type1 ;".format(add_tab(3))
-            lib_data += "\n{}direction  : input ;\n".format(add_tab(3))
+            lib_data += "\n{}direction  : output ;\n".format(add_tab(3))
 
     for pin in f2a_pin_list:
         if pin.used:
