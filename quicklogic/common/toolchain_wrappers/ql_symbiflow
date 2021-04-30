@@ -461,42 +461,42 @@ all: \${BUILDDIR}/\${TOP}.bit\n\
   ifneq (\"\$(wildcard \$(HEX_FILES))\",\"\")\n\
 	\$(shell cp \${current_dir}/*.hex \${BUILDDIR})\n\
   endif\n\
-	cd \${BUILDDIR} && symbiflow_synth -t \${TOP} -v \${VERILOG} -f \${FAMILY} -d \${DEVICE} -p \${PCF} 2>&1 > $LOG_FILE\n\
+	cd \${BUILDDIR} && symbiflow_synth -t \${TOP} -v \${VERILOG} -f \${FAMILY} -d \${DEVICE} -p \${PCF} > $LOG_FILE 2>&1\n\
 \n\
 \${BUILDDIR}/\${TOP}.net: \${BUILDDIR}/\${TOP}.eblif\n\
-	cd \${BUILDDIR} && symbiflow_pack -e \${TOP}.eblif -f \${FAMILY} -d \${DEVICE} -s \${SDC} 2>&1 >> $LOG_FILE\n\
+	cd \${BUILDDIR} && symbiflow_pack -e \${TOP}.eblif -f \${FAMILY} -d \${DEVICE} -s \${SDC} >> $LOG_FILE 2>&1\n\
 \n\
 \${BUILDDIR}/\${TOP}.place: \${BUILDDIR}/\${TOP}.net \${PCF}\n\
-	cd \${BUILDDIR} && symbiflow_place -e \${TOP}.eblif -f \${FAMILY} -d \${DEVICE} -p \${PCF} -n \${TOP}.net -P \${PARTNAME} -s \${SDC} 2>&1 >> $LOG_FILE\n\
+	cd \${BUILDDIR} && symbiflow_place -e \${TOP}.eblif -f \${FAMILY} -d \${DEVICE} -p \${PCF} -n \${TOP}.net -P \${PARTNAME} -s \${SDC} >> $LOG_FILE 2>&1\n\
 " >$MAKE_FILE
 
 if [ "$TOP" != "$TOP_FINAL" ]; then
 	if [ -z "$JSON" ];then
     echo -e "\
 \${BUILDDIR}/\${TOP_FINAL}.place: \${BUILDDIR}/\${TOP}.eblif \${BUILDDIR}/\${TOP}.net \${BUILDDIR}/\${TOP}.place\n\
-	cd \${BUILDDIR} && symbiflow_repack -e \${TOP}.eblif -n \${TOP}.net -f \${FAMILY} -d \${DEVICE} 2>&1 >> $LOG_FILE\n\
+	cd \${BUILDDIR} && symbiflow_repack -e \${TOP}.eblif -n \${TOP}.net -f \${FAMILY} -d \${DEVICE} >> $LOG_FILE 2>&1\n\
     " >>$MAKE_FILE
       else
     echo -e "\
 \${BUILDDIR}/\${TOP_FINAL}.place: \${BUILDDIR}/\${TOP}.eblif \${BUILDDIR}/\${TOP}.net \${BUILDDIR}/\${TOP}.place\n\
-	cd \${BUILDDIR} && symbiflow_repack -e \${TOP}.eblif -n \${TOP}.net -f \${FAMILY} -d \${DEVICE} -j \${JSON} 2>&1 >> $LOG_FILE\n\
+	cd \${BUILDDIR} && symbiflow_repack -e \${TOP}.eblif -n \${TOP}.net -f \${FAMILY} -d \${DEVICE} -j \${JSON} >> $LOG_FILE 2>&1\n\
     " >>$MAKE_FILE
        fi
 fi
 
     echo -e "\
 \${BUILDDIR}/\${TOP_FINAL}.route: \${BUILDDIR}/\${TOP_FINAL}.place\n\
-	cd \${BUILDDIR} && symbiflow_route -e \${TOP_FINAL}.eblif -f \${FAMILY} -d \${DEVICE} -s \${SDC} 2>&1 >> $LOG_FILE\n\
+	cd \${BUILDDIR} && symbiflow_route -e \${TOP_FINAL}.eblif -f \${FAMILY} -d \${DEVICE} -s \${SDC} >> $LOG_FILE 2>&1\n\
 \n\
 \${BUILDDIR}/\${TOP}.post_v: \${BUILDDIR}/\${TOP_FINAL}.route\n\
-	cd \${BUILDDIR} && symbiflow_analysis -e \${TOP_FINAL}.eblif -f \${FAMILY} -d \${DEVICE} -s \${SDC} 2>&1 >> $LOG_FILE\n\
+	cd \${BUILDDIR} && symbiflow_analysis -e \${TOP_FINAL}.eblif -f \${FAMILY} -d \${DEVICE} -s \${SDC} >> $LOG_FILE 2>&1\n\
 \n\
 \${BUILDDIR}/\${TOP}.fasm: \${BUILDDIR}/\${TOP_FINAL}.route\n\
-	cd \${BUILDDIR} && symbiflow_write_fasm -e \${TOP_FINAL}.eblif -f \${FAMILY} -d \${DEVICE} -s \${SDC} 2>&1 >> $LOG_FILE\n\
+	cd \${BUILDDIR} && symbiflow_write_fasm -e \${TOP_FINAL}.eblif -f \${FAMILY} -d \${DEVICE} -s \${SDC} >> $LOG_FILE 2>&1\n\
 \n\
 \${BUILDDIR}/\${TOP}.bit: \${BUILDDIR}/\${TOP}.fasm\n\
-	cd \${BUILDDIR} && symbiflow_generate_bitstream -d \${FAMILY} -f \${TOP}.fasm -r 4byte -b \${TOP}.bit 2>&1 >> $LOG_FILE\n\
-	cd \${BUILDDIR} && symbiflow_generate_bitstream -d \${FAMILY} -f \${TOP}.fasm -r txt -b \${TOP}.bin 2>&1 >> $LOG_FILE\n\
+	cd \${BUILDDIR} && symbiflow_generate_bitstream -d \${FAMILY} -f \${TOP}.fasm -r 4byte -b \${TOP}.bit >> $LOG_FILE 2>&1\n\
+	cd \${BUILDDIR} && symbiflow_generate_bitstream -d \${FAMILY} -f \${TOP}.fasm -r txt -b \${TOP}.bin >> $LOG_FILE 2>&1\n\
 " >>$MAKE_FILE
 
 if [ "$HAVE_FASM2BELS" != 0 ]; then
