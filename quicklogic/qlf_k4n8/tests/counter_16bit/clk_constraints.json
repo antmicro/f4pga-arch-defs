@@ -2,43 +2,8 @@
   "repacking_constraints": [
     {
       "tile": "clb",
-      "pin": "clk[0]",
-      "net": "clk"
-    },
-    {
-      "tile": "clb",
-      "pin": "clk[1]",
-      "net": "OPEN"
-    },
-    {
-      "tile": "clb",
-      "pin": "clk[2]",
-      "net": "OPEN"
-    },
-    {
-      "tile": "clb",
       "pin": "clk[3]",
-      "net": "OPEN"
-    },
-    {
-      "tile": "io",
-      "pin": "clk[0]",
       "net": "clk"
-    },
-    {
-      "tile": "io",
-      "pin": "clk[1]",
-      "net": "OPEN"
-    },
-    {
-      "tile": "io",
-      "pin": "clk[2]",
-      "net": "OPEN"
-    },
-    {
-      "tile": "io",
-      "pin": "clk[3]",
-      "net": "OPEN"
     }
   ]
 }
