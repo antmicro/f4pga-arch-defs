@@ -57,22 +57,22 @@ function(DEFINE_QL_TOOLCHAIN_TARGET)
           DESTINATION share/symbiflow/scripts/${FAMILY})
 
   # Example design to run through the flow
-  install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/${FAMILY}/tests/counter_16bit/counter_16bit.v
+  install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/${FAMILY}/tests/design_flow/counter_16bit/counter_16bit.v
           DESTINATION share/symbiflow/tests/counter_16bit
           PERMISSIONS WORLD_READ OWNER_WRITE OWNER_READ GROUP_READ)
-  install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/${FAMILY}/tests/counter_16bit/counter_16bit_tb.v
+  install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/${FAMILY}/tests/design_flow/counter_16bit/counter_16bit_tb.v
           DESTINATION share/symbiflow/tests/counter_16bit
           PERMISSIONS WORLD_READ OWNER_WRITE OWNER_READ GROUP_READ)
-  install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/${FAMILY}/tests/counter_16bit/counter_16bit.pcf
+  install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/${FAMILY}/tests/design_flow/counter_16bit/counter_16bit.pcf
 	  DESTINATION share/symbiflow/tests/counter_16bit
           PERMISSIONS WORLD_READ OWNER_WRITE OWNER_READ GROUP_READ)
-  install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/${FAMILY}/tests/counter_16bit/pinmap_qlf_k4n8_umc22.csv
+  install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/${FAMILY}/tests/design_flow/counter_16bit/pinmap_qlf_k4n8_umc22.csv
 	  DESTINATION share/symbiflow/tests/counter_16bit
 	  PERMISSIONS WORLD_READ OWNER_WRITE OWNER_READ GROUP_READ)
-  install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/${FAMILY}/tests/counter_16bit/counter_16bit.sdc
+  install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/${FAMILY}/tests/design_flow/counter_16bit/counter_16bit.sdc
           DESTINATION share/symbiflow/tests/counter_16bit
           PERMISSIONS WORLD_READ OWNER_WRITE OWNER_READ GROUP_READ)
-  install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/${FAMILY}/tests/counter_16bit/clk_constraints.json
+  install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/${FAMILY}/tests/design_flow/counter_16bit/clk_constraints.json
           DESTINATION share/symbiflow/tests/counter_16bit
           PERMISSIONS WORLD_READ OWNER_WRITE OWNER_READ GROUP_READ)
 
