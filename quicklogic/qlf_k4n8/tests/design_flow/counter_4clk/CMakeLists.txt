@@ -1,4 +1,5 @@
-add_file_target(FILE counter_4clk.v SCANNER_TYPE verilog)
+set(CURR_DIR ${QL_DESIGNS_DIR}/counter_4clk)
+add_file_target(FILE ${CURR_DIR}/counter_4clk.v SCANNER_TYPE verilog)
 add_file_target(FILE counter_4clk.sdc SCANNER_TYPE)
 add_file_target(FILE test.pcf)
 
@@ -6,7 +7,7 @@ add_fpga_target(
   NAME counter_4clk-umc22-no-adder
   TOP top
   BOARD qlf_k4n8-qlf_k4n8_umc22_board
-  SOURCES counter_4clk.v
+  SOURCES ${CURR_DIR}/counter_4clk.v
   INPUT_IO_FILE test.pcf
   INPUT_SDC_FILE counter_4clk.sdc
   EXPLICIT_ADD_FILE_TARGET
@@ -18,7 +19,7 @@ add_fpga_target(
   NAME counter_4clk-umc22-adder
   TOP top
   BOARD qlf_k4n8-qlf_k4n8_umc22_board
-  SOURCES counter_4clk.v
+  SOURCES ${CURR_DIR}/counter_4clk.v
   INPUT_IO_FILE test.pcf
   INPUT_SDC_FILE counter_4clk.sdc
   EXPLICIT_ADD_FILE_TARGET
