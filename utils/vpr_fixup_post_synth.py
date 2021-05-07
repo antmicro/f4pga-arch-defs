@@ -23,8 +23,12 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
 
-    parser.add_argument("i", type=str, help="Input Verilog file")
-    parser.add_argument("o", type=str, help="Output Verilog file")
+    parser.add_argument(
+        "-i", type=str, required=True, help="Input Verilog file"
+    )
+    parser.add_argument(
+        "-o", type=str, required=True, help="Output Verilog file"
+    )
 
     args = parser.parse_args()
 

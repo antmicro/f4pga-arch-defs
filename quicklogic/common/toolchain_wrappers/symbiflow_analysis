@@ -17,5 +17,5 @@ run_vpr --analysis --gen_post_synthesis_netlist on
 mv vpr_stdout.log analysis.log
 
 python3 ${FIXUP_POST_SYNTHESIS} \
-    ${TOP}_post_synthesis.v \
-    ${TOP}_post_synthesis.v
+    -i ${TOP}_post_synthesis.v \
+    -o ${TOP}_post_synthesis.v

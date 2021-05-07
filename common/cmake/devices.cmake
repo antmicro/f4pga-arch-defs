@@ -2151,8 +2151,8 @@ function(ADD_FPGA_TARGET)
     COMMAND ${CMAKE_COMMAND} -E copy ${OUT_LOCAL}/vpr_stdout.log
         ${OUT_LOCAL}/analysis.log
     COMMAND ${PYTHON3} ${FIXUP_POST_SYNTHESIS}
-        ${OUT_POST_SYNTHESIS_V}
-        ${OUT_POST_SYNTHESIS_V}
+        -i ${OUT_POST_SYNTHESIS_V}
+        -o ${OUT_POST_SYNTHESIS_V}
     WORKING_DIRECTORY ${OUT_LOCAL}
     )
   add_custom_target(${NAME}_analysis DEPENDS ${OUT_ANALYSIS})
