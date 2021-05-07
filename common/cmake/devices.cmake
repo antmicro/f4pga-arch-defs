@@ -2139,15 +2139,20 @@ function(ADD_FPGA_TARGET)
 
   # Generate analysis.
   #-------------------------------------------------------------------------
+  set(FIXUP_POST_SYNTHESIS ${symbiflow-arch-defs_SOURCE_DIR}/utils/vpr_fixup_post_synth.py)
+
   set(OUT_ANALYSIS ${OUT_LOCAL}/analysis.log)
-  set(OUT_POST_SYNTHESIS_V ${OUT_LOCAL}/top_post_synthesis.v)
-  set(OUT_POST_SYNTHESIS_BLIF ${OUT_LOCAL}/top_post_synthesis.blif)
+  set(OUT_POST_SYNTHESIS_V ${OUT_LOCAL}/${TOP}_post_synthesis.v)
+  set(OUT_POST_SYNTHESIS_BLIF ${OUT_LOCAL}/${TOP}_post_synthesis.blif)
   add_custom_command(
     OUTPUT ${OUT_ANALYSIS} ${OUT_POST_SYNTHESIS_V} ${OUT_POST_SYNTHESIS_BLIF}
-    DEPENDS ${OUT_ROUTE} ${VPR_DEPS}
+    DEPENDS ${OUT_ROUTE} ${VPR_DEPS} ${PYTHON3} ${FIXUP_POST_SYNTHESIS}
     COMMAND ${VPR_CMD} ${OUT_EBLIF} ${VPR_ARGS} --analysis --gen_post_synthesis_netlist on
     COMMAND ${CMAKE_COMMAND} -E copy ${OUT_LOCAL}/vpr_stdout.log
         ${OUT_LOCAL}/analysis.log
+    COMMAND ${PYTHON3} ${FIXUP_POST_SYNTHESIS}
+        ${OUT_POST_SYNTHESIS_V}
+        ${OUT_POST_SYNTHESIS_V}
     WORKING_DIRECTORY ${OUT_LOCAL}
     )
   add_custom_target(${NAME}_analysis DEPENDS ${OUT_ANALYSIS})
