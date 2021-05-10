@@ -1,2 +1,3 @@
 #Add feature specific testcases here 
-#add_subdirectory(dct_mac)
+add_subdirectory(bit_file)
+add_subdirectory(fasm_file)
