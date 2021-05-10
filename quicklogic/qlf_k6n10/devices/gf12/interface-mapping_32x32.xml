@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  XML file specification is primarily to define the mapping of the interface cell ports defined
+  in vpr_arch xml, to the EFPGA IO interface port names. This mapping is required by Symbiflow
+  alongwith architecture definition file i.e. vpr_arch xml file. Symbiflow will process this 
+  file and use this information for IO placement and then later on use this to map it with the 
+  user-defined pin-mapping file.
+-->
+<DEVICE name= "qlf_k6n10_gf12" family="qlf_k6n10" width="130" height="130" z="1">
+  <IO>
+    <TOP_IO y="0">
+        <CELL port_name="outpad" mapped_name="gfpga_pad_IO_top[0:127]" startx="1" endx="128"/>
+        <CELL port_name="inpad" mapped_name="gfpga_pad_IO_top[0:127]" startx="1" endx="128"/>
+    </TOP_IO>
+    <RIGHT_IO x="129">
+        <CELL port_name="outpad" mapped_name="gfpga_pad_IO_right[0:127]" starty="128" endy="1"/>
+        <CELL port_name="inpad" mapped_name="gfpga_pad_IO_right[0:127]" starty="128" endy="1"/>
+    </RIGHT_IO>
+    <BOTTOM_IO y="129">
+        <CELL port_name="outpad" mapped_name="gfpga_pad_IO_bot[0:127]" startx="128" endx="1"/>
+        <CELL port_name="inpad" mapped_name="gfpga_pad_IO_bot[0:127]" startx="128" endx="1"/>
+    </BOTTOM_IO>
+    <LEFT_IO x="0">
+        <CELL port_name="outpad" mapped_name="gfpga_pad_IO_left[0:127]" starty="1" endy="128"/>
+        <CELL port_name="inpad" mapped_name="gfpga_pad_IO_left[0:127]" starty="1" endy="128"/>
+    </LEFT_IO>
+  </IO>
+</DEVICE>
