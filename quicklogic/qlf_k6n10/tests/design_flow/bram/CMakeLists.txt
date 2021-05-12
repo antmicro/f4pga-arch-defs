@@ -40,5 +40,5 @@ add_fpga_target(
 
 add_dependencies(all_qlf_k6n10_tests_adder    bram-gf12-mode0_route)
 add_dependencies(all_qlf_k6n10_tests_adder    bram-gf12-mode1_route)
-add_dependencies(all_qlf_k6n10_tests_adder    bram-gf12-mode2_route)
-add_dependencies(all_qlf_k6n10_tests_adder    bram-gf12-mode3_route)
+#add_dependencies(all_qlf_k6n10_tests_adder    bram-gf12-mode2_route)
+#add_dependencies(all_qlf_k6n10_tests_adder    bram-gf12-mode3_route)

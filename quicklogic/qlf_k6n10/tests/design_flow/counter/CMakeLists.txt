@@ -19,4 +19,4 @@ add_fpga_target(
 #  )
 
 add_dependencies(all_qlf_k6n10_tests_no_adder counter-gf12-no-adder_route)
-add_dependencies(all_qlf_k6n10_tests_adder    counter-gf12-adder_route)
+#add_dependencies(all_qlf_k6n10_tests_adder    counter-gf12-adder_route)

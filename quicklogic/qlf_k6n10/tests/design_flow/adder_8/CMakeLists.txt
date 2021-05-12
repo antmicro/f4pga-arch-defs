@@ -17,5 +17,5 @@ add_fpga_target(
   EXPLICIT_ADD_FILE_TARGET
   )
 
-add_dependencies(all_qlf_k6n10_tests_no_adder adder_8-gf12-no-adder_route)
+#add_dependencies(all_qlf_k6n10_tests_no_adder adder_8-gf12-no-adder_route)
 add_dependencies(all_qlf_k6n10_tests_adder    adder_8-gf12-adder_route)
