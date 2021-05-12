@@ -26,4 +26,6 @@ quicklogic_define_qlf_arch(
 add_subdirectory(devices)
 include(boards.cmake)
 
-add_subdirectory(tests)
+# qlf_k6n10 arch is too large, testcases are stalling CI runs.
+# Test are disabled until the test benchmark is setup.
+#add_subdirectory(tests)
