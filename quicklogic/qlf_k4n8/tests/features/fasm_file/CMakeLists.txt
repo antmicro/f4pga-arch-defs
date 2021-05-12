@@ -10,7 +10,7 @@ set(BITSTREAM ${CMAKE_CURRENT_BINARY_DIR}/dct_mac_test2-umc22-adder/qlf_k4n8-${Q
 add_fpga_target(
   NAME dct_mac_test2-umc22-adder
   TOP dct_mac
-  BOARD qlf_k4n8-qlf_k4n8_umc22_board
+  BOARD qlf_k4n8-qlf_k4n8_umc22_slow_board
   SOURCES ${DCT_MAC}
   EXPLICIT_ADD_FILE_TARGET
   )

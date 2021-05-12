@@ -10,7 +10,7 @@ set(BITSTREAM ${CMAKE_CURRENT_BINARY_DIR}/counter_16bit_test2-umc22-adder/qlf_k4
 add_fpga_target(
   NAME counter_16bit_test2-umc22-adder
   TOP top
-  BOARD qlf_k4n8-qlf_k4n8_umc22_board
+  BOARD qlf_k4n8-qlf_k4n8_umc22_slow_board
   SOURCES ${COUNTER_16BIT}
   EXPLICIT_ADD_FILE_TARGET
   )
