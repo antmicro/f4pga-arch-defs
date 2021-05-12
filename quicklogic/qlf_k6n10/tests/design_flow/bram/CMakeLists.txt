@@ -20,21 +20,23 @@ add_fpga_target(
   DEFINES TOP=BRAM_16x1024
   )
 
-add_fpga_target(
-  NAME bram-gf12-mode2
-  BOARD qlf_k6n10-qlf_k6n10_gf12_board
-  SOURCES ${BRAM}
-  EXPLICIT_ADD_FILE_TARGET
-  DEFINES TOP=BRAM_8x2048
-  )
+#Disabled mode to avoid Stalling CI, will be enabled after test benchmark is set up.
 
-add_fpga_target(
-  NAME bram-gf12-mode3
-  BOARD qlf_k6n10-qlf_k6n10_gf12_board
-  SOURCES ${BRAM}
-  EXPLICIT_ADD_FILE_TARGET
-  DEFINES TOP=BRAM_4x4096
-  )
+#add_fpga_target(
+#  NAME bram-gf12-mode2
+#  BOARD qlf_k6n10-qlf_k6n10_gf12_board
+#  SOURCES ${BRAM}
+#  EXPLICIT_ADD_FILE_TARGET
+#  DEFINES TOP=BRAM_8x2048
+#  )
+
+#add_fpga_target(
+#  NAME bram-gf12-mode3
+#  BOARD qlf_k6n10-qlf_k6n10_gf12_board
+#  SOURCES ${BRAM}
+#  EXPLICIT_ADD_FILE_TARGET
+#  DEFINES TOP=BRAM_4x4096
+#  )
 
 add_dependencies(all_qlf_k6n10_tests_adder    bram-gf12-mode0_route)
 add_dependencies(all_qlf_k6n10_tests_adder    bram-gf12-mode1_route)
