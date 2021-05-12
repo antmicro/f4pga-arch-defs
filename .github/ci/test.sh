@@ -30,7 +30,7 @@ start_section "symbiflow.build_all_rrgraph_xmls" "Build all rrgraph XMLs."
 make all_rrgraph_xmls
 end_section "symbiflow.build_all_rrgraph_xmls"
 
-make_target all_route_tests "Complete all routing tests"
+MAKE_JOBS=1 make_target all_route_tests "Complete all routing tests"
 
 echo "Suppressing some xml linting, as the 5k/8k parts cannot be built on GH actions."
 make_target all_xml_lint "Complete all xmllint"
