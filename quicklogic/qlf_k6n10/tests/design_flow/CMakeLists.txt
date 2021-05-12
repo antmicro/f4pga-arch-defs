@@ -1,7 +1,7 @@
 #Testcases for the design flow
 add_subdirectory(counter)
 add_subdirectory(adder_8)
-add_subdirectory(bram)
+#add_subdirectory(bram)
 
 # The k6n10 architecture is too large, having a lot of testcase is stalling CI.
 # Testcases will be enabled after test benchmark is set up.
