@@ -9,13 +9,15 @@ set(BITSTREAM ${CMAKE_CURRENT_BINARY_DIR}/counter_16bit_test2-umc22-adder/qlf_k4
 
 add_fpga_target(
   NAME counter_16bit_test2-umc22-adder
-  TOP counter_16bit
+  TOP top
   BOARD qlf_k4n8-qlf_k4n8_umc22_board
   SOURCES ${COUNTER_16BIT}
   EXPLICIT_ADD_FILE_TARGET
   )
 
 add_dependencies(all_qlf_k4n8_tests_adder post_synthesis_verify)
+#add_dependencies(post_synthesis_verify counter_16bit_test2-umc22-adder_analysis)
+
 add_custom_target(
   post_synthesis_verify
   COMMAND diff ${BITSTREAM} ${GOLDEN_BITSTREAM}
