@@ -84,7 +84,7 @@ function(DEFINE_QL_TOOLCHAIN_TARGET)
   install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/common/utils/pinmap_parse.py
           DESTINATION bin/python
           PERMISSIONS WORLD_READ OWNER_WRITE OWNER_READ GROUP_READ)
-  
+
   install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/${FAMILY}/utils/create_lib.py
 	  DESTINATION bin/python
 	  PERMISSIONS WORLD_READ OWNER_WRITE OWNER_READ GROUP_READ)
@@ -139,7 +139,7 @@ function(DEFINE_QL_TOOLCHAIN_TARGET)
   # install lib files
   install(DIRECTORY ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/${FAMILY}/devices/umc22/
 	  DESTINATION "share/symbiflow/arch/${FAMILY}-${FAMILY}_umc22_${FAMILY}-${FAMILY}_umc22/lib"
-	  FILES_MATCHING 
+	  FILES_MATCHING
 	  PATTERN "*.txt"
 	  PATTERN "*.json"
 	  PATTERN "*.xml")
