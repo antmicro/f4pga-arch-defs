@@ -2304,6 +2304,24 @@ function(ADD_FPGA_TARGET)
     )
   add_custom_target(${NAME}_analysis DEPENDS ${OUT_ANALYSIS})
 
+  # Add targets for post-pnr files and store them as properties for later
+  # reference
+  set(OUT_POST_PNR_V    ${OUT_LOCAL_REL}/${TOP}_post_synthesis.v)
+  set(OUT_POST_PNR_BLIF ${OUT_LOCAL_REL}/${TOP}_post_synthesis.blif)
+  set(OUT_POST_PNR_SDF  ${OUT_LOCAL_REL}/${TOP}_post_synthesis.sdf)
+
+  add_file_target(FILE ${OUT_POST_PNR_V}    GENERATED)
+  add_file_target(FILE ${OUT_POST_PNR_BLIF} GENERATED)
+  add_file_target(FILE ${OUT_POST_PNR_SDF}  GENERATED)
+
+  set_target_properties(
+    ${NAME}
+    PROPERTIES
+      POST_PNR_BLIF ${OUT_POST_PNR_BLIF}
+      POST_PNR_V    ${OUT_POST_PNR_V}
+      POST_PNR_SDF  ${OUT_POST_PNR_SDF}
+  )
+
   get_target_property_required(NO_BITSTREAM ${ARCH} NO_BITSTREAM)
   if(NOT ${NO_BITSTREAM})
     if(${USE_FASM})
