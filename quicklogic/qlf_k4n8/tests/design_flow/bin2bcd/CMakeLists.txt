@@ -10,6 +10,10 @@ add_fpga_target(
   DEFINES SYNTH_OPTS=-no_adder
   )
 
+add_post_pnr_equivalence_test(
+  PARENT_NAME bin2bcd_test-umc22-no-adder
+  )
+
 add_fpga_target(
   NAME bin2bcd_test-umc22-adder
   TOP bin2bcd
@@ -18,5 +22,13 @@ add_fpga_target(
   EXPLICIT_ADD_FILE_TARGET
   )
 
+add_post_pnr_equivalence_test(
+  PARENT_NAME bin2bcd_test-umc22-adder
+  )
+
 add_dependencies(all_qlf_k4n8_tests_no_adder bin2bcd_test-umc22-no-adder_bit)
 add_dependencies(all_qlf_k4n8_tests_adder    bin2bcd_test-umc22-adder_bit)
+
+add_dependencies(all_qlf_k4n8_post_pnr_equivalence_tests bin2bcd_test-umc22-no-adder_post_pnr_equivalence_test)
+add_dependencies(all_qlf_k4n8_post_pnr_equivalence_tests bin2bcd_test-umc22-adder_post_pnr_equivalence_test)
+
