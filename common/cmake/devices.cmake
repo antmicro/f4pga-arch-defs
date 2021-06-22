@@ -2115,6 +2115,9 @@ function(ADD_FPGA_TARGET)
     set(OUT_PLACE ${OUT_LOCAL}/${TOP}.patched.place)
     set(OUT_PLACE_REL ${OUT_LOCAL_REL}/${TOP}.patched.place)
 
+    set(OUT_ROUTE ${OUT_LOCAL}/${TOP}.patched.route)
+    set(OUT_ROUTE_REL ${OUT_LOCAL_REL}/${TOP}.patched.route)
+
     # Configure the base command
     string(CONFIGURE ${NET_PATCH_TOOL_CMD} NET_PATCH_TOOL_CMD_FOR_TARGET)
     separate_arguments(
