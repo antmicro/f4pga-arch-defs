@@ -30,3 +30,6 @@ stat
 
 write_json $::env(OUT_JSON)
 write_verilog $::env(OUT_SYNTH_V)
+
+# TODO: Integrate use of the SDC plugin instead of the mockup below
+close [open $::env(OUT_SDC) a]
