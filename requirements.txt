@@ -1,4 +1,6 @@
+# PyPi
 cairosvg
+fasm
 gitpython
 hilbertcurve==1.0.5
 intervaltree
@@ -15,11 +17,12 @@ pyyaml
 scipy
 simplejson
 svgwrite
+termcolor
 textx
 tinyfpgab
 tinyprog
 yapf==0.26.0
-fasm
+
 git+https://github.com/SymbiFlow/symbiflow-rr-graph.git#egg=rr-graph
 git+https://github.com/SymbiFlow/python-fpga-interchange.git#egg=python-fpga-interchange
 -e third_party/prjxray
@@ -37,6 +40,12 @@ git+https://github.com/SymbiFlow/python-fpga-interchange.git#egg=python-fpga-int
 -e third_party/migen
 third_party/pythondata-cpu-vexriscv
 third_party/pythondata-software-compiler_rt
+
+# QuickLogic dependencies
+-e quicklogic/common/utils/fasm-utils
+-e quicklogic/common/utils/quicklogic-fasm
+-e quicklogic/common/utils/quicklogic-timings-importer
+
 # Ibex dependencies
 git+https://github.com/lowRISC/edalize.git@ot
 git+https://github.com/lowRISC/fusesoc.git@ot
