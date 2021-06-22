@@ -15,10 +15,8 @@ import re
 
 # =============================================================================
 
-
-VPR_PORT_RE = re.compile(r"^io_(out:)?(?P<name>.*)(_input_|_output_)")
+# VPR unconnected port name regex
 VPR_UNCONN_RE = re.compile(r"^__vpr__unconn[0-9]+")
-#PORT_IDX_RE = re.compile(r"^(?P<name>[^\[\]]+)(\[(?P<index>[0-9]+)\])?")
 
 def main():
 
@@ -56,19 +54,15 @@ def main():
     ports_to_rename = set()
     for port_name, port_data in module["ports"].items():
 
-        # Match the VPR name
-        match = VPR_PORT_RE.match(port_name)
-        if match is not None:
+        # Get original port name
+        org_name = str(port_name)
 
-            # Get original port name
-            org_name = match.group("name")
+        # Replace '[]' brackets with '()' brackets as the port is an
+        # individual net rather than a vector.
+        org_name = org_name.replace("[", "(").replace("]", ")")
 
-            # Replace '[]' brackets with '()' brackets as the port is an
-            # individual net rather than a vector.
-            org_name = org_name.replace("[", "(").replace("]", ")")
-
-            # Store the correspondence
-            ports_to_rename.add((port_name, org_name))
+        # Store the correspondence
+        ports_to_rename.add((port_name, org_name))
 
         # Check if this port is unconnected. If so then mark it for removal
         match = VPR_UNCONN_RE.match(port_name)

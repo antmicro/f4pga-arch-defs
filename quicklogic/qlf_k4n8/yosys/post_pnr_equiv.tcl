@@ -20,6 +20,9 @@ yosys proc
 flatten
 splitnets -ports -format ():
 
+# Remove unconnected ports
+rmports A:top
+
 # Store
 yosys rename -top top_syn
 stat
@@ -39,7 +42,7 @@ hierarchy -check -auto-top
 # Fixup top-level IO port names, remove unconected wires added by VPR explicitly
 # and exposed by Yosys. This has to be done by the external script below.
 write_json equiv_top_pnr_ios.json
-exec $::env(PYTHON3) $::env(UTILS_PATH)/fixup_io_names.py equiv_top_pnr_ios.json
+exec $::env(PYTHON3) $::env(UTILS_PATH)/../../common/utils/fixup_io_names.py equiv_top_pnr_ios.json
 design -reset
 read_json equiv_top_pnr_ios.json
 
