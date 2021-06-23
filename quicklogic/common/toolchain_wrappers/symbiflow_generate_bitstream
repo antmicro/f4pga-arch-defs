@@ -4,12 +4,6 @@ set -e
 MYPATH=`realpath $0`
 MYPATH=`dirname ${MYPATH}`
 
-OPTS=d:f:r:b:
-LONGOPTS=device:,fasm:,format:,bit:
-
-PARSED_OPTS=`getopt --options=${OPTS} --longoptions=${LONGOPTS} --name $0 -- "$@"`
-eval set -- "${PARSED_OPTS}"
-
 DEVICE=""
 FASM=""
 BIT=""
@@ -54,9 +48,15 @@ if [ -z $BIT ]; then
 		exit 1
 fi
 
-QLF_FASM=`which qlf_fasm`
-
-DB_ROOT=`realpath ${MYPATH}/../share/symbiflow/fasm_database/${DEVICE}`
-
-${QLF_FASM} --db-root ${DB_ROOT} --format ${BIT_FORMAT} --assemble $FASM $BIT
+if [[ "$DEVICE" =~ ^(ql-eos-s3.*)$ ]]; then
+  QL_FASM=`which qlfasm`
+  ${QL_FASM} ${FASM} ${BIT}
+elif [[ "$DEVICE" =~ ^(qlf_k4n8.*)$ ]]; then
+  QLF_FASM=`which qlf_fasm`
+  DB_ROOT=`realpath ${MYPATH}/../share/symbiflow/fasm_database/${DEVICE}`
+  ${QLF_FASM} --db-root ${DB_ROOT} --format ${BIT_FORMAT} --assemble $FASM $BIT
+else; then
+  echo "Unknown device '${DEVICE}'"
+  exit -1
+fi
 

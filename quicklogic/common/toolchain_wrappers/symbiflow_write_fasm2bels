@@ -1,0 +1,28 @@
+#!/bin/bash
+set -e
+
+MYPATH=$(dirname "$(readlink -f "$BASH_SOURCE")")
+
+
+source ${MYPATH}/env
+source ${VPRPATH}/vpr_common
+
+parse_args $@
+
+if [ -z $PCF ]; then
+     echo "Please provide pcf file name"
+     exit 1
+fi
+
+if [ -z $DEVICE ]; then
+     echo "Please provide device name"
+     exit 1
+fi
+
+
+VPR_DB=`readlink -f ${MYPATH}/../share/symbiflow/arch/${DEVICE}/db_phy.pickle`
+FASM2BELS=`readlink -f ${MYPATH}/../bin/python/fasm2bels.py`
+VERILOG_FILE="${TOP_F}_bit.v"
+
+echo "Generating post verilog file ..."
+python3 ${FASM2BELS} ${TOP_F}.bit --vpr-db ${VPR_DB} --package-name ${PKG} --input-type bitstream --output-verilog ../${VERILOG_FILE} --input-pcf $PCF

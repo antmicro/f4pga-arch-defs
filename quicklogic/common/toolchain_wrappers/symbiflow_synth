@@ -105,7 +105,6 @@ if [ ${#VERILOG_FILES[@]} -eq 0 ]; then
 	exit 1
 fi
 
-PINMAPCSV="pinmap_${PART}.csv"
 
 export TECHMAP_PATH=`realpath ${MYPATH}/../share/symbiflow/techmaps/${FAMILY}`
 
@@ -124,13 +123,16 @@ if [ -s $PCF ]; then
 fi
 
 DEVICE_PATH=`realpath ${MYPATH}/../share/symbiflow/arch/${DEVICE}_${DEVICE}`
-export PINMAP_FILE=${DEVICE_PATH}/${PINMAPCSV}
 if [ -d "${DEVICE_PATH}/cells" ]; then
 	export DEVICE_CELLS_SIM=`find ${DEVICE_PATH}/cells -name "*_sim.v"`
 	export DEVICE_CELLS_MAP=`find ${DEVICE_PATH}/cells -name "*_map.v"`
 else
 	export DEVICE_CELLS_SIM=
 	export DEVICE_CELLS_MAP=
+fi
+
+if [ ! -z "${PART}" ]; then
+    export PINMAP_FILE=${DEVICE_PATH}/pinmap_${PART}.csv
 fi
 
 YOSYS_COMMANDS=`echo ${EXTRA_ARGS[*]} | python3 ${CONVERT_OPTS}`
