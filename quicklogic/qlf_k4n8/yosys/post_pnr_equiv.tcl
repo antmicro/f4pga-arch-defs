@@ -66,6 +66,7 @@ design -copy-from top_syn -as top_syn top_syn
 design -copy-from top_pnr -as top_pnr top_pnr
 stat
 
+async2sync
 equiv_make top_syn top_pnr equiv
 hierarchy -top equiv
 flatten
