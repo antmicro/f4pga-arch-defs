@@ -25,6 +25,8 @@ set(VPR_ARCH_ARGS "\
     --place_delta_delay_matrix_calculation_method dijkstra \
     --place_delay_model delta_override \
     --router_lookahead extended_map \
+    --post_synth_netlist_unconn_inputs nets \
+    --post_synth_netlist_unconn_outputs nets \
     --allow_dangling_combinational_nodes on \
     --absorb_buffer_luts off "
 )
