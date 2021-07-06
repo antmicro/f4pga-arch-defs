@@ -88,6 +88,12 @@ class RoutingMux():
                     active_nodes.add(edge.dst)
                 else:
                     inactive_edges.add(edge_key)
+
+        # No features, mark all edges as inactive
+        elif not features:
+            for edge in self.edges:
+                edge_key = (edge.src, edge.dst)
+                inactive_edges.add(edge_key)
                 
         # Perform FASM feature matching
         else:
@@ -100,6 +106,8 @@ class RoutingMux():
                         active_nodes.add(edge.dst)
                     else:
                         inactive_edges.add(edge_key)
+                else:
+                    inactive_edges.add(edge_key)
 
         return active_nodes, active_edges, inactive_edges
 
@@ -217,11 +225,14 @@ class RoutingDecoder():
 
         for edge_key in edges_to:
             src, dst = edge_key
-
             other_id = src
-            other_net = self.node_assignments.get(other_id, None)
+
+            # Skip SOURCE and SINK nodes
+            if self.nodes[other_id].type in [rr.NodeType.SOURCE, rr.NodeType.SINK]:
+                continue
 
             # Same net
+            other_net = self.node_assignments.get(other_id, None)
             if node_net == other_net:
                 continue
 
@@ -233,7 +244,7 @@ class RoutingDecoder():
 
             # Not a free node, stitch nets
             elif other_net is not None:
-                if edge_key in self.active_edges:
+                if edge_key in self.active_edges or len(edges_to) == 1:
                     self._remap_net(other_net, node_net)
                 continue           
 
@@ -259,7 +270,7 @@ class RoutingDecoder():
 
             # Not a free node, stitch nets
             elif other_net is not None:
-                if edge_key in self.active_edges:
+                if edge_key in self.active_edges or len(edges_from) == 1:
                     self._remap_net(other_net, node_net)
                 continue           
 
