@@ -173,6 +173,32 @@ def main():
         pin_name = graph.pin_ptc_to_name_map[(blk_id, ptc)]
         pin_map[node.id] = pin_name
 
+    # Check for multi-source nets and undriven nets
+    nets = set(pin_nodes.values())
+    for net in nets:
+        nodes = [k for k, v in pin_nodes.items() if v == net]
+        ipins = [n for n in nodes if graph.nodes[n].type == rr.NodeType.IPIN]
+        opins = [n for n in nodes if graph.nodes[n].type == rr.NodeType.OPIN]
+
+        if len(opins) > 1:
+            logging.error("Multi-driver net {}".fornat(net))
+            for node_id in opins:
+                loc = (graph.nodes[node_id].loc.x_low, graph.nodes[node_id].loc.y_low)
+                logging.error(" OPIN {} {} '{}'".format(node_id, loc, pin_map[node_id]))
+
+        if len(opins) == 0:
+            logging.warning("Undriven net {}".format(net))
+            for node_id in ipins:
+                loc = (graph.nodes[node_id].loc.x_low, graph.nodes[node_id].loc.y_low)
+                logging.warning(" IPIN {} {} '{}'".format(node_id, loc, pin_map[node_id]))
+
+        if len(ipins) == 0:
+            logging.warning("Net with no sink(s) {}".format(net))
+            for node_id in opins:
+                loc = (graph.nodes[node_id].loc.x_low, graph.nodes[node_id].loc.y_low)
+                logging.warning(" OPIN {} {} '{}'".format(node_id, loc, pin_map[node_id]))
+
+
     # Group nodes by clusters
     INDEX_RE = re.compile(r"(?P<name>\S+)\[(?P<index>[0-9]+)\]")
 
