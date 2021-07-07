@@ -198,6 +198,37 @@ def main():
                 loc = (graph.nodes[node_id].loc.x_low, graph.nodes[node_id].loc.y_low)
                 logging.warning(" OPIN {} {} '{}'".format(node_id, loc, pin_map[node_id]))
 
+    # Prepare routed net report (for debugging / verification)
+    nets = [] 
+    for net in set(pin_nodes.values()):
+        nodes = [k for k, v in pin_nodes.items() if v == net]
+        ipins = [n for n in nodes if graph.nodes[n].type == rr.NodeType.IPIN]
+        opins = [n for n in nodes if graph.nodes[n].type == rr.NodeType.OPIN]
+
+        nets.append({
+            "name": net,
+            "opins": opins,
+            "ipins": ipins,
+        })
+
+    nets = sorted(nets, key=lambda n: sorted(n["opins"])[0])
+    with open("nets.txt", "w") as fp:
+        for net in nets:
+            for node_id in sorted(net["opins"]):
+                node = graph.nodes[node_id]
+                fp.write("OPIN {} ({},{})\n".format(
+                    node_id,
+                    node.loc.x_low,
+                    node.loc.y_low
+                ))
+            for node_id in sorted(net["ipins"]):
+                node = graph.nodes[node_id]
+                fp.write(" IPIN {} ({},{})\n".format(
+                    node_id,
+                    node.loc.x_low,
+                    node.loc.y_low
+                ))
+            fp.write("\n")
 
     # Group nodes by clusters
     INDEX_RE = re.compile(r"(?P<name>\S+)\[(?P<index>[0-9]+)\]")
