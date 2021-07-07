@@ -49,11 +49,20 @@ class Grid:
 
                 xml_sites = xml_equiv.findall("site")
                 if len(xml_sites) > 1:
-                    logging.critical("Multiple equivalent sites per sub-tile not supported")
+                    logging.critical(
+                        "Multiple equivalent sites per sub-tile not supported"
+                    )
+                    raise RuntimeError
 
-                # FIXME: This assumes 1-to-1 pin map between the tile and the
-                # pb_type
-                pb_type = xml_sites[0].attrib["pb_type"]
+                xml_site = xml_sites[0]                
+                if xml_site.attrib.get("pin_mapping", "direct") != "direct" \
+                   or xml_site.find("direct") is not None:
+                        logging.critical(
+                            "Equivalent site custom pin mapping not supported"
+                        )
+                        raise RuntimeError
+
+                pb_type = xml_site.attrib["pb_type"]
 
                 # Add site types
                 for i in range(capacity):
@@ -68,29 +77,30 @@ class Grid:
 
         # Get the fixed layout
         # TODO: Support multiple fixed layouts
-        xml_fixed = xml_layout.find("fixed")
-        assert xml_layout is not None
+        xml_fixed = xml_layout.find("fixed_layout")
+        assert xml_fixed is not None
 
         # Get tiles
         self.tiles = {}
-        for xml_single in xml_layout.findall("single"):
+        for xml_single in xml_fixed.findall("single"):
 
             # Must have metadata
             xml_metadata = xml_single.find("metadata")
-            if not xml_metadata:
+            if xml_metadata is None:
                 continue
 
             # Find meta with name="fasm_prefix"
             for xml_item in xml_metadata.findall("meta"):
-                if xml_item.tag == "meta" and xml_item.attrib["name"] == "fasm_prefix":
+                if xml_item.tag == "meta" and \
+                   xml_item.attrib["name"] == "fasm_prefix":
                     xml_meta = xml_item
                     break
             else:
                 continue
 
-            type = xml_layout.attrib["type"]
-            x = int(xml_layout.attrib["x"])
-            y = int(xml_layout.attrib["y"])
+            type = xml_single.attrib["type"]
+            x = int(xml_single.attrib["x"])
+            y = int(xml_single.attrib["y"])
 
             # Split prefixes for sub-tiles
             prefixes = xml_meta.text.strip().split()
@@ -105,3 +115,4 @@ class Grid:
                 loc = (x, y, z)
                 assert loc not in self.tiles, loc
                 self.tiles[loc] = Tile(type, pb_type, prefix)
+

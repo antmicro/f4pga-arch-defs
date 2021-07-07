@@ -131,7 +131,7 @@ class RoutingDecoder():
         """
         Builds lookup maps
         """
-        logging.info("Building maps...")
+        logging.info(" Building maps...")
 
         # Base node and edge maps indexed by ids.
         # Edges do not have an id so assign them here,
@@ -161,7 +161,7 @@ class RoutingDecoder():
         intermediate ones and have no FASM features assigned.
         """
 
-        logging.info("Identifying routing muxes...")
+        logging.info(" Identifying routing muxes...")
 
         self.muxes = []
         for node in self.nodes.values():
@@ -180,7 +180,7 @@ class RoutingDecoder():
             mux = RoutingMux(node, [self.edges[i] for i in edge_ids])
             self.muxes.append(mux)
 
-        logging.debug("rr muxes: {}".format(len(self.muxes)))
+        logging.debug("  rr muxes: {}".format(len(self.muxes)))
 
     def _edge_key(self, edge_id):
         """
@@ -282,7 +282,7 @@ class RoutingDecoder():
         a dict with IPIN/OPIN node ids associating them with individual net
         ids. The net ids are somewhat random.
         """
-        logging.info("Decoding routing...")
+        logging.info(" Decoding nets...")
 
         fasm_features = set(fasm_features)
 
@@ -312,9 +312,9 @@ class RoutingDecoder():
         # Check for edge activity conflicts
         assert len(self.active_edges & self.inactive_edges) == 0
 
-        logging.debug("active nodes:   {}".format(len(self.node_assignments)))
-        logging.debug("active edges:   {}".format(len(self.active_edges)))
-        logging.debug("inactive edges: {}".format(len(self.inactive_edges)))
+        logging.debug("  active nodes:   {}".format(len(self.node_assignments)))
+        logging.debug("  active edges:   {}".format(len(self.active_edges)))
+        logging.debug("  inactive edges: {}".format(len(self.inactive_edges)))
 
         # Initialize node queue
         node_queue = list(self.node_assignments.keys())
@@ -345,12 +345,12 @@ class RoutingDecoder():
         ipin_locs = set([(self.nodes[n].loc.x_low, self.nodes[n].loc.y_low) for n in pin_to_net if self.nodes[n].type == rr.NodeType.IPIN])
         opin_locs = set([(self.nodes[n].loc.x_low, self.nodes[n].loc.y_low) for n in pin_to_net if self.nodes[n].type == rr.NodeType.OPIN])
 
-        logging.debug("Nets     : ({}) {}".format(len(set(self.node_assignments.values())), set(self.node_assignments.values())))
-        logging.debug("IPIN     : {}".format(ipin_count))
-        logging.debug("OPIN     : {}".format(opin_count))
-        logging.debug("all locs : {}".format(len(locs)))
-        logging.debug("IPIN locs: {}".format(len(ipin_locs)))
-        logging.debug("OPIN locs: {}".format(len(opin_locs)))
+        logging.debug("  nets     : ({}) {}".format(len(set(self.node_assignments.values())), set(self.node_assignments.values())))
+        logging.debug("  IPIN     : {}".format(ipin_count))
+        logging.debug("  OPIN     : {}".format(opin_count))
+        logging.debug("  all locs : {}".format(len(locs)))
+        logging.debug("  IPIN locs: {}".format(len(ipin_locs)))
+        logging.debug("  OPIN locs: {}".format(len(opin_locs)))
         # DEBUG #
 
         return pin_to_net

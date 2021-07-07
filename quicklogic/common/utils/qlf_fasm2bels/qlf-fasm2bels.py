@@ -19,6 +19,7 @@ import fasm
 
 from tile_grid import Grid as TileGrid
 from routing_decoder import RoutingDecoder
+from cluster_decoder import ClusterDecoder
 from netlist import Cell, Netlist
 
 # =============================================================================
@@ -80,7 +81,7 @@ def group_by_clusters(pin_nodes, graph, pin_names):
                 "nodes": {},
             }
 
-        clusters[loc]["nodes"][node_id] = pin_name
+        clusters[loc]["nodes"][node_id] = (pin_name, net)
 
     return clusters
 
@@ -257,13 +258,14 @@ def main():
 
     graph = graph_io.graph
 
-    logging.debug("rr nodes: {}".format(len(graph.nodes)))
-    logging.debug("rr edges: {}".format(len(graph.edges)))
+    logging.debug(" rr nodes: {}".format(len(graph.nodes)))
+    logging.debug(" rr edges: {}".format(len(graph.edges)))
 
     # Build pin name map
     pin_names = build_pin_name_map(graph)
 
     # Decode net routes between clusters
+    logging.info("Decoding routing...")
     r_decoder = RoutingDecoder(graph)
     pin_nodes = r_decoder.decode(fasm_features)
 
@@ -275,36 +277,76 @@ def main():
         opins = [n for n in nodes if graph.nodes[n].type == rr.NodeType.OPIN]
 
         if len(opins) > 1:
-            logging.error("Multi-driver net {}".fornat(net))
+            logging.error(" Multi-driver net {}".fornat(net))
             for node_id in opins:
                 loc = (graph.nodes[node_id].loc.x_low, graph.nodes[node_id].loc.y_low)
-                logging.error(" OPIN {} {} '{}'".format(node_id, loc, pin_map[node_id]))
+                logging.error("  OPIN {} {} '{}'".format(node_id, loc, pin_map[node_id]))
 
         if len(opins) == 0:
-            logging.warning("Undriven net {}".format(net))
+            logging.warning(" Undriven net {}".format(net))
             for node_id in ipins:
                 loc = (graph.nodes[node_id].loc.x_low, graph.nodes[node_id].loc.y_low)
-                logging.warning(" IPIN {} {} '{}'".format(node_id, loc, pin_map[node_id]))
+                logging.warning("  IPIN {} {} '{}'".format(node_id, loc, pin_map[node_id]))
 
         if len(ipins) == 0:
-            logging.warning("Net with no sink(s) {}".format(net))
+            logging.warning(" Net with no sink(s) {}".format(net))
             for node_id in opins:
                 loc = (graph.nodes[node_id].loc.x_low, graph.nodes[node_id].loc.y_low)
-                logging.warning(" OPIN {} {} '{}'".format(node_id, loc, pin_map[node_id]))
+                logging.warning("  OPIN {} {} '{}'".format(node_id, loc, pin_map[node_id]))
 
     # Group nets by clusters
     cluster_nodes = group_by_clusters(pin_nodes, graph, pin_names)
 
-    # TEST - make netlist with clusters
+#    # TEST - make netlist with clusters
+#    netlist = Netlist()
+#    for loc, cluster in cluster_nodes.items():
+#        name = cluster["type"].upper() + "_X{}Y{}Z{}".format(*loc)
+#        cell = Cell(cluster["type"], name)
+#        cell.attributes["LOC"] = "X{}Y{}Z{}".format(*loc)
+#        for node_id, pin_name in cluster["nodes"].items():
+#            cell.ports[pin_name] = "net_{}".format(pin_nodes[node_id])
+#        netlist.add_cell(cell)      
+#    netlist.write_verilog("clusters.v")
+
+    # Decode clusters
+    logging.info("Decoding clusters...")
     netlist = Netlist()
-    for loc, cluster in cluster_nodes.items():
-        name = cluster["type"].upper() + "_X{}Y{}Z{}".format(*loc)
-        cell = Cell(cluster["type"], name)
-        cell.attributes["LOC"] = "X{}Y{}Z{}".format(*loc)
-        for node_id, pin_name in cluster["nodes"].items():
-            cell.ports[pin_name] = "net_{}".format(pin_nodes[node_id])
-        netlist.add_cell(cell)      
-    netlist.write_verilog("clusters.v")
+    c_decoder = ClusterDecoder(xml_arch, graph, netlist)
+    for cluster_loc, cluster_info in cluster_nodes.items():
+
+        logging.info(" {} at {}".format(cluster_info["type"], cluster_loc))
+
+        # Get pb_type name and FASM prefix
+        assert cluster_loc in tile_grid.tiles, cluster_loc
+        tile = tile_grid.tiles[cluster_loc]
+
+        # The type must match
+        assert tile.type == cluster_info["type"], \
+            (tile.type == cluster_info["type"])
+
+        logging.debug("  pb_type : {}".format(tile.pb_type))
+        logging.debug("  fasm pfx: {}".format(tile.fasm_prefix))
+
+        # Get FASM features for this prefix, remove the prefix
+        clb_features = set()
+        for feature in fasm_features:
+            if feature.startswith(tile.fasm_prefix):
+                clb_features.add(feature.replace(tile.fasm_prefix + ".", ""))
+
+        logging.debug("  {} features".format(len(clb_features)))
+#        for f in clb_features:
+#            logging.debug("   {}".format(f))
+
+        # FIXME: Skip IOs for now
+        if cluster_info["type"] != "clb":
+            continue
+
+        # Decode the CLB
+        c_decoder.decode(cluster_info["nodes"], tile.pb_type, clb_features)
+
+        break        
+    
+    netlist.write_verilog("netlist.v")
 
 # =============================================================================
 
