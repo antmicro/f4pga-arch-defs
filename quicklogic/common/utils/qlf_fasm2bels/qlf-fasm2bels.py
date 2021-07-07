@@ -23,6 +23,112 @@ from netlist import Cell, Netlist
 
 # =============================================================================
 
+
+def build_pin_name_map(graph):
+    """
+    Builds a map of IPIN/OPIN node ids to pin names
+    """
+
+    pin_map = {}
+    for node in graph.nodes:
+
+        # Consider only IPIN/OPIN
+        if node.type not in [rr.NodeType.IPIN, rr.NodeType.OPIN]:
+            continue
+
+        loc = (node.loc.x_low, node.loc.y_low)
+        ptc = node.loc.ptc
+        blk_id = graph.loc_map[loc].block_type_id
+
+        pin_name = graph.pin_ptc_to_name_map[(blk_id, ptc)]
+        pin_map[node.id] = pin_name
+
+    return pin_map
+
+
+def group_by_clusters(pin_nodes, graph, pin_names):
+    """
+    Groups nodes by clusters. Returns a dict indexed by grid locations as
+    (x, y, z) of dicts containing cluster block (tile) type "type" and yet
+    another dict which maps IPIN/OPIN node IDs to tile pin names.
+    """
+
+    INDEX_RE = re.compile(r"(?P<name>\S+)\[(?P<index>[0-9]+)\]")
+
+    clusters = {}
+    for node_id, net in pin_nodes.items():
+        node = graph.nodes[node_id]
+        pin_spec = pin_names[node_id]
+
+        # Get block type and pin name
+        block_name, pin_name = pin_spec.split(".", maxsplit=1)
+
+        # Get sub-tile index if applicable
+        match = INDEX_RE.fullmatch(block_name)
+        if match is not None:
+            block_name = match.group("name")
+            z = int(match.group("index"))
+
+        # No index, assume Z=0
+        else:
+            z = 0
+
+        loc = (node.loc.x_low, node.loc.y_low, z)
+        if loc not in clusters:
+            clusters[loc] = {
+                "type": block_name,
+                "nodes": {},
+            }
+
+        clusters[loc]["nodes"][node_id] = pin_name
+
+    return clusters
+
+# =============================================================================
+
+
+def report_routed_nets(file_name, pin_nodes, graph):
+    """
+    Prepares and writes routed net report for debugging / verification against
+    VPR
+    """
+
+    # Group IPIN and OPIN nodes by nets
+    nets = [] 
+    for net in set(pin_nodes.values()):
+        nodes = [k for k, v in pin_nodes.items() if v == net]
+        ipins = [n for n in nodes if graph.nodes[n].type == rr.NodeType.IPIN]
+        opins = [n for n in nodes if graph.nodes[n].type == rr.NodeType.OPIN]
+
+        nets.append({
+            "name": net,
+            "opins": opins,
+            "ipins": ipins,
+        })
+
+    # Write the report. Sort data for it to be repetable
+    nets = sorted(nets, key=lambda n: sorted(n["opins"])[0])
+    with open(file_name, "w") as fp:
+        for net in nets:
+            for node_id in sorted(net["opins"]):
+                node = graph.nodes[node_id]
+                fp.write("OPIN {} ({},{})\n".format(
+                    node_id,
+                    node.loc.x_low,
+                    node.loc.y_low
+                ))
+            for node_id in sorted(net["ipins"]):
+                node = graph.nodes[node_id]
+                fp.write(" IPIN {} ({},{})\n".format(
+                    node_id,
+                    node.loc.x_low,
+                    node.loc.y_low
+                ))
+            fp.write("\n")
+
+# =============================================================================
+
+
 def main():
 
     # Parse arguments
@@ -154,28 +260,16 @@ def main():
     logging.debug("rr nodes: {}".format(len(graph.nodes)))
     logging.debug("rr edges: {}".format(len(graph.edges)))
 
+    # Build pin name map
+    pin_names = build_pin_name_map(graph)
+
     # Decode net routes between clusters
     r_decoder = RoutingDecoder(graph)
     pin_nodes = r_decoder.decode(fasm_features)
 
-    # Build a map of IPIN/OPIN node ids to block types and pin names
-    pin_map = {}
-    for node in graph.nodes:
-
-        # Consider only IPIN/OPIN
-        if node.type not in [rr.NodeType.IPIN, rr.NodeType.OPIN]:
-            continue
-
-        loc = (node.loc.x_low, node.loc.y_low)
-        ptc = node.loc.ptc
-        blk_id = graph.loc_map[loc].block_type_id
-
-        pin_name = graph.pin_ptc_to_name_map[(blk_id, ptc)]
-        pin_map[node.id] = pin_name
-
     # Check for multi-source nets and undriven nets
-    nets = set(pin_nodes.values())
-    for net in nets:
+    for net in set(pin_nodes.values()):
+
         nodes = [k for k, v in pin_nodes.items() if v == net]
         ipins = [n for n in nodes if graph.nodes[n].type == rr.NodeType.IPIN]
         opins = [n for n in nodes if graph.nodes[n].type == rr.NodeType.OPIN]
@@ -198,72 +292,12 @@ def main():
                 loc = (graph.nodes[node_id].loc.x_low, graph.nodes[node_id].loc.y_low)
                 logging.warning(" OPIN {} {} '{}'".format(node_id, loc, pin_map[node_id]))
 
-    # Prepare routed net report (for debugging / verification)
-    nets = [] 
-    for net in set(pin_nodes.values()):
-        nodes = [k for k, v in pin_nodes.items() if v == net]
-        ipins = [n for n in nodes if graph.nodes[n].type == rr.NodeType.IPIN]
-        opins = [n for n in nodes if graph.nodes[n].type == rr.NodeType.OPIN]
-
-        nets.append({
-            "name": net,
-            "opins": opins,
-            "ipins": ipins,
-        })
-
-    nets = sorted(nets, key=lambda n: sorted(n["opins"])[0])
-    with open("nets.txt", "w") as fp:
-        for net in nets:
-            for node_id in sorted(net["opins"]):
-                node = graph.nodes[node_id]
-                fp.write("OPIN {} ({},{})\n".format(
-                    node_id,
-                    node.loc.x_low,
-                    node.loc.y_low
-                ))
-            for node_id in sorted(net["ipins"]):
-                node = graph.nodes[node_id]
-                fp.write(" IPIN {} ({},{})\n".format(
-                    node_id,
-                    node.loc.x_low,
-                    node.loc.y_low
-                ))
-            fp.write("\n")
-
-    # Group nodes by clusters
-    INDEX_RE = re.compile(r"(?P<name>\S+)\[(?P<index>[0-9]+)\]")
-
-    clusters = {}
-    for node_id, net in pin_nodes.items():
-        node = graph.nodes[node_id]
-        pin_spec = pin_map[node_id]
-
-        # Get block type and pin name
-        block_name, pin_name = pin_spec.split(".", maxsplit=1)
-
-        # Get sub-tile index if applicable
-        match = INDEX_RE.fullmatch(block_name)
-        if match is not None:
-            block_name = match.group("name")
-            z = int(match.group("index"))
-
-        # No index, assume Z=0
-        else:
-            z = 0
-
-        loc = (node.loc.x_low, node.loc.y_low, z)
-        if loc not in clusters:
-            clusters[loc] = {
-                "type": block_name,
-                "nodes": {},
-            }
-
-        clusters[loc]["nodes"][node_id] = pin_name
-
+    # Group nets by clusters
+    cluster_nodes = group_by_clusters(pin_nodes, graph, pin_names)
 
     # TEST - make netlist with clusters
     netlist = Netlist()
-    for loc, cluster in clusters.items():
+    for loc, cluster in cluster_nodes.items():
         name = cluster["type"].upper() + "_X{}Y{}Z{}".format(*loc)
         cell = Cell(cluster["type"], name)
         cell.attributes["LOC"] = "X{}Y{}Z{}".format(*loc)
