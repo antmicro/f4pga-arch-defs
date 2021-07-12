@@ -5,113 +5,24 @@ from enum import Enum
 
 import rr_graph.graph2 as rr
 
+import routing_mux as rrmux
+
 # =============================================================================
 
 
-class Edge():
+class Edge(rrmux.Edge):
     """
-    Routing graph edge with FASM annotation
+    A wrapper class that gathers FASM metadata from rr graph edge
     """
     def __init__(self, edge):
 
-        # Copy basic info
-        self.src = edge.src_node
-        self.dst = edge.sink_node
-
         # Get FASM features
-        self.features = set()
+        features = set()
         for meta, data in edge.metadata:
             if meta == "fasm_features":
-                self.features = set(data.split("\n"))
+                features = set(data.split("\n"))
 
-
-class RoutingMux():
-    """
-    A routing mux inferred directly from a graph. Consists of one destination
-    node and a set of incoming edges.
-    """
-
-    FEATURE_RE = re.compile(r"(?P<feature>\S+)\[(?P<bit>[0-9]+)\]")
-
-    def __init__(self, node, edges):
-
-        self.node_id = node.id
-        self.edges = [Edge(e) for e in edges]
-
-        # All mux features
-        self.features = set()
-        for edge in self.edges:
-            self.features |= edge.features
-
-        # Check if all features are consistent. They should differ only in the
-        # index of the last part
-        features = set()
-        for feature in self.features:
-            match = RoutingMux.FEATURE_RE.fullmatch(feature)
-            assert match is not None, feature
-            features.add(match.group("feature"))
-
-        if len(features) != 1:
-            logging.critical(
-                "ERROR: Got a routing mux with inconsistent FASM features:"
-            )
-            for feature in features:
-                logging.critical(" '{}'".format(feature))
-            raise RuntimeError
-
-    def get_active_nodes_and_edges(self, fasm_features):
-        """
-        Returns IDs of active nodes, active edges and inactive edges given the
-        set of active canonical FASM features
-        """
-
-        width = len(self.edges)
-
-        active_nodes = set()
-        active_edges = set()
-        inactive_edges = set()
-
-        # Count edges with no features (there can be only one)
-        num_no_feature_edges = len([e for e in self.edges if not e.features])
-        assert num_no_feature_edges <= 1
-
-        # Pre-filter features
-        features = fasm_features & self.features
-
-        # No features and we have at least one edge without features. Make
-        # edges with no features active and the others inactive
-        if not features and num_no_feature_edges:
-            for edge in self.edges:
-                if not edge.features:
-                    active_edges.add(edge_key)
-                    active_nodes.add(edge.src)
-                    active_nodes.add(edge.dst)
-                else:
-                    inactive_edges.add(edge_key)
-
-        # No features, mark all edges as inactive
-        elif not features:
-            for edge in self.edges:
-                edge_key = (edge.src, edge.dst)
-                inactive_edges.add(edge_key)
-                
-        # Perform FASM feature matching
-        else:
-            for edge in self.edges:
-                edge_key = (edge.src, edge.dst)
-                if edge.features:
-                    if features == edge.features:
-                        active_edges.add(edge_key)
-                        active_nodes.add(edge.src)
-                        active_nodes.add(edge.dst)
-                    else:
-                        inactive_edges.add(edge_key)
-                else:
-                    inactive_edges.add(edge_key)
-
-        return active_nodes, active_edges, inactive_edges
-
-# =============================================================================
+        super().__init__(edge.src_node, edge.sink_node, features)
 
 
 class RoutingDecoder():
@@ -177,7 +88,7 @@ class RoutingDecoder():
                 continue
 
             # Build a routing mux
-            mux = RoutingMux(node, [self.edges[i] for i in edge_ids])
+            mux = rrmux.RoutingMux([Edge(self.edges[i]) for i in edge_ids])
             self.muxes.append(mux)
 
         logging.debug("  rr muxes: {}".format(len(self.muxes)))
