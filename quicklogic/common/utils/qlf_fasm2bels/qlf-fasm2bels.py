@@ -228,6 +228,17 @@ def main():
     # Build tile grid
     tile_grid = TileGrid(xml_arch)
 
+    # Initialize cluster decoders for each pb_type in the architecture
+    xml_cplx = xml_arch.find("complexblocklist")
+    assert xml_cplx is not None
+
+    c_decoders = {}
+    for xml_pb_type in xml_cplx.findall("pb_type"):
+        pb_type_name = xml_pb_type.attrib["name"]
+
+        assert pb_type_name not in c_decoders, pb_type_name
+        c_decoders[pb_type_name] = ClusterDecoder(xml_pb_type)
+
     # Read the rr graph
     logging.info("Loading rr graph...")
     if rr_graph_ext == ".xml":
@@ -311,8 +322,12 @@ def main():
     # Decode clusters
     logging.info("Decoding clusters...")
     netlist = Netlist()
-    c_decoder = ClusterDecoder(xml_arch, graph, netlist)
+
     for cluster_loc, cluster_info in cluster_nodes.items():
+
+        # FIXME: Skip IOs for now
+        if cluster_info["type"] != "clb":
+            continue
 
         logging.info(" {} at {}".format(cluster_info["type"], cluster_loc))
 
@@ -320,12 +335,12 @@ def main():
         assert cluster_loc in tile_grid.tiles, cluster_loc
         tile = tile_grid.tiles[cluster_loc]
 
-        # The type must match
-        assert tile.type == cluster_info["type"], \
-            (tile.type == cluster_info["type"])
-
         logging.debug("  pb_type : {}".format(tile.pb_type))
         logging.debug("  fasm pfx: {}".format(tile.fasm_prefix))
+
+        # Get the decoder
+        assert tile.pb_type in c_decoders, tile.pb_type
+        c_decoder = c_decoders[tile.pb_type]
 
         # Get FASM features for this prefix, remove the prefix
         clb_features = set()
@@ -337,14 +352,14 @@ def main():
 #        for f in clb_features:
 #            logging.debug("   {}".format(f))
 
-        # FIXME: Skip IOs for now
-        if cluster_info["type"] != "clb":
-            continue
-
         # Decode the CLB
-        c_decoder.decode(cluster_info["nodes"], tile.pb_type, clb_features)
+        c_decoder.decode(cluster_info["nodes"], clb_features, netlist)
 
-        break        
+        # DEBUG
+        dot = c_decoder.graph.dump_dot(color_by="net", nets_only=True)
+        fname = "cluster_{}_X{}Y{}Z{}.dot".format(cluster_info["type"], *cluster_loc)
+        with open(fname, "w") as fp:            
+            fp.write(dot)
     
     netlist.write_verilog("netlist.v")
 
