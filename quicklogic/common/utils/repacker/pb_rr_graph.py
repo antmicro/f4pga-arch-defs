@@ -371,7 +371,7 @@ class Graph():
         # Retrieves metadata string of the given type
         def get_metadata(xml_item, name):
 
-            xml_metadata = xml_conn.find("metadata")
+            xml_metadata = xml_item.find("metadata")
             if xml_metadata is None:
                 return None
 
@@ -382,26 +382,63 @@ class Graph():
             return None
 
         # Assembles FASM prefix of a given pb_type
-        def build_fasm_prefix(xml_pb_type):
+        def build_fasm_prefix(xml_pb_type, path):
 
-            prefix = []
+            xml_pb_types = []
+
+            # Walk to the root, build a list of pb_types
+            xml_item = xml_pb_type
             while True:
 
-                # Check if we have a prefix. If so then prepend it
-                pfx = get_metadata(xml_pb_type, "fasm_prefix")
-                if pfx:
-                    prefix = [pfx] + prefix
+                # Store the object
+                xml_pb_types = [xml_item] + xml_pb_types
 
                 # Go one level up
-                xml_pb_type = get_parent_pb(xml_pb_type)
-                if xml_pb_type is None:
+                xml_item = get_parent_pb(xml_item)
+                if xml_item is None:
                     break
+
+            # Split the path
+            parts = [PathNode.from_string(p) for p in path.split(".")]
+            assert len(parts) >= len(xml_pb_types), \
+                (path, len(parts), len(xml_pb_types))
+
+            # Walk along the path from the root, collect and concatenate FASM
+            # prefixes
+            prefix = []
+            for xml_item, part in zip(xml_pb_types, parts):
+
+                # Must match the path
+                assert xml_item.attrib["name"] == part.name, \
+                    (xml_item.attrib["name"], part.name)
+
+                # Get FASM prefix if any
+                meta = get_metadata(xml_item, "fasm_prefix")
+                if meta:
+
+                    # For a pb_type with num_pb > 1 choose correct prefix
+                    num_pb = int(xml_item.attrib.get("num_pb", "1"))
+                    prefixes = meta.strip().split()
+                    assert len(prefixes) == num_pb, (len(prefixed), num_pb)
+
+                    index = 0 if part.index is None else part.index
+                    prefix.append(prefixes[index])
 
             return ".".join(prefix)
 
         # Retrieves FASM metadata for direct/mux connections
-        def get_fasm_features(xml_conn):
-           
+        def get_fasm_features(xml_conn, path):
+
+            # No metadata, exit early
+            if xml_conn.find("metadata") is None:
+                return None
+
+            # Get FASM prefix
+            prefix = build_fasm_prefix(
+                get_parent_pb(xml_conn.getparent()),
+                path
+            )
+
             # A list of FASM features
             metadata = get_metadata(xml_conn, "fasm_features")
             if metadata:
@@ -409,9 +446,6 @@ class Graph():
 
                 # Get a list of features
                 features = [f.strip() for f in metadata.strip().split(",")]
-
-                # Get prefix
-                prefix = build_fasm_prefix(get_parent_pb(xml_conn.getparent()))
                 if prefix:
                     features = [prefix + "." + f for f in features]
 
@@ -422,9 +456,6 @@ class Graph():
             if metadata:
                 assert xml_conn.tag == "mux", xml_conn.name
 
-                # Get prefix
-                prefix = build_fasm_prefix(get_parent_pb(xml_conn.getparent()))
-
                 # Get a list of features for each input pin
                 features = {}
                 for line in metadata.strip().split("\n"):
@@ -434,7 +465,7 @@ class Graph():
                     fts = [f for f in fts if f != "NULL"]
 
                     if prefix:
-                        fts = [fts + "." + f for f in features]
+                        fts = [prefix + "." + f for f in fts]
 
                     features[pin] = fts
 
@@ -459,7 +490,8 @@ class Graph():
                 )
 
                 # FASM annotation
-                features = get_fasm_features(xml_conn)
+                path = get_node_path(outs[0])
+                features = get_fasm_features(xml_conn, path)
 
                 # Add edges
                 for inp, out in zip(inps, outs):
@@ -484,7 +516,8 @@ class Graph():
                 assert len(out_pins) == 1, xml_ic.attrib
 
                 # FASM annotation
-                features = get_fasm_features(xml_conn)
+                path = get_node_path(out_pins[0])
+                features = get_fasm_features(xml_conn, path)
 
                 # Build edges for each input port
                 for inp_port in inp_ports:
