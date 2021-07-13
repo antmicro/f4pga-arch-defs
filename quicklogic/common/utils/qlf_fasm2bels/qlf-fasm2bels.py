@@ -19,7 +19,7 @@ import fasm
 
 from tile_grid import Grid as TileGrid
 from routing_decoder import RoutingDecoder
-from cluster_decoder import ClusterDecoder
+from cluster_decoder import ClusterDecoder, NetPool
 from netlist import Cell, Netlist
 
 # =============================================================================
@@ -318,6 +318,9 @@ def main():
 #            cell.ports[pin_name] = "net_{}".format(pin_nodes[node_id])
 #        netlist.add_cell(cell)      
 #    netlist.write_verilog("clusters.v")
+    
+    # Initialize net id pool
+    net_pool = NetPool(pin_nodes.values())
 
     # Decode clusters
     logging.info("Decoding clusters...")
@@ -348,19 +351,21 @@ def main():
             if feature.startswith(tile.fasm_prefix):
                 clb_features.add(feature.replace(tile.fasm_prefix + ".", ""))
 
-        logging.debug("  {} features".format(len(clb_features)))
+#        logging.debug("  {} features".format(len(clb_features)))
 #        for f in clb_features:
 #            logging.debug("   {}".format(f))
 
         # Decode the CLB
-        c_decoder.decode(cluster_info["nodes"], clb_features, netlist)
+        suffix = "X{}Y{}Z{}".format(*cluster_loc)
+        c_decoder.decode(cluster_info["nodes"], clb_features, netlist, net_pool, suffix)
 
-        # DEBUG
+        # DEBUG - dump graphviz #
         dot = c_decoder.graph.dump_dot(color_by="net", nets_only=True)
         fname = "cluster_{}_X{}Y{}Z{}.dot".format(cluster_info["type"], *cluster_loc)
         with open(fname, "w") as fp:            
             fp.write(dot)
-    
+
+    # Write the final netlist    
     netlist.write_verilog("netlist.v")
 
 # =============================================================================

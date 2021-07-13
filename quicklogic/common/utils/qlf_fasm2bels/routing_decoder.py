@@ -134,56 +134,30 @@ class RoutingDecoder():
         node_ids = set()
         node_net = self.node_assignments[node_id]
 
-        for edge_key in edges_to:
-            src, dst = edge_key
-            other_id = src
+        for e, edges in enumerate((edges_to, edges_from)):
+            for edge_key in edges:
+                other_id = edge_key[e]
 
-            # Skip SOURCE and SINK nodes
-            if self.nodes[other_id].type in [rr.NodeType.SOURCE, rr.NodeType.SINK]:
-                continue
+                # Skip SOURCE and SINK nodes
+                if self.nodes[other_id].type in [rr.NodeType.SOURCE, rr.NodeType.SINK]:
+                    continue
 
-            # Same net
-            other_net = self.node_assignments.get(other_id, None)
-            if node_net == other_net:
-                continue
+                # Same net
+                other_net = self.node_assignments.get(other_id, None)
+                if node_net == other_net:
+                    continue
 
-            # Free node, propagate
-            if other_net is None:
-                self.node_assignments[other_id] = node_net
-                node_ids.add(other_id)
-                continue
+                # Free node, propagate
+                if other_net is None:
+                    self.node_assignments[other_id] = node_net
+                    node_ids.add(other_id)
+                    continue
 
-            # Not a free node, stitch nets
-            elif other_net is not None:
-                if edge_key in self.active_edges or len(edges_to) == 1:
-                    self._remap_net(other_net, node_net)
-                continue           
-
-        # Expand outgoin paths
-        for edge_key in edges_from:
-            src, dst = edge_key
-            other_id = dst
-
-            # Skip SOURCE and SINK nodes
-            if self.nodes[other_id].type in [rr.NodeType.SOURCE, rr.NodeType.SINK]:
-                continue
-
-            # Same net
-            other_net = self.node_assignments.get(other_id, None)
-            if node_net == other_net:
-                continue
-
-            # Free node, propagate
-            if other_net is None:
-                self.node_assignments[other_id] = node_net
-                node_ids.add(other_id)
-                continue
-
-            # Not a free node, stitch nets
-            elif other_net is not None:
-                if edge_key in self.active_edges or len(edges_from) == 1:
-                    self._remap_net(other_net, node_net)
-                continue           
+                # Not a free node, stitch nets
+                elif other_net is not None:
+                    if edge_key in self.active_edges or len(edges) == 1:
+                        self._remap_net(other_net, node_net)
+                    continue           
 
         return node_ids
 
@@ -230,7 +204,7 @@ class RoutingDecoder():
         # Initialize node queue
         node_queue = list(self.node_assignments.keys())
 
-        # Propagate ans stitch nets
+        # Propagate and stitch nets
         while len(node_queue):
 
             # Pop a node

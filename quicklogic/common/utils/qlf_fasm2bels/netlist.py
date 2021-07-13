@@ -50,25 +50,32 @@ class Netlist:
 
     @staticmethod
     def escape(s):
+
         if set(s) & {'[', ']', '(', ')'}:
             return "\\" + s
         return s
 
-    def write_verilog(self, file_name):
+    @staticmethod
+    def net2str(net):
 
-        def net2str(net):
-            if net is None:
-                return ""
-            if not isinstance(net, str):
-                return "_" + str(net) + "_"
+        if net is None:
+            return ""
+        elif isinstance(net, int):
+            return "_" + str(net) + "_"
+        elif isinstance(net, str):
             return net
+
+        assert False, net
+
+    def write_verilog(self, file_name):
 
         lines = []
         lines.append("module top ();")
 
         # Nets (wires)
         for net in self.all_nets():
-            lines.append("  wire [0:0] {};".format(self.escape(net2str(net))))
+            net = self.escape(self.net2str(net))
+            lines.append("  wire [0:0] {};".format(net))
         lines.append("")
 
         # Cell instances
@@ -80,19 +87,30 @@ class Netlist:
                     value = "\"" + value + "\""
                 lines.append("  (* {} = {} *)".format(name, value))
 
-            # TODO: Parameters
+            # Instance + parameters
+            if cell.parameters:
+                lines.append("  {} # (".format(cell.type))
+                for name, value in cell.parameters.items():
+                    if isinstance(value, str):
+                        value = "\"" + value + "\""
+                    lines.append("    .{} ({})".format(name, value))    
+                lines.append("  ) {} (".format(cell.name))
 
-            # Instance
-            lines.append("  {} {} (".format(cell.type, cell.name))
+            # Instance + no parameters
+            else:
+                lines.append("  {} {} (".format(cell.type, cell.name))
+
+            # Port connections
             ports = sorted(cell.ports.keys())
             for port in ports:
-                net = net2str(cell.ports[port])
-                lines.append("    .{} ({}),".format(self.escape(port), self.escape(net)))
+                net = self.escape(self.net2str(cell.ports[port]))
+                lines.append("    .{} ({}),".format(self.escape(port), net))
             lines.append("  );")
             lines.append("")
 
         lines.append("endmodule")
 
+        # Write the lines
         with open(file_name, "w") as fp:
             for line in lines:
                 fp.write(line + "\n")
