@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 import logging
+import re
 
 import pb_rr_graph as pb
 from pb_type import PbType
 from block_path import PathNode
+from arch_xml_utils import yield_indices
 
 import routing_mux as rrmux
 from netlist import Cell
@@ -382,11 +384,12 @@ class ClusterDecoder:
 
         return did_prune
 
-    def _instantiate_cells(self, netlist, suffix=""):
+    def _identify_cells(self):
         """
-        Creates cell instances given net assignments to their nodes
+        Returns a dict of PbType objects indexed by their path strings for
+        all pb_types considered as active leaf cells.
         """
-        count = 0
+        pb_types = {}
 
         for path, nodes in self.nodes_by_cells.items():
 
@@ -403,6 +406,20 @@ class ClusterDecoder:
 
             pb_type = self.pb_type.find(pb_path)
             assert pb_type is not None, pb_path
+
+            # Store the object
+            pb_types[path] = pb_type
+
+        return pb_types
+
+    def _instantiate_cells(self, pb_types, parameters, netlist, suffix=""):
+        """
+        Creates cell instances given the list of active leaf pb_types
+        """
+        count = 0
+
+        for path, pb_type in pb_types.items():
+            nodes = self.nodes_by_cells[path]
 
             # Format cell type
             assert pb_type.blif_model is not None
@@ -431,6 +448,10 @@ class ClusterDecoder:
             conn = {}
             for node_id in nodes:
                 node = self.graph.nodes[node_id]
+
+                if node.net is None:
+                    continue
+
                 port = node.path.rsplit(".", maxsplit=1)[1]
                 port = PathNode.from_string(port)
 
@@ -457,16 +478,74 @@ class ClusterDecoder:
                     else:
                         cell.ports[pname] = conn[port.name].get(pin, None)
 
+            # Attach parameters
+            if path in parameters:
+                cell.parameters.update(parameters[path])
+
             # Add it
             netlist.add_cell(cell)
             count += 1
 
         return count
-                
+
+    def _decode_parameters(self, pb_types, fasm_features):
+        """
+        Decodes FASM parameters of pb_types. Returns a dict indexed by
+        pb_type path (strings) containing dicts of parameters and their
+        values. The values are also strings but conform to the Verilog sized
+        binary literal syntax.
+        """
+
+        regex = re.compile(
+            r"(?P<feature>[A-Za-z0-9_\.]+)(\[(?P<bits>[0-9:]+)\])?"
+        )
+
+        parameters = {}
+        for path, pb_type in pb_types.items():
+
+            # No FASM parameters
+            if not pb_type.fasm_params:
+                continue
+
+            # Get FASM prefix
+            prefix = self.pb_type.get_fasm_prefix(path)
+
+            # Decode each param
+            parameters[path] = {}
+            for param, feature in pb_type.fasm_params.items():
+
+                # Get base feature name and bit indices
+                match = regex.fullmatch(feature)
+                assert match is not None, feature
+
+                feature = match.group("feature")
+                if not match.group("bits"):
+                    bits = [0]
+                else:
+                    bits = list(yield_indices(match.group("bits")))
+                    assert bits is not None
+
+                # Assemble the parameter value
+                value = []
+                for b in bits:
+
+                    # Full canonical FASM feature name
+                    full_feature = "{}[{}]".format(feature, b)
+                    if prefix:
+                        full_feature = prefix + "." + full_feature
+
+                    # Set a bit
+                    value.append("1" if full_feature in fasm_features else "0")
+
+                # Express the value as a sized binary literal
+                value = "{}'b{}".format(len(value), "".join(value[::-1]))
+                parameters[path][param] = value
+
+        return parameters
 
     def decode(self, nodes, fasm_features, netlist, net_pool, suffix=""):
         """
-        Decodes
+        Decodes the cluster. Adds its cells to the netlist.
         """
         fasm_features = set(fasm_features)
 
@@ -549,6 +628,12 @@ class ClusterDecoder:
 #                logging.debug("   {}, net_id={}".format(str(node), net_id))
 #        # DEBUG #
 
+        # Identify cells
+        pb_types = self._identify_cells()
+
+        # Decore FASM parameters
+        parameters = self._decode_parameters(pb_types, fasm_features)
+
         # Instantiate cells
-        count = self._instantiate_cells(netlist, suffix)
+        count = self._instantiate_cells(pb_types, parameters, netlist, suffix)
         logging.debug("  cells   : {}".format(count))

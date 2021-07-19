@@ -91,8 +91,6 @@ class Netlist:
             if cell.parameters:
                 lines.append("  {} # (".format(cell.type))
                 for name, value in cell.parameters.items():
-                    if isinstance(value, str):
-                        value = "\"" + value + "\""
                     lines.append("    .{} ({})".format(name, value))    
                 lines.append("  ) {} (".format(cell.name))
 
