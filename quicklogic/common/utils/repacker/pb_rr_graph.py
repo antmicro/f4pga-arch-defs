@@ -36,10 +36,11 @@ class Node:
     pins.
     """
 
-    def __init__(self, id, type, port_type, path, net=None):
+    def __init__(self, id, type, port_type, is_global, path, net=None):
         self.id = id
         self.type = type
         self.port_type = port_type
+        self.is_global = is_global
         self.path = path
         self.net = net
 
@@ -95,7 +96,7 @@ class Graph():
         # Id of the next node to be added
         self.next_node_id = 0
 
-    def add_node(self, type, port_type, path, net=None):
+    def add_node(self, type, port_type, is_global, path, net=None):
         """
         Adds a new node. Automatically assings its id
         """
@@ -103,6 +104,7 @@ class Graph():
             id=self.next_node_id,
             type=type,
             port_type=port_type,
+            is_global=is_global,
             path=path,
             net=net
         )
@@ -178,7 +180,7 @@ class Graph():
 
                 # Add node
                 node = graph.add_node(
-                    parent_node.type, parent_node.port_type,
+                    parent_node.type, parent_node.port_type, False,
                     ".".join([curr_path, parent_port])
                 )
 
@@ -304,6 +306,9 @@ class Graph():
             if xml_port.tag in ["input", "output", "clock"]:
                 width = int(xml_port.attrib["num_pins"])
 
+                is_global = \
+                    xml_port.get("is_non_clock_global", "false") == "true"
+
                 # Determine node type
                 if is_top:
                     node_type = top_node_types[xml_port.tag]
@@ -319,7 +324,7 @@ class Graph():
                 for i in range(width):
                     name = "{}[{}]".format(xml_port.attrib["name"], i)
                     path = ".".join([prefix, name])
-                    node = self.add_node(node_type, port_type, path)
+                    node = self.add_node(node_type, port_type, is_global, path)
 
                     node_map[path] = node
 
