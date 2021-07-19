@@ -18,6 +18,7 @@ from rr_graph.utils import progressbar_utils as pbar
 import fasm
 
 from tile_grid import Grid as TileGrid
+from placement import Placement
 from routing_decoder import RoutingDecoder
 from cluster_decoder import ClusterDecoder, NetPool
 from netlist import Cell, Netlist
@@ -160,6 +161,12 @@ def main():
         help="Path to rr graph cap'n'proto schema (for binary rr graph)"
     )
     parser.add_argument(
+        "--place",
+        default=None,
+        type=str,
+        help="VPR placement file (optional)"
+    )
+    parser.add_argument(
         "--log-level",
         type=str,
         choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
@@ -238,6 +245,14 @@ def main():
 
         assert pb_type_name not in c_decoders, pb_type_name
         c_decoders[pb_type_name] = ClusterDecoder(xml_pb_type)
+
+    # Read cluster placement if provided
+    if args.place:
+        logging.info("Loading placement...")
+        with open(args.place, "r") as fp:
+            placement = Placement.from_file(fp)
+    else:
+        placement = Placement()
 
     # Read the rr graph
     logging.info("Loading rr graph...")
@@ -321,6 +336,7 @@ def main():
     
     # Initialize net id pool
     net_pool = NetPool(pin_nodes.values())
+    net_map = {}
 
     # Decode clusters
     logging.info("Decoding clusters...")
@@ -328,11 +344,15 @@ def main():
 
     for cluster_loc, cluster_info in cluster_nodes.items():
 
-        # FIXME: Skip IOs for now
-        if cluster_info["type"] != "clb":
-            continue
+#        # FIXME: Skip IOs for now
+#        if cluster_info["type"] != "clb":
+#            continue
+        # Get the cluster name if any
+        cluster_name = placement.get_cluster_at(cluster_loc)
 
-        logging.info(" {} at {}".format(cluster_info["type"], cluster_loc))
+        logging.info(" {} at {} ({})".format(
+            cluster_info["type"], cluster_loc, cluster_name)
+        )
 
         # Get pb_type name and FASM prefix
         assert cluster_loc in tile_grid.tiles, cluster_loc
@@ -357,7 +377,7 @@ def main():
 
         # Decode the CLB
         suffix = "X{}Y{}Z{}".format(*cluster_loc)
-        c_decoder.decode(cluster_info["nodes"], clb_features, netlist, net_pool, suffix)
+        c_decoder.decode(cluster_info["nodes"], clb_features, netlist, net_pool, net_map, cluster_name, suffix)
 
         # DEBUG - dump graphviz #
         dot = c_decoder.graph.dump_dot(color_by="net", nets_only=True)
@@ -365,7 +385,8 @@ def main():
         with open(fname, "w") as fp:            
             fp.write(dot)
 
-    # Write the final netlist    
+    # Write the final netlist
+    netlist.remap_nets(net_map)
     netlist.write_verilog("netlist.v")
 
 # =============================================================================

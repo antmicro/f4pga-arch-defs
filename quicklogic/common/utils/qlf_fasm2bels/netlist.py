@@ -30,14 +30,27 @@ class Netlist:
 
     def __init__(self):
 
+        # Top-level inputs, outputs and inouts
+        self.ports = {
+            "input": set(),
+            "output": set(),
+            "inout": set(),
+        }
+
         # Cells indexed by names.
         self.cells = {}
 
     def add_cell(self, cell):
+        """
+        Adds a cell ensuring that there is no name duplicate
+        """
         assert cell.name not in self.cells, cell.name
         self.cells[cell.name] = cell
 
     def all_nets(self):
+        """
+        Returns the set of all nets
+        """
         nets = set()
 
         # Collect all nets
@@ -46,7 +59,22 @@ class Netlist:
                 if net is not None:
                     nets.add(net)
 
+        for type, ports in self.ports.items():
+            for port in ports:
+                nets.add(port)
+
         return nets
+
+    def remap_nets(self, net_map):
+        """
+        Remaps net names according to the given map
+        """
+        for cell in self.cells.values():
+            for port, net in cell.ports.items():
+                cell.ports[port] = net_map.get(net, net)
+
+        for type, ports in self.ports.items():
+            self.ports[type] = set([net_map.get(net, net) for net in ports])
 
     @staticmethod
     def escape(s):
@@ -70,12 +98,21 @@ class Netlist:
     def write_verilog(self, file_name):
 
         lines = []
-        lines.append("module top ();")
+        lines.append("module top (")
+
+        # Top-level ports
+        for type, ports in self.ports.items():
+            for port in ports:
+                port = self.escape(self.net2str(port))
+                lines.append("  {} {} ,".format(type, port))
+
+        lines[-1] = lines[-1].replace(",", "")
+        lines.append(");")
 
         # Nets (wires)
         for net in self.all_nets():
             net = self.escape(self.net2str(net))
-            lines.append("  wire [0:0] {};".format(net))
+            lines.append("  wire {} ;".format(net))
         lines.append("")
 
         # Cell instances
@@ -91,7 +128,8 @@ class Netlist:
             if cell.parameters:
                 lines.append("  {} # (".format(cell.type))
                 for name, value in cell.parameters.items():
-                    lines.append("    .{} ({})".format(name, value))    
+                    lines.append("    .{} ({}),".format(name, value))
+                lines[-1] = lines[-1].replace(",", "")
                 lines.append("  ) {} (".format(cell.name))
 
             # Instance + no parameters
@@ -102,7 +140,8 @@ class Netlist:
             ports = sorted(cell.ports.keys())
             for port in ports:
                 net = self.escape(self.net2str(cell.ports[port]))
-                lines.append("    .{} ({}),".format(self.escape(port), net))
+                lines.append("    .{} ({} ),".format(self.escape(port), net))
+            lines[-1] = lines[-1].replace(",", "")
             lines.append("  );")
             lines.append("")
 

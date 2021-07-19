@@ -184,7 +184,8 @@ class ClusterDecoder:
 
     def _assign_nets(self, pin_map):
         """
-        Assigns top-level nodes with nets according to the pin map
+        Assigns top-level nodes with nets according to the pin map. Assign
+        global non-routable cluster ports with their names as net names.
         """
         node_assignments = {}
 
@@ -193,13 +194,21 @@ class ClusterDecoder:
             if node.type in [pb.NodeType.SOURCE, pb.NodeType.SINK]:
                 path = [PathNode.from_string(p) for p in node.path.split(".")]
 
-                # A top-level node
-                if len(path) == 2:
-                    net = pin_map.get(str(path[1]), None)
-                    if net is not None:
+                # Not a top-level node
+                if len(path) > 2:
+                    continue
 
-                        assert node.id not in node_assignments, node
-                        node_assignments[node.id] = net
+                # A net from pin map
+                net = pin_map.get(str(path[1]), None)
+                if net is not None:
+                    assert node.id not in node_assignments, node
+                    node_assignments[node.id] = net
+
+                # This is a global port
+                # FIXME: Implicitly assume that all clock ports are global
+                elif node.is_global or node.port_type == pb.PortType.CLOCK:
+                    assert node.id not in node_assignments, node
+                    node_assignments[node.id] = "glb_" + str(path[-1])
 
         return node_assignments
 
@@ -412,18 +421,57 @@ class ClusterDecoder:
 
         return pb_types
 
-    def _instantiate_cells(self, pb_types, parameters, netlist, suffix=""):
+    def _instantiate_cells(self, pb_types, parameters, netlist, net_map, cluster_name, suffix=""):
         """
         Creates cell instances given the list of active leaf pb_types
         """
         count = 0
 
+        # Check if there are any global nets. If so then add them as top
+        # level inputs
+        for node in self.graph.nodes.values():
+
+            if node.path.count(".") > 1:
+                continue
+            if node.net is None:
+                continue
+
+            if node.is_global or node.port_type == pb.PortType.CLOCK:
+                netlist.ports["input"].add(node.net)
+
+        # Instantiate cells
         for path, pb_type in pb_types.items():
             nodes = self.nodes_by_cells[path]
 
             # Format cell type
             assert pb_type.blif_model is not None
             blif_model = pb_type.blif_model.split(maxsplit=1)[-1]
+
+            # This is a IO cell
+            if blif_model in [".input", ".output"]:
+
+                # Get the single net
+                nets = [self.graph.nodes[n].net for n in nodes]
+                nets = [net for net in nets if net is not None]
+                assert len(nets) == 1, nets
+                net = nets[0]
+
+                # Add it to the list of top-level ports
+                if blif_model == ".input":
+                    netlist.ports["input"].add(net)
+
+                if blif_model == ".output":
+                    netlist.ports["output"].add(net)
+
+                # If the cluster name is known use it to remap the net name
+                name = cluster_name.replace("out:", "")
+                name = blif_model[1:4] + "_" + name
+
+                net_map[net] = name
+
+                continue
+
+            # A regular cell
             assert not blif_model.startswith("."), blif_model
 
             # Format cell name
@@ -458,7 +506,7 @@ class ClusterDecoder:
                 if port.name not in conn:
                     conn[port.name] = {}
 
-                conn[port.name][port.index] = "_{}_".format(node.net)
+                conn[port.name][port.index] = node.net
 
             # Create the cell
             cell = Cell(blif_model, name)
@@ -481,6 +529,13 @@ class ClusterDecoder:
             # Attach parameters
             if path in parameters:
                 cell.parameters.update(parameters[path])
+
+            # Attach attributes
+            cell.attributes["pb_type"] = path
+
+            # If the cluster name is known store it in an attribute
+            if cluster_name is not None:
+                cell.attributes["cluster"] = cluster_name
 
             # Add it
             netlist.add_cell(cell)
@@ -543,7 +598,7 @@ class ClusterDecoder:
 
         return parameters
 
-    def decode(self, nodes, fasm_features, netlist, net_pool, suffix=""):
+    def decode(self, nodes, fasm_features, netlist, net_pool, net_map, cluster_name=None, suffix=""):
         """
         Decodes the cluster. Adds its cells to the netlist.
         """
@@ -616,9 +671,11 @@ class ClusterDecoder:
             if not pruned_nets and not pruned_blocks:
                 break
 
-        # Transfer net assignments to nodes
-        for node_id, net_id in self.node_assignments.items():
-            self.graph.nodes[node_id].net = net_id
+        # Transfer net assignments to nodes. Convert net ids to strings
+        for node_id, net in self.node_assignments.items():
+            if isinstance(net, int):
+                net = "_{}_".format(net)
+            self.graph.nodes[node_id].net = net
 
 #        # DEBUG #
 #        logging.debug("  Node assignments:")
@@ -635,5 +692,5 @@ class ClusterDecoder:
         parameters = self._decode_parameters(pb_types, fasm_features)
 
         # Instantiate cells
-        count = self._instantiate_cells(pb_types, parameters, netlist, suffix)
+        count = self._instantiate_cells(pb_types, parameters, netlist, net_map, cluster_name, suffix)
         logging.debug("  cells   : {}".format(count))
