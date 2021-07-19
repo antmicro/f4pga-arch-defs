@@ -7,6 +7,7 @@ from copy import deepcopy
 from enum import Enum
 
 from arch_xml_utils import is_leaf_pbtype
+from arch_xml_utils import get_metadata
 
 from block_path import PathNode
 
@@ -225,6 +226,14 @@ class PbType:
         # Ports (indexed by name)
         self.ports = {}
 
+        # FASM prefix(es). The count equals the num_pb. Can be None if there is
+        # no prefix.
+        self.fasm_prefix = None
+        # FASM features
+        self.fasm_features = set()
+        # FASM params
+        self.fasm_params = {}
+
     @property
     def is_leaf(self):
         """
@@ -294,6 +303,32 @@ class PbType:
             # Copy ports from the current pb_type
             child.ports = deepcopy(pb_type.ports)
 
+        # FASM prefix(es)
+        meta = get_metadata(elem, "fasm_prefix")
+        if meta:
+            pb_type.fasm_prefix = [pfx.strip() for pfx in meta.strip().split()]
+
+        # FASM features
+        meta = get_metadata(elem, "fasm_features")
+        if meta:
+            pb_type.fasm_features = set(
+                [f.strip() for f in meta.strip().split(",")]
+            )
+
+        # FASM params
+        meta = get_metadata(elem, "fasm_params")
+        if meta:
+            pb_type.fasm_params = {}
+
+            for spec in meta.strip().split("\n"):
+                spec = spec.strip()
+
+                feature, param = spec.split("=")
+                feature = feature.strip()
+                param = param.strip()
+
+                pb_type.fasm_params[param] = feature
+
         return pb_type
 
     def yield_port_pins(self, port_spec):
@@ -317,15 +352,32 @@ class PbType:
         # Yield the bits
         yield from port.yield_pins(bits)
 
+    def get_root(self):
+        """
+        Finds a root pb_type (complex block) of this one
+        """
+
+        # Already a root
+        if not self.parent:
+            return self
+
+        # Walk upwards
+        root = self.parent
+        while root.parent is not None:
+            root = root.parent
+
+        assert isinstance(root, PbType)
+        return root
+
     def find(self, path):
         """
-        Finds a pb_type or a mode given its hierarchical path.
+        Finds a pb_type or a mode given its hierarchical path. The path must
+        not contain pb_type indices.
         """
 
         # Split the path or assume this is an already splitted list.
         if isinstance(path, str):
-            path = path.split(".")
-            path = [PathNode.from_string(p) for p in path]
+            path = [PathNode.from_string(p) for p in path.split(".")]
         else:
             assert isinstance(path, list), type(path)
 
@@ -375,6 +427,68 @@ class PbType:
 
         # Not found
         return None
+
+    def get_fasm_prefix(self, path):
+        """
+        Builds a hierarchical FASM prefix for a pb_type pointed by the path.
+
+        This function takes into account pb_type indices to use correct FASM
+        prefix in case of num_pb > 1
+        """
+
+        # Split the path or assume this is an already splitted list.
+        if isinstance(path, str):
+            path = [PathNode.from_string(p) for p in path.split(".")]
+        else:
+            assert isinstance(path, list), type(path)
+
+        # Walk the hierarchy along the path
+        pbtype = self
+        prefix = []
+
+        while True:
+
+            # Pop a node from the path
+            part = path[0]
+            path = path[1:]
+
+            # Check name
+            assert part.name == pbtype.name, (part.name, pbtype.name)
+
+            # If there is a FASM prefix then append if
+            if pbtype.fasm_prefix:
+                assert part.index < len(pbtype.fasm_prefix)
+                prefix.append(pbtype.fasm_prefix[part.index])
+
+            # Explicit mode
+            if part.mode is not None:
+                assert part.mode in pbtype.modes, part.mode
+                mode = pbtype.modes[part.mode]
+
+                # No more path, return the prefix
+                if not path:
+                    return ".".join(prefix)
+
+            # Mode not given
+            else:
+
+                # No more path, return the prefix
+                if not path:
+                    return ".".join(prefix)
+
+                # Get the implicit mode
+                assert len(pbtype.modes) <= 1
+                mode = next(iter(pbtype.modes.values()))
+
+            # Find the child pb_type
+            part = path[0]
+            assert part.name in mode.pb_types, part.name
+
+            # Jump to the child
+            pbtype = mode.pb_types[part.name]
+
+        # Shouldn't happen
+        assert False
 
 
 class Mode:

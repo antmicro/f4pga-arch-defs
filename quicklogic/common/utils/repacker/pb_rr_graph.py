@@ -16,6 +16,7 @@ from arch_xml_utils import is_leaf_pbtype
 from arch_xml_utils import get_parent_pb
 from arch_xml_utils import yield_pb_children
 from arch_xml_utils import yield_pins
+from arch_xml_utils import get_metadata
 
 # =============================================================================
 
@@ -367,19 +368,6 @@ class Graph():
             # Assemble the full path
             node_path = ".".join(parts)
             return node_path
-
-        # Retrieves metadata string of the given type
-        def get_metadata(xml_item, name):
-
-            xml_metadata = xml_item.find("metadata")
-            if xml_metadata is None:
-                return None
-
-            for xml_meta in xml_metadata.findall("meta"):
-                if xml_meta.attrib["name"] == name:
-                    return xml_meta.text
-
-            return None
 
         # Assembles FASM prefix of a given pb_type
         def build_fasm_prefix(xml_pb_type, path):

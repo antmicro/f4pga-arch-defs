@@ -248,6 +248,22 @@ def yield_pins(xml_ic, port_spec, skip_index=True):
 # =============================================================================
 
 
+def get_metadata(xml_item, meta_name):
+    """
+    Retrieves metadata string of the given type. Returns None if not found
+    """
+
+    xml_metadata = xml_item.find("metadata")
+    if xml_metadata is None:
+        return None
+
+    for xml_meta in xml_metadata.findall("meta"):
+        if xml_meta.attrib["name"] == meta_name:
+            return xml_meta.text
+
+    return None
+
+
 def append_metadata(xml_item, meta_name, meta_data):
     """
     Appends metadata to an element of architecture
