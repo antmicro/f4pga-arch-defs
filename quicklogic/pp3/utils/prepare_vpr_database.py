@@ -10,7 +10,7 @@ from sdf_timing.utils import get_scale_seconds
 
 from data_structs import Pin, PinDirection, Cell, CellType, ClockCell, Loc, LocMap, \
     Tile, TileType, Connection, ConnectionLoc, ConnectionType, PackagePin, VprSwitch, \
-    VprSegment, Quadrant
+    VprSegment, Quadrant, TilePin
 from utils import get_loc_of_cell, find_cell_in_tile
 from utils import get_pin_name
 
@@ -482,7 +482,8 @@ def process_tilegrid(
         # Remove "FBIO_*" pins from the ASSP tile. These pins are handled by
         # SDIOMUX IO cells
         tile_type = tile_types["ASSP"]
-        tile_type.pins = [p for p in tile_type.pins if "FBIO_" not in p.name]
+        tile_type.pins = [p for p in tile_type.pins \
+            if "FBIO_" not in str(p.name)]
 
     # Insert synthetic VCC and GND source tiles.
     # FIXME: This assumes that the locations specified are empty!
@@ -597,11 +598,14 @@ def process_connections(
             if "GMUX" in ep.pin and ep.type == ConnectionType.TILE:
 
                 # Modify the cell name, use always "GMUX0"
-                cell, pin = ep.pin.split("_", maxsplit=1)
-                vpr_pin = "GMUX0_{}".format(pin)
+                vpr_pin = TilePin(
+                    cell = ep.pin.cell,
+                    index = 0,
+                    pin = ep.pin.pin
+                )
 
                 # Modify the location according to the cell index
-                z = int(cell[-1])  # FIXME: Assuming indices 0-9
+                z = ep.pin.index
                 vpr_loc = Loc(vpr_loc.x, vpr_loc.y, z)
 
             # Update the endpoint
@@ -620,7 +624,7 @@ def process_connections(
         for j, ep in enumerate(eps):
 
             # This endpoint is not relevant to a CLOCK cell
-            if not ep.pin.startswith("CLOCK"):
+            if not str(ep.pin).startswith("CLOCK"):
                 continue
 
             # The endpoint location points to a BIDIR tile. Find the assocated
@@ -662,19 +666,17 @@ def process_connections(
         for j, ep in enumerate(eps):
 
             # Must have "ASSP" and "FBIO_" in name and refer to a tile.
-            if "ASSP" not in ep.pin:
-                continue
-            if "FBIO_" not in ep.pin:
-                continue
             if ep.type != ConnectionType.TILE:
                 continue
+            if ep.pin.cell != "ASSP":
+                continue
+            if "FBIO_" not in ep.pin.pin:
+                continue
+            print(ep)
 
             # Get the pin name and index
-            pin_name, pin_index = get_pin_name(ep.pin)
+            pin_name, pin_index = get_pin_name(ep.pin.pin)
             assert pin_index is not None, ep
-
-            # Strip cell name
-            pin_name = pin_name.split("_", maxsplit=1)[1]
 
             # Find where is an SDIOMUX cell for that index
             cell_name = "SFB_{}_IO".format(pin_index)
@@ -683,8 +685,10 @@ def process_connections(
             new_loc = get_loc_of_cell(cell_name, vpr_tile_grid)
             cell = find_cell_in_tile(cell_name, vpr_tile_grid[new_loc])
 
-            new_pin = "{}{}_{}".format(
-                cell.type, cell.index, SDIOMUX_PIN_MAP[pin_name]
+            new_pin = TilePin(
+                cell = cell.type,
+                index = cell.index,
+                pin = SDIOMUX_PIN_MAP[pin_name]
             )
 
             eps[j] = ConnectionLoc(
@@ -716,12 +720,8 @@ def process_connections(
             if ep.type != ConnectionType.TILE:
                 continue
 
-            cell_name, pin = ep.pin.split("_", maxsplit=1)
-            cell_type = cell_name[:-1]
-            # FIXME: The above will fail on cell with index >= 10
-
-            if cell_type in special_tile_loc:
-                loc = special_tile_loc[cell_type]
+            if ep.pin.cell in special_tile_loc:
+                loc = special_tile_loc[ep.pin.cell]
 
                 eps[j] = ConnectionLoc(
                     loc=loc,
@@ -755,21 +755,16 @@ def process_connections(
             if ep.type != ConnectionType.TILE:
                 continue
 
-            cell_name, pin = ep.pin.split("_", maxsplit=1)
-            cell_type = cell_name[:-1]
-            # FIXME: The above will fail on cell with index >= 10
-
             # We handle on MULT and RAM here
-            if cell_type != "MULT" and cell_type != "RAM":
+            if ep.pin.cell != "MULT" and ep.pin.cell != "RAM":
                 continue
 
-            loc = loc_map.bwd[ep.loc]
-            tile = phy_tile_grid[loc]
-            cell = [cell for cell in tile.cells if cell.type == cell_type]
+            phy_loc = loc_map.bwd[ep.loc]
+            tile = phy_tile_grid[phy_loc]
+            cells = [cell for cell in tile.cells if cell.type == ep.pin.cell]
 
-            cell_name = cell[0].name
-
-            if cell_type == "MULT":
+            cell_name = cells[0].name
+            if ep.pin.cell == "MULT":
                 loc = mult_locations[cell_name]
             else:
                 loc = ram_locations[cell_name]
@@ -801,7 +796,9 @@ def process_connections(
         if not dst_cell_name.startswith("QMUX") or dst_pin != "QCLKIN0":
             continue
 
-        src_cell_name, src_pin = connection.src.pin.split("_", maxsplit=1)
+        src_cell_name = "{}{}".format(
+            connection.src.pin.cell, connection.src.pin.index
+        )
         if not src_cell_name.startswith("GMUX"):
             continue
 
@@ -812,6 +809,10 @@ def process_connections(
         for i in [1, 2]:
             gmux_idx = (gmux_base + i) % 5
 
+            gmux_pin = TilePin(cell="GMUX", index=0, pin="IZ")
+            if connection.src.type != ConnectionType.TILE:
+                gmux_pin = str(gmux_pin)
+
             c = Connection(
                 src=ConnectionLoc(
                     loc=Loc(
@@ -819,7 +820,7 @@ def process_connections(
                         y=connection.src.loc.y,
                         z=gmux_idx
                     ),
-                    pin="GMUX0_IZ",
+                    pin=gmux_pin,
                     type=connection.src.type
                 ),
                 dst=ConnectionLoc(
@@ -844,14 +845,8 @@ def process_connections(
             if ep.type != ConnectionType.TILE:
                 continue
 
-            cell_name, pin = ep.pin.split("_", maxsplit=1)
-
-            cell_index = int(cell_name[-1])
-            cell_type = cell_name[:-1]
-            # FIXME: The above will fail on cell with index >= 10
-
             # Only QMUX
-            if cell_type != "QMUX":
+            if ep.pin.cell != "QMUX":
                 continue
 
             # Get the physical tile
@@ -861,7 +856,7 @@ def process_connections(
             # Find the cell in the tile
             cells = [
                 c for c in tile.cells
-                if c.type == "QMUX" and c.index == cell_index
+                if c.type == "QMUX" and c.index == ep.pin.index
             ]
             assert len(cells) == 1
             cell = cells[0]
@@ -869,7 +864,7 @@ def process_connections(
             # Modify the endpoint
             eps[j] = ConnectionLoc(
                 loc=ep.loc,
-                pin="{}.{}".format(cell.name, pin),
+                pin="{}.{}".format(cell.name, ep.pin.pin),
                 type=ConnectionType.CLOCK,
             )
 
