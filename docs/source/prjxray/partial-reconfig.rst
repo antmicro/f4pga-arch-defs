@@ -1,11 +1,11 @@
-=================
+======================================================
 Xilinx 7 Series SymbiFlow Partial Reconfiguration Flow
-=================
+======================================================
 
 Note: SymbiFlow currently does not support partial bitstream generation. This is a goal in the future, but at the moment partial FASM must be concatenated with an overlay to generate a full bitstream.
 
 Background
-=================
+==========
 
 Partition Regions
 -----------------
@@ -525,6 +525,7 @@ All of the following snippets are from `xc/xc7/tests/switch_processing/CMakeList
 .. _xc/xc7/tests/switch_processing/CMakeLists.txt: https://github.com/SymbiFlow/symbiflow-arch-defs/blob/master/xc/xc7/tests/switch_processing/CMakeLists.txt
 
 .. code-block:: RST
+
 	add_file_target(FILE switch_processing_add_1.v SCANNER_TYPE verilog)
 	add_fpga_target(
 	  NAME switch_processing_arty_add_1_pr1
@@ -563,6 +564,7 @@ All of the following snippets are from `xc/xc7/tests/switch_processing/CMakeList
 Here the add_1 and blink modules are mapped to pr1 and pr2 respectively. The identity function is then also mapped to each partition region.
 
 .. code-block:: RST
+
 	add_file_target(FILE switch_processing_arty_overlay.v SCANNER_TYPE verilog)
 	add_fpga_target(
 	  NAME switch_processing_arty_overlay
@@ -575,6 +577,7 @@ Here the add_1 and blink modules are mapped to pr1 and pr2 respectively. The ide
 Here the overlay verilog is mapped to the overlay architecture. This overlay verilog connects switches to the input of the first partition region, connects the output of the first partition region to the input of the second partition region, and then connects the output of the second partition region to LEDs.
 
 .. code-block:: RST
+
 	add_bitstream_target(
 	  NAME switch_processing_arty_both_merged
 	  USE_FASM
