@@ -158,6 +158,14 @@ function(DEFINE_QL_TOOLCHAIN_TARGET)
   install(FILES ${DEFINE_QL_TOOLCHAIN_TARGET_CELLS_SIM}
           DESTINATION share/symbiflow/techmaps/${FAMILY})
 
+  # install lib files
+  install(DIRECTORY ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/${FAMILY}/devices/umc22/
+	  DESTINATION "share/symbiflow/arch/${FAMILY}-${FAMILY}_umc22_${FAMILY}-${FAMILY}_umc22/lib"
+	  FILES_MATCHING
+	  PATTERN "*.txt"
+	  PATTERN "*.json"
+	  PATTERN "*.xml")
+
   # install Yosys scripts
   install(FILES ${DEFINE_QL_TOOLCHAIN_TARGET_CONV_SCRIPT} ${DEFINE_QL_TOOLCHAIN_TARGET_SYNTH_SCRIPT}
           DESTINATION share/symbiflow/scripts/${FAMILY})
