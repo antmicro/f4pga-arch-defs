@@ -586,7 +586,7 @@ def annotate_net_endpoints(
 
         else:
             logging.critical(
-                "Cannot find port '{}' of block type '{}'".format(
+                "ERROR: Cannot find port '{}' of block type '{}'".format(
                     PathNode(constraint.port, constraint.pin).to_string(),
                     block_type
                 )
@@ -601,7 +601,7 @@ def annotate_net_endpoints(
             name_map = {NodeType.SINK: "output", NodeType.SOURCE: "input"}
 
             logging.warning(
-                "Cannot constrain {} net '{}' to {} port '{}'".format(
+                "WARNING: Cannot constrain {} net '{}' to {} port '{}'".format(
                     name_map[next(iter(node_types))],
                     constraint.net,
                     name_map[port_node.type],
@@ -623,6 +623,51 @@ def annotate_net_endpoints(
                 PathNode(constraint.port, constraint.pin).to_string()
             )
         )
+
+
+def annotate_global_routes(clb_graph, global_routes):
+    """
+    Assigns global routes with nets from the CLB graph. Throws an error on a
+    net conflict
+    """
+
+    for node in clb_graph.nodes.values():
+
+        # Consider only top-level SOURCE and SINK nodes
+        if node.type not in [NodeType.SOURCE, NodeType.SINK]:
+            continue
+        if node.path.count(".") > 1:
+            continue
+
+        # No net
+        if not node.net:
+            continue
+
+        # Get port name
+        path = [PathNode.from_string(p) for p in node.path.split(".")]
+        port = str(path[-1])
+
+        # Not a global route
+        if port not in global_routes:
+            continue
+
+        # Check net
+        net = global_routes[port]
+        if net is not None and net != node.net:
+            logging.critical(
+                "ERROR: Global route conflict! Route '{}', nets '{}', '{}'".
+                format(port, net, node.net)
+            )
+            exit(-1)
+
+        # Assign
+        if net is None:
+            logging.debug(
+                "    Net '{}' assigned to global route '{}'".format(
+                    node.net, port
+                )
+            )
+            global_routes[port] = node.net
 
 
 def rotate_truth_table(table, rotation_map):
@@ -817,6 +862,83 @@ def syncrhonize_attributes_and_parameters(eblif, packed_netlist):
     # Walk over CLBs
     for block in packed_netlist.blocks.values():
         walk(block)
+
+
+def verify_global_routes(clb, global_routes):
+    """
+    Checks if there are no globally routed nets connected to non-global ports
+    of the CLB. Should that happen, an error is thrown
+    """
+
+    global_nets = set(global_routes.values())
+    error = False
+
+    # This helper function checks whether a net is driven by an inpad block
+    def is_driven_by_inpad(block, net):
+
+        # This is a leaf block
+        if block.is_leaf:
+
+            # Not an inpad
+            if not block.instance.startswith("inpad"):
+                return False
+
+            # Look for the net in ports
+            for port in block.ports.values():
+                for conn in port.connections.values():
+                    if isinstance(conn, str) and conn == net:
+                        return True
+
+            # Net not found
+            return False
+
+        # This is a non-leaf block. Recurse
+        else:
+            for child in block.blocks.values():
+                if is_driven_by_inpad(child, net):
+                    return True
+
+        return False
+
+    # Loop over all port and their pins
+    for port in clb.ports.values():
+        for pin in range(port.width):
+
+            # Check if it is a non-global port
+            name = "{}[{}]".format(port.name, pin)
+            if name in global_routes:
+                continue
+
+            # Get net
+            net = clb.find_net_for_port(port.name, pin)
+            if not net:
+                continue
+
+            # Check
+            if net in global_nets:
+
+                # Check if the net is driven by a leaf block representing an
+                # input pad. Even though VPR treads an input pad for a global
+                # net as virtual it has to be present in the netlist and this
+                # is not an error
+                if is_driven_by_inpad(clb, net):
+                    logging.debug(
+                        " Global net '{}' driven by inpad in {}".format(
+                            net, clb
+                        )
+                    )
+                    continue
+
+                # This is an error
+                logging.critical(
+                    " ERROR: Global net '{}' connected to a non-global port '{}' of {}"
+                    .format(net, name, clb)
+                )
+                error = True
+
+    # Raise an error
+    if error:
+        exit(-1)
 
 
 # =============================================================================
@@ -1064,6 +1186,11 @@ def main():
         help="Controls whether buffer LUTs are to be absorbed downstream"
     )
     parser.add_argument(
+        "--no_global_clocks",
+        action="store_true",
+        help="Disables treating top-level CLB clock inputs as global"
+    )
+    parser.add_argument(
         "--dump-dot",
         action="store_true",
         help="Dump graphviz .dot files for pb_type graphs"
@@ -1118,6 +1245,31 @@ def main():
         name: PbType.from_etree(elem)
         for name, elem in xml_clbs.items()
     }
+
+    # Identify global routes
+    global_routes = {}
+    global_clock_routes = set()
+
+    for pb_type in clb_pbtypes.values():
+        for port in pb_type.ports.values():
+
+            # Has to be either explicitly defined as a global port or be a
+            # clock input when they are treated as global.
+            if not port.is_global and \
+               not (port.type == PortType.CLOCK and not args.no_global_clocks):
+                continue
+
+            for pinspec in port.yield_pins():
+                name = "{}[{}]".format(*pinspec)
+                global_routes[name] = None
+
+                if port.type == PortType.CLOCK:
+                    global_clock_routes.add(name)
+
+    # DEBUG
+    logging.debug(" global routes:")
+    for name in sorted(global_routes.keys()):
+        logging.debug("  " + name)
 
     # Build a list of models
     logging.info("Building primitive models...")
@@ -1192,8 +1344,87 @@ def main():
         total_blocks += clb_block.count_leafs()
     logging.debug(" {} leaf blocks".format(total_blocks))
 
+    # Identify global clock nets
+    global_clock_nets = set()
+    for clb_block in packed_netlist.blocks.values():
+        for port in clb_block.ports.values():
+            for pin in range(port.width):
+
+                # Format port pin name
+                name = "{}[{}]".format(port.name, pin)
+
+                # Not a global clock route port, skip
+                if name not in global_clock_routes:
+                    continue
+
+                # Get connected net
+                net = clb_block.find_net_for_port(port.name, pin)
+                if net is None:
+                    continue
+
+                global_clock_nets.add(net)
+
+    logging.info(" {} global clocks".format(len(global_clock_nets)))
+    for net in global_clock_nets:
+        logging.debug("  {}".format(net))
+
+    # Too many clocks, throw an error
+    if len(global_clock_nets) > len(global_clock_routes):
+        logging.critical(
+            " ERROR: Too many global clocks ({}) for this architecture ({})".
+            format(
+                len(global_clock_nets),
+                len(global_clock_routes),
+            )
+        )
+        exit(-1)
+
     init_time = time.perf_counter() - init_time
     repack_time = time.perf_counter()
+
+    # Constrain unconstrained global clocks
+    if global_clock_nets:
+
+        logging.info("Constraining unconstrained global clock nets...")
+
+        # Identify unconstrainted global clock nets and routes
+        free_clock_nets = set(global_clock_nets)
+        free_clock_routes = set(global_clock_routes)
+
+        for constraint in repacking_constraints:
+
+            if constraint.net in global_clock_nets:
+                free_clock_nets.discard(constraint.net)
+
+            name = "{}[{}]".format(constraint.port, constraint.pin)
+            if name in free_clock_routes:
+                free_clock_routes.discard(name)
+
+        # Cannot constrain all
+        if len(free_clock_routes) < len(free_clock_nets):
+            logging.critical(
+                " ERROR: Cannot constrain all free global clocks ({}) as there "
+                "are to few global clock routes available ({})".format(
+                    len(free_clock_nets), len(free_clock_routes)
+                )
+            )
+            exit(-1)
+
+        # Make the constraints
+        block_types = set([b.type for b in packed_netlist.blocks.values()])
+        for net, port in zip(free_clock_nets, free_clock_routes):
+            for block_type in block_types:
+                constraint = RepackingConstraint(
+                    net=net, block_type=block_type, port_spec=port
+                )
+                repacking_constraints.append(constraint)
+
+                logging.debug(
+                    " {}: {}.{}[{}]".format(
+                        constraint.net, constraint.block_type, constraint.port,
+                        constraint.pin
+                    )
+                )
 
     # Check if the repacking constraints do not refer to any non-existent nets
     if repacking_constraints:
@@ -1208,7 +1439,7 @@ def main():
 
         if invalid_nets:
             logging.critical(
-                " Error: constraints refer to nonexistent net(s): {}".format(
+                " ERROR: constraints refer to nonexistent net(s): {}".format(
                     ", ".join(invalid_nets)
                 )
             )
@@ -1233,10 +1464,9 @@ def main():
         # Find a corresponding root pb_type (complex block) in the architecture
         clb_pbtype = clb_pbtypes.get(clb_block.type, None)
         if clb_pbtype is None:
-            logging.error(
-                "Complex block type '{}' not found in the VPR arch".format(
-                    clb_block.type
-                )
+            logging.critical(
+                "ERROR: Complex block type '{}' not found in the VPR arch".
+                format(clb_block.type)
             )
             exit(-1)
 
@@ -1290,13 +1520,14 @@ def main():
 
             # No candidates
             if not candidates:
-                logging.critical("No repack target found!")
+                logging.critical("ERROR: No repack target found!")
                 exit(-1)
 
             # There must be only a single repack target per block
             if len(candidates) > 1:
                 logging.critical(
-                    "Multiple repack targets found! {}".format(candidates)
+                    "ERROR: Multiple repack targets found! {}".
+                    format(candidates)
                 )
                 exit(-1)
 
@@ -1313,7 +1544,7 @@ def main():
 
             if path in repack_targets:
                 logging.error(
-                    "Multiple blocks are to be repacked into '{}'".
+                    "ERROR: Multiple blocks are to be repacked into '{}'".
                     format(path)
                 )
             repack_targets.add(path)
@@ -1384,6 +1615,8 @@ def main():
             block=clb_block,
             constraints=repacking_constraints
         )
+
+        annotate_global_routes(clb_graph=graph, global_routes=global_routes)
 
         # For repacked leafs
         for block, rule, (path, dst_pbtype) in blocks_to_repack:
@@ -1476,6 +1709,11 @@ def main():
     # Optional dump
     if args.dump_netlist:
         eblif.to_file("netlist.repacked_and_cleaned.eblif")
+
+    # Verify global routes
+    logging.info("Verifying global routes...")
+    for clb_block in packed_netlist.blocks.values():
+        verify_global_routes(clb_block, global_routes)
 
     # Write the circuit netlist
     logging.info("Writing EBLIF circuit netlist...")
