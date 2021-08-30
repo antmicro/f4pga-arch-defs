@@ -8,7 +8,7 @@
 function(ADD_BINARY_TOOLCHAIN_TEST)
 
   set(options)
-  set(oneValueArgs TEST_NAME DEVICE PINMAP EXTRA_ARGS)
+  set(oneValueArgs TEST_NAME DIRECTIVE DEVICE PINMAP PCF SDC EXTRA_ARGS)
   set(multiValueArgs)
 
   cmake_parse_arguments(
@@ -22,18 +22,30 @@ function(ADD_BINARY_TOOLCHAIN_TEST)
   set(INSTALLATION_DIR_BIN "${CMAKE_INSTALL_PREFIX}/bin")
 
   set(TEST_NAME  ${ADD_BINARY_TOOLCHAIN_TEST_TEST_NAME})
+  set(DIRECTIVE  ${ADD_BINARY_TOOLCHAIN_TEST_DIRECTIVE})
   set(DEVICE     ${ADD_BINARY_TOOLCHAIN_TEST_DEVICE})
   set(PINMAP     ${ADD_BINARY_TOOLCHAIN_TEST_PINMAP})
+  set(PCF        ${ADD_BINARY_TOOLCHAIN_TEST_PCF})
+  set(SDC        ${ADD_BINARY_TOOLCHAIN_TEST_SDC})
   set(EXTRA_ARGS ${ADD_BINARY_TOOLCHAIN_TEST_EXTRA_ARGS})
 
   set(SOURCES "${TEST_NAME}.v")
 
-  set(PCF "${TEST_NAME}.pcf")
-  set(SDC "${TEST_NAME}.sdc")
+  if("${PCF}" STREQUAL "")
+    set(PCF "${TEST_NAME}.pcf")
+  endif()
+
+  if("${SDC}" STREQUAL "")
+    set(SDC "${TEST_NAME}.sdc")
+  endif()
+
+  if("${DIRECTIVE}" STREQUAL "")
+    set(DIRECTIVE "compile")
+  endif()
 
   set(TOOLCHAIN_COMMAND "\
     ql_symbiflow \
-    -synth \
+    -${DIRECTIVE} \
     -src ${CMAKE_CURRENT_SOURCE_DIR} \
     -d ${DEVICE} \
     -t top \
