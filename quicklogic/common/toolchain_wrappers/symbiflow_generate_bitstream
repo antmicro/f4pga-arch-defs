@@ -4,7 +4,7 @@ set -e
 MYPATH=`realpath $0`
 MYPATH=`dirname ${MYPATH}`
 
-OPTS=d:f:r:b:
+OPTS=d:f:r:b:P:
 LONGOPTS=device:,fasm:,format:,bit:,part:
 
 PARSED_OPTS=`getopt --options=${OPTS} --longoptions=${LONGOPTS} --name $0 -- "$@"`

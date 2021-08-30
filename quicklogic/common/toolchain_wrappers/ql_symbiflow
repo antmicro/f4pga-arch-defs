@@ -21,7 +21,7 @@ echo -e "\nBelow are the supported commands: \n\
 \t>ql_symbiflow -synth -src <source_dir path> -d <device> -P <pinmap csv file> -t <top module name> -v <verilog file/files> -p <pcf file>\n\
  To run synthesis, pack, place and route:\n\
 \t>ql_symbiflow -compile -src <source_dir path> -d <device> -P <pinmap csv file> -t <top module name> -v <verilog file/files> -p <pcf file> -P <pinmap csv file> -s <SDC file> \n\
-Devices supported:qlf_k4n8, qlf_k6n10 " || exit
+Devices supported: ql-eos-s3, ql-pp3, qlf_k4n8, qlf_k6n10 " || exit
 elif [[ $1 == "-v" || $1 == "--version" ]];then
         echo "Symbiflow Tool Version : ${VERSION}"
         exit
@@ -173,16 +173,25 @@ case ${DEVICE} in
         DEVICE="${DEVICE}_${DEVICE}"
 		FAMILY="qlf_k4n8"
         DEVICE_CHECK="VALID"
+        USE_PINMAP=1
 		;;
 	qlf_k6n10)
         DEVICE="${DEVICE}_${DEVICE}"
         FAMILY="qlf_k6n10"
         DEVICE_CHECK="VALID"
-	        ;;
+        USE_PINMAP=1
+        ;;
 	ql-eos-s3)
         DEVICE="${DEVICE}"
 		FAMILY="pp3"
         DEVICE_CHECK="VALID"
+        USE_PINMAP=0
+		;;
+	ql-pp3)
+        DEVICE="${DEVICE}"
+		FAMILY="pp3"
+        DEVICE_CHECK="VALID"
+        USE_PINMAP=0
 		;;
 	*)
 		echo "Unsupported device '${DEVICE}'"
@@ -235,7 +244,7 @@ if [[ $1 == "-compile" || $1 == "-post_verilog" ]]; then
     echo "DEVICE name is missing. Refer -h/--help"
     exit 1
   elif ! [[ "$DEVICE_CHECK" =~ ^(VALID)$ ]]; then
-	  echo "Invalid Device name, supported qlf_k4n8/qlf_k6n10/pp3"
+	  echo "Invalid Device name, supported: ql-eos-s3, ql-pp3, qlf_k4n8, qlf_k6n10"
     exit 1
   fi
   if [ -z "$TOP" ]; then
@@ -244,10 +253,10 @@ if [[ $1 == "-compile" || $1 == "-post_verilog" ]]; then
   fi
   if [[  "$DEVICE_CHECK" =~ ^(VALID)$ ]]; then
     if [ -z "$PART" ]; then
-	   if [ -n "$PCF" ];then
+	   if [ -n "$PCF" && $USE_PINMAP -ne 0 ];then
 	     echo "Error: pcf file cannot be used without declaring PINMAP CSV file"
-             exit 1
-           fi
+         exit 1
+       fi
     fi
   fi
     if [ -z "$ROUTE_FLAG0" ]; then
@@ -331,7 +340,7 @@ else
 	CURR_DIR="${PWD}/${SOURCE}"
 fi
 
-if [ -n "$PART" ]; then
+if [[ -n "$PART" && $USE_PINMAP -ne 0 ]]; then
     if [[ -f $SOURCE/$PART ]];then
 	CSV_PATH=`realpath $SOURCE/$PART`
     elif [[ -f $PART ]];then
@@ -356,7 +365,12 @@ elif [[ -f $PCF ]];then
 	PCF_PATH=`realpath $PCF`
 fi
 
-export PART=${CSV_PATH}
+if [[ $USE_PINMAP -ne 0 ]]; then
+    export PART=${CSV_PATH}
+else
+    export PART=${PART}
+fi
+
 export JSON=${JSON_PATH}
 export PCF_PATH=${PCF_PATH}
 
@@ -413,7 +427,7 @@ all: \${BUILDDIR}/\${TOP}.${RUN_TILL}\n\
   ifneq (\"\$(wildcard \$(HEX_FILES))\",\"\")\n\
 	\$(shell cp \${current_dir}/*.hex \${BUILDDIR})\n\
   endif\n\
-	cd \${BUILDDIR} && symbiflow_synth -t \${TOP} -v \${VERILOG} -F \${FAMILY} -d \${DEVICE} -p \${PCF} ${COMPILE_EXTRA_ARGS[*]} > $LOG_FILE 2>&1\n\
+	cd \${BUILDDIR} && symbiflow_synth -t \${TOP} -v \${VERILOG} -F \${FAMILY} -d \${DEVICE} -p \${PCF} -P \${PART} ${COMPILE_EXTRA_ARGS[*]} > $LOG_FILE 2>&1\n\
 \n\
 \${BUILDDIR}/\${TOP}.sdc: \${BUILDDIR}/\${TOP}.eblif\n\
 	python3 ${PROCESS_SDC} --sdc-in \${SDC_IN} --sdc-out \$@ --pcf \${PCF} --eblif \${BUILDDIR}/\${TOP}.eblif --pin-map \${PINMAP_CSV}\n\
@@ -463,7 +477,7 @@ if [ "$FAMILY" == "qlf_k4n8" ]; then
 elif [ "$FAMILY" == "pp3" ]; then
     echo -e "\
 \${BUILDDIR}/\${TOP}.bit: \${BUILDDIR}/\${TOP}.fasm\n\
-	cd \${BUILDDIR} && symbiflow_write_bitstream -d \${DEVICE} -f \${TOP}.fasm -P \${PARTNAME} -b \${TOP}.bit >> $LOG_FILE 2>&1\n\
+	cd \${BUILDDIR} && symbiflow_generate_bitstream -d \${DEVICE} -f \${TOP}.fasm -P \${PARTNAME} -b \${TOP}.bit >> $LOG_FILE 2>&1\n\
     " >>$MAKE_FILE
 fi
 
