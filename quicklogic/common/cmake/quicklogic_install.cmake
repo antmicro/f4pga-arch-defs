@@ -36,6 +36,10 @@ function(DEFINE_QL_TOOLCHAIN_TARGET)
         symbiflow_route
         symbiflow_synth
         symbiflow_write_fasm
+        symbiflow_write_bitheader
+        symbiflow_write_jlink
+        symbiflow_write_openocd
+        symbiflow_fasm2bels
   )
 
   # Export VPR arguments

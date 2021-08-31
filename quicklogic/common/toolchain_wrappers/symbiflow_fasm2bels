@@ -1,0 +1,68 @@
+#!/bin/bash
+set -e
+
+MYPATH=`realpath $0`
+MYPATH=`dirname ${MYPATH}`
+
+OPTS=d:P:p:b:
+LONGOPTS=device:,part:,pcf:,bit:,
+
+PARSED_OPTS=`getopt --options=${OPTS} --longoptions=${LONGOPTS} --name $0 -- "$@"`
+eval set -- "${PARSED_OPTS}"
+
+DEVICE=""
+PART=""
+PCF=""
+BIT=""
+
+while true; do
+	case "$1" in
+		-d|--device)
+			DEVICE=$2
+			shift 2
+			;;
+		-P|--part)
+			PART=$2
+			shift 2
+			;;
+		-p|--pcf)
+			PCF=$2
+			shift 2
+			;;
+		-b|--bit)
+			BIT=$2
+			shift 2
+			;;
+		--)
+			break
+			;;
+	esac
+done
+
+if [ -z $DEVICE ]; then
+    echo "Please provide device name"
+	exit 1
+fi
+
+if [ -z $BIT ]; then
+	echo "Please provide an input bistream file name"
+	exit 1
+fi
+
+
+# Run fasm2bels
+if [[ "$DEVICE" =~ ^(ql-eos-s3|ql-pp3|ql-pp3e)$ ]]; then
+
+    VPR_DB=`readlink -f ${MYPATH}/../share/arch/${DEVICE}/db_phy.pickle`
+    FASM2BEL=`readlink -f ${MYPATH}/../bin/python/fasm2bels.py`
+    VERILOG_FILE="${BIT}.v"
+
+    echo "Running fasm2bels"
+    python3 ${FASM2BEL} ${BIT} --vpr-db ${VPR_DB} --package-name ${PART} --input-type bitstream --output-verilog ../${VERILOG_FILE} --input-pcf ${PCF}
+
+else
+
+    echo "ERROR: Unsupported device '${DEVICE}' for fasm2bels"
+    exit -1
+fi
+
