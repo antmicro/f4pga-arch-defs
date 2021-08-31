@@ -292,12 +292,22 @@ if [ -f "$SOURCE/v_list_tmp" ]; then
 fi
 
 # FIXME: Some devices do not have fasm2bels yet
+# FIXME: Some device do not support bitstream generation yet
 RUN_TILL=""
 if [[ "$DEVICE" =~ ^(qlf_k4n8.*)$ ]]; then
     HAVE_FASM2BELS=0
     RUN_TILL="bit"
-else
+elif [[ "$DEVICE" =~ ^(qlf_k6n10.*)$ ]]; then
+    HAVE_FASM2BELS=0
+    RUN_TILL="route"
+elif [[ "$DEVICE" =~ ^(ql-eos-s3)$ ]]; then
     HAVE_FASM2BELS=1
+    RUN_TILL="bit"
+elif [[ "$DEVICE" =~ ^(ql-pp3)$ ]]; then
+    HAVE_FASM2BELS=0 # TODO:
+    RUN_TILL="route" # TODO:
+else
+    HAVE_FASM2BELS=0
     RUN_TILL="route"
 fi
 
@@ -437,7 +447,11 @@ fi
 \n\
 \${BUILDDIR}/\${TOP}.fasm: \${BUILDDIR}/\${TOP_FINAL}.route\n\
 	cd \${BUILDDIR} && symbiflow_write_fasm -e \${TOP_FINAL}.eblif -f \${FAMILY} -d \${DEVICE} -s \${SDC} -c \${PNR_CORNER} >> $LOG_FILE 2>&1\n\
-\n\
+    " >>$MAKE_FILE
+
+# Bitstream
+if [ "$FAMILY" == "qlf_k4n8" ]; then
+    echo -e "\
 \${BUILDDIR}/\${TOP}.bit: \${BUILDDIR}/\${TOP}.fasm\n\
 	cd \${BUILDDIR} && symbiflow_generate_bitstream -d \${FAMILY} -f \${TOP}.fasm -r 4byte -b \${TOP}.bit >> $LOG_FILE 2>&1\n\
 	cd \${BUILDDIR} && symbiflow_generate_bitstream -d \${FAMILY} -f \${TOP}.fasm -r txt -b \${TOP}.bin >> $LOG_FILE 2>&1\n\
@@ -446,16 +460,45 @@ fi
 	cd \${BUILDDIR} && symbiflow_generate_libfile \${PARTNAME} \${DEVICE} \${PNR_CORNER} >> $LOG_FILE 2>&1\n\
 " >>$MAKE_FILE
 
+elif [ "$FAMILY" == "pp3" ]; then
+    echo -e "\
+\${BUILDDIR}/\${TOP}.bit: \${BUILDDIR}/\${TOP}.fasm\n\
+	cd \${BUILDDIR} && symbiflow_write_bitstream -d \${DEVICE} -f \${TOP}.fasm -P \${PARTNAME} -b \${TOP}.bit >> $LOG_FILE 2>&1\n\
+    " >>$MAKE_FILE
+fi
+
+# EOS-S3 specific targets
+if [ "$DEVICE" == "ql-eos-s3" ]; then
+    echo -e "\
+\${BUILDDIR}/\${TOP}_bit.h: \${BUILDDIR}/\${TOP}.bit\n\
+	cd \${BUILDDIR} && symbiflow_write_bitheader -b \${TOP}.bit >> $LOG_FILE 2>&1\n\
+\n\
+\${BUILDDIR}/\${TOP}.bin: \${BUILDDIR}/\${TOP}.bit\n\
+	cd \${BUILDDIR} && symbiflow_write_binary -b \${TOP}.bit >> $LOG_FILE 2>&1\n\
+\n\
+\${BUILDDIR}/\${TOP}.jlink: \${BUILDDIR}/\${TOP}.bit\n\
+	cd \${BUILDDIR} && symbiflow_write_jlink -f \${TOP}.fasm -P \${PACKAGENAME} -b \${TOP}.bit >> $LOG_FILE 2>&1\n\
+\n\
+\${BUILDDIR}/\${TOP}.openocd: \${BUILDDIR}/\${TOP}.bit\n\
+	cd \${BUILDDIR} && symbiflow_write_openocd -f \${TOP}.fasm -P \${PACKAGENAME} -b \${TOP}.bit >> $LOG_FILE 2>&1\n\
+\n\
+\${BUILDDIR}/\${TOP}_jlink.h: \${BUILDDIR}/\${TOP}.jlink >> $LOG_FILE 2>&1\n\
+	cd \${BUILDDIR} && symbiflow_write_jlinkheader\n\
+    " >>$MAKE_FILE
+fi
+
+# fasm2bels
 if [ "$HAVE_FASM2BELS" != 0 ]; then
     echo -e "\
-	cd \${BUILDDIR} && symbiflow_write_fasm2bels -e \${TOP}.eblif -d \${DEVICE} -p \${PCF} -n \${TOP}.net -P \${PARTNAME}\n\
+\${BUILDDIR}/\${TOP}.bit.v: \${BUILDDIR}/\${TOP}.bit\n\
+	cd \${BUILDDIR} && symbiflow_fasm2bels -b \${BUILDDIR}/\${TOP}.bit -d \${DEVICE} -p \${PCF} -P \${PARTNAME} >> $LOG_FILE 2>&1\n\
     " >>$MAKE_FILE
 fi
 
 echo -e "\
 clean:\n\
 	rm -rf \${BUILDDIR}\n\
-" >>$MAKE_FILE
+    " >>$MAKE_FILE
 
 #### Remove temporary files #####
 rm -f $SOURCE/f_list_temp $SOURCE/v_list_tmp $SOURCE/v_list
@@ -468,6 +511,25 @@ elif [[ ! -z "$OUT" && $1 == "-compile" ]];then
 	if [[ " ${OUT_ARR[@]} " =~ " post_verilog " ]];then
 		cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.post_v || exit
 	fi
+
+    if [ "$DEVICE" == "ql-eos-s3" ]; then
+      if [[ " ${OUT_ARR[@]} " =~ " jlink " ]]; then
+       cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.jlink || exit
+      fi
+      if [[ " ${OUT_ARR[@]} " =~ " openocd " ]]; then
+       cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.openocd || exit
+      fi
+      if [[ " ${OUT_ARR[@]} " =~ " post_verilog " ]]; then
+       cd $SOURCE;make -f Makefile.symbiflow  ${BUILDDIR}/${TOP}.bit.v || exit
+      fi
+      if [[ " ${OUT_ARR[@]} " =~ " header " ]]; then
+       cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}_bit.h || exit
+      fi
+      if [[ " ${OUT_ARR[@]} " =~ " binary " ]]; then
+       cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.bin || exit
+      fi
+    fi
+
 else
   if [ $1 == "-compile" ]; then
   echo -e "Running Synth->Pack->Place->Route->FASM->bitstream"
