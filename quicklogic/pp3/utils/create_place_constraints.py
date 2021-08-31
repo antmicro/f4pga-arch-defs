@@ -103,7 +103,7 @@ def main():
         for cell in eblif_data["subckt"]:
             if cell["type"] == "subckt" and cell["args"][0] == IOB_CELL[0]:
                 iob_cell = cell
-
+                break
         else:
             continue
 
@@ -122,6 +122,7 @@ def main():
         for cell in eblif_data["subckt"]:
             if cell["type"] == "subckt" and cell["args"][0] == BUF_CELL[0]:
                 buf_cell = cell
+                break
         else:
             continue
 
