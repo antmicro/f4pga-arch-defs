@@ -7,6 +7,44 @@ on:
 
 jobs:
 
+  code-quality:
+
+    runs-on: ubuntu-18.04
+    steps:
+
+      - uses: actions/checkout@v2
+        with:
+          lfs: 'true'
+          submodules: true
+
+      - name: Environment
+        env:
+          CI: TEST
+        run: |
+          sudo rm -rf /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+          sudo apt update
+          sudo apt install -y g++-8 gcc-8 colordiff coreutils graphviz inkscape make git git-lfs unzip cmake
+
+          mkdir .tmp
+          curl -L https://github.com/ninja-build/ninja/releases/download/v1.10.0/ninja-linux.zip -o .tmp/ninja-linux.zip
+          unzip .tmp/ninja-linux.zip -d .tmp
+
+          export PATH=$PATH:$PWD/.tmp
+          export ROOT=$(pwd)
+          export CMAKE_FLAGS="-GNinja"
+
+          make env
+
+          echo "PATH=${PATH}" >> $GITHUB_ENV
+          echo "ROOT=${ROOT}" >> $GITHUB_ENV
+
+      - name: Code Formatting
+        run: |
+          cd ${ROOT}/build
+          source ../env/conda/bin/activate symbiflow_arch_def_base
+          ninja -j$(nproc) check_python
+          ninja -j$(nproc) lint_python
+
   ci:
     runs-on: ubuntu-18.04
     steps:
@@ -42,13 +80,6 @@ jobs:
           echo "ROOT=${ROOT}" >> $GITHUB_ENV
           echo "INSTALL_DIR=${INSTALL_DIR}" >> $GITHUB_ENV
 
-      - name: Code Formatting
-        run: |
-          cd ${ROOT}/build
-          source ../env/conda/bin/activate symbiflow_arch_def_base
-          ninja -j$(nproc) check_python
-          ninja -j$(nproc) lint_python
-
       - name: QuickLogic Tests
         run: |
           cd ${ROOT}/build
@@ -82,7 +113,7 @@ jobs:
 
   upload-architectures:
     runs-on: ubuntu-18.04
-    needs: ci
+    needs: [code-quality, ci]
     steps:
 
       - uses: actions/download-artifact@v2
@@ -107,7 +138,7 @@ jobs:
 
   upload-latest:
     runs-on: ubuntu-18.04
-    needs: [ci, upload-architectures]
+    needs: [code-quality, ci, upload-architectures]
     steps:
 
       - uses: actions/download-artifact@v2
