@@ -97,7 +97,7 @@ jobs:
           cd ${ROOT}/build
           source ../env/conda/bin/activate symbiflow_arch_def_base
           export CTEST_OUTPUT_ON_FAILURE=1
-          ctest --no-tests=error -R quicklogic_toolchain_test_.*
+          ctest --no-tests=error -R "quicklogic_toolchain_test_.*" -E "quicklogic_toolchain_test_.*_qlf_k6n10" -VV
 
       - name: Packaging
         run: |
