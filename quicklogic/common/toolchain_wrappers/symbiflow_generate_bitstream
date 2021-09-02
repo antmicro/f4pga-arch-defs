@@ -66,7 +66,7 @@ if [[ "$DEVICE" =~ ^(qlf_k4n8.*)$ ]]; then
     ${QLF_FASM} --db-root ${DB_ROOT} --format ${BIT_FORMAT} --assemble $FASM $BIT
 
 elif [[ "$DEVICE" =~ ^(ql-eos-s3|ql-pp3|ql-pp3e)$ ]]; then
-    qlfasm ${FASM} ${BIT}
+    qlfasm --dev-type ${DEVICE} ${FASM} ${BIT}
 
 else
 
