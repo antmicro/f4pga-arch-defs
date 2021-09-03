@@ -11,7 +11,7 @@ from data_structs import Loc, SwitchboxPinLoc, PinDirection, ConnectionType
 from utils import get_quadrant_for_loc
 from verilogmodule import VModule
 
-from quicklogic_fasm.qlfasm import QL732BAssembler, load_quicklogic_database
+from quicklogic_fasm.qlfasm import QL732BAssembler, load_quicklogic_database, get_db_dir
 
 Feature = namedtuple('Feature', 'loc typ signature value')
 RouteEntry = namedtuple('RouteEntry', 'typ stage_id switch_id mux_id sel_id')
@@ -1078,7 +1078,7 @@ if __name__ == '__main__':
     f2b = Fasm2Bels(db, args.package_name)
 
     if args.input_type == 'bitstream':
-        qlfasmdb = load_quicklogic_database()
+        qlfasmdb = load_quicklogic_database(get_db_dir("ql-eos-s3"))
         assembler = QL732BAssembler(qlfasmdb)
         assembler.read_bitstream(args.input_file)
         fasmlines = assembler.disassemble()
