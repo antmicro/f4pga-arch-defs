@@ -1,0 +1,4 @@
+set_io clk A3
+set_io clr B1
+set_io shift_in A1
+set_io shift_out A2
