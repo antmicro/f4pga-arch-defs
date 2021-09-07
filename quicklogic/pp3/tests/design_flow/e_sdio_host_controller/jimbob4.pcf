@@ -1,0 +1,2 @@
+set_io sys_clk A3
+set_io reset   B1
