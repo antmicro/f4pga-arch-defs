@@ -1332,6 +1332,7 @@ function(ADD_FPGA_TARGET)
   #   [INPUT_XDC_FILES <input_xdc_files>]
   #   [INPUT_SDC_FILE <input_sdc_file>]
   #   [EXPLICIT_ADD_FILE_TARGET]
+  #   [AUTO_ADD_FILE_TARGET]
   #   [EMIT_CHECK_TESTS EQUIV_CHECK_SCRIPT <yosys to script verify two bitstreams gold and gate>]
   #   [NO_SYNTHESIS]
   #   [ASSERT_USAGE <usage_spec>]
@@ -1345,8 +1346,9 @@ function(ADD_FPGA_TARGET)
   #
   # ADD_FPGA_TARGET defines a FPGA build targetting a specific board.  By
   # default input files (SOURCES, TESTBENCH_SOURCES, INPUT_IO_FILE) will be
-  # implicitly passed to ADD_FILE_TARGET.  If EXPLICIT_ADD_FILE_TARGET is
-  # supplied, this behavior is supressed.
+  # implicitly passed to ADD_FILE_TARGET. If EXPLICIT_ADD_FILE_TARGET is
+  # supplied, this behavior is supressed. When AUTO_ADD_FILE_TARGETS is specified
+  # file targets will be created only if they do not exist already.
   #
   # TOP is the name of the top-level module in the design.  If no supplied,
   # TOP is set to "top".
@@ -1395,7 +1397,7 @@ function(ADD_FPGA_TARGET)
   # * ${TOP}.route - Place and routed design (http://docs.verilogtorouting.org/en/latest/vpr/file_formats/#routing-file-format-route)
   # * ${TOP}.${BITSTREAM_EXTENSION} - Bitstream for target.
   #
-  set(options EXPLICIT_ADD_FILE_TARGET EMIT_CHECK_TESTS NO_SYNTHESIS ROUTE_ONLY INSTALL_CIRCUIT)
+  set(options EXPLICIT_ADD_FILE_TARGET AUTO_ADD_FILE_TARGET EMIT_CHECK_TESTS NO_SYNTHESIS ROUTE_ONLY INSTALL_CIRCUIT)
   set(oneValueArgs NAME TOP BOARD INPUT_IO_FILE EQUIV_CHECK_SCRIPT AUTOSIM_CYCLES ASSERT_USAGE ASSERT_TIMING INPUT_SDC_FILE)
   set(multiValueArgs SOURCES TESTBENCH_SOURCES DEFINES BIT_TO_V_EXTRA_ARGS INPUT_XDC_FILES NET_PATCH_EXTRA_ARGS)
   cmake_parse_arguments(
@@ -1470,25 +1472,46 @@ function(ADD_FPGA_TARGET)
   if(NOT ${ADD_FPGA_TARGET_EXPLICIT_ADD_FILE_TARGET})
     if(NOT ${ADD_FPGA_TARGET_NO_SYNTHESIS})
       foreach(SRC ${ADD_FPGA_TARGET_SOURCES})
-        add_file_target(FILE ${SRC} SCANNER_TYPE verilog)
+        get_file_target(FILE_TARGET ${SRC})
+        if(NOT ${ADD_FPGA_TARGET_AUTO_ADD_FILE_TARGET} OR NOT TARGET ${FILE_TARGET})
+          add_file_target(FILE ${SRC} SCANNER_TYPE verilog)
+        endif()
       endforeach()
     else()
       foreach(SRC ${ADD_FPGA_TARGET_SOURCES})
-        add_file_target(FILE ${SRC})
+        get_file_target(FILE_TARGET ${SRC})
+        if(NOT ${ADD_FPGA_TARGET_AUTO_ADD_FILE_TARGET} OR NOT TARGET ${FILE_TARGET})
+          add_file_target(FILE ${SRC})
+        endif()
       endforeach()
     endif()
+
     foreach(SRC ${ADD_FPGA_TARGET_TESTBENCH_SOURCES})
-      add_file_target(FILE ${SRC} SCANNER_TYPE verilog)
+      get_file_target(FILE_TARGET ${SRC})
+      if(NOT ${ADD_FPGA_TARGET_AUTO_ADD_FILE_TARGET} OR NOT TARGET ${FILE_TARGET})
+        add_file_target(FILE ${SRC} SCANNER_TYPE verilog)
+      endif()
     endforeach()
 
     if(NOT "${ADD_FPGA_TARGET_INPUT_IO_FILE}" STREQUAL "")
-      add_file_target(FILE ${ADD_FPGA_TARGET_INPUT_IO_FILE})
+      get_file_target(FILE_TARGET ${ADD_FPGA_TARGET_INPUT_IO_FILE})
+      if(NOT ${ADD_FPGA_TARGET_AUTO_ADD_FILE_TARGET} OR NOT TARGET ${FILE_TARGET})
+        add_file_target(FILE ${ADD_FPGA_TARGET_INPUT_IO_FILE})
+      endif()
     endif()
+
     foreach(XDC ${ADD_FPGA_TARGET_INPUT_XDC_FILES})
-      add_file_target(FILE ${XDC})
+      get_file_target(FILE_TARGET ${XDC})
+      if(NOT ${ADD_FPGA_TARGET_AUTO_ADD_FILE_TARGET} OR NOT TARGET ${FILE_TARGET})
+        add_file_target(FILE ${XDC})
+      endif()
     endforeach()
+
     if(NOT "${ADD_FPGA_TARGET_INPUT_SDC_FILE}" STREQUAL "")
-      add_file_target(FILE ${ADD_FPGA_TARGET_INPUT_SDC_FILE})
+      get_file_target(FILE_TARGET ${SDC})
+      if(NOT ${ADD_FPGA_TARGET_AUTO_ADD_FILE_TARGET} OR NOT TARGET ${FILE_TARGET})
+        add_file_target(FILE ${ADD_FPGA_TARGET_INPUT_SDC_FILE})
+      endif()
     endif()
   endif()
 
