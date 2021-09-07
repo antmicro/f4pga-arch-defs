@@ -1,0 +1,5 @@
+set_io clk1     A3
+set_io clk2     B1
+set_io clk3     E2
+set_io reset    A1
+set_io out1x[0] F3
