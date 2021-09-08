@@ -191,8 +191,6 @@ class VModule(object):
         assign = ""
         direction = self.get_io_config(parameters)
 
-        print(direction, bloc, ioname, parameters)
-
         if direction == 'input':
             assign = "    assign {} = {};".format(parameters["IZ"], ioname)
         elif direction == 'output':
