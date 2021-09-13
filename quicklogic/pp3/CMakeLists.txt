@@ -100,10 +100,11 @@ define_arch(
   BIT_TO_V_CMD
     "${CMAKE_COMMAND} -E env PYTHONPATH=${symbiflow-arch-defs_SOURCE_DIR}/utils:$PYTHONPATH \
     \${PYTHON3} \${BIT_TO_V} \${OUT_BITSTREAM}
-      --vpr-db ${CMAKE_CURRENT_BINARY_DIR}/devices/\${DEVICE_TYPE}/db_phy.pickle
-      --package-name PD64
+      --phy-db ${CMAKE_CURRENT_BINARY_DIR}/devices/\${DEVICE_TYPE}/db_phy.pickle
       --input-type bitstream
       --output-verilog \${OUT_BIT_VERILOG}
+      --output-pcf \${OUT_BIT_VERILOG}.pcf
+      --output-qcf \${OUT_BIT_VERILOG}.qcf
       --input-pcf \${INPUT_IO_FILE}"
   BIT_TO_V_DEPS
     ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/pp3/utils/verilogmodule.py

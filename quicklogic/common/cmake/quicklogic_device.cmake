@@ -233,6 +233,7 @@ function(QUICKLOGIC_DEFINE_DEVICE_TYPE)
   set_target_properties(
     ${DEVICE_TYPE}
     PROPERTIES
+    PHY_DB_FILE ${CMAKE_CURRENT_SOURCE_DIR}/${PHY_DB_FILE}
     VPR_DB_FILE ${CMAKE_CURRENT_SOURCE_DIR}/${VPR_DB_FILE}
     CELLS_SIM ${CMAKE_CURRENT_SOURCE_DIR}/${RAM_CELLS_SIM}
     CELLS_MAP ${CMAKE_CURRENT_SOURCE_DIR}/${RAM_CELLS_MAP}
@@ -278,6 +279,7 @@ function(QUICKLOGIC_DEFINE_DEVICE)
     add_subdirectory(${DEVICE_TYPE})
 
     # Get the VPR db file to add as dependency to RR graph patch
+    get_target_property_required(PHY_DB_FILE ${DEVICE_TYPE} PHY_DB_FILE)
     get_target_property_required(VPR_DB_FILE ${DEVICE_TYPE} VPR_DB_FILE)
 
     # RR graph patch dependencies
@@ -307,6 +309,8 @@ function(QUICKLOGIC_DEFINE_DEVICE)
         --allow_unrelated_clustering on
         --balance_block_type_utilization on
         --target_ext_pin_util 1.0
+      EXTRA_INSTALL_FILES
+        ${PHY_DB_FILE}
     )
 
   endforeach()

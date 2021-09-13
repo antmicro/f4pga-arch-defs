@@ -316,8 +316,8 @@ elif [[ "$DEVICE" =~ ^(ql-eos-s3)$ ]]; then
     HAVE_FASM2BELS=1
     RUN_TILL="bit"
 elif [[ "$DEVICE" =~ ^(ql-pp3)$ ]]; then
-    HAVE_FASM2BELS=0 # TODO:
-    RUN_TILL="route" # TODO:
+    HAVE_FASM2BELS=1
+    RUN_TILL="bit"
 else
     HAVE_FASM2BELS=0
     RUN_TILL="route"
@@ -508,7 +508,7 @@ fi
 if [ "$HAVE_FASM2BELS" != 0 ]; then
     echo -e "\
 \${BUILDDIR}/\${TOP}.bit.v: \${BUILDDIR}/\${TOP}.bit\n\
-	cd \${BUILDDIR} && symbiflow_fasm2bels -b \${BUILDDIR}/\${TOP}.bit -d \${DEVICE} -p \${PCF} -P \${PARTNAME} >> $LOG_FILE 2>&1\n\
+	cd \${BUILDDIR} && symbiflow_fasm2bels -b \${TOP}.bit -d \${DEVICE} -p \${PCF} -P \${PARTNAME} >> $LOG_FILE 2>&1\n\
     " >>$MAKE_FILE
 fi
 
@@ -541,6 +541,15 @@ elif [[ ! -z "$OUT" && $1 == "-compile" ]];then
       fi
       if [[ " ${OUT_ARR[@]} " =~ " header " ]]; then
        cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}_bit.h || exit
+      fi
+      if [[ " ${OUT_ARR[@]} " =~ " binary " ]]; then
+       cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.bin || exit
+      fi
+    fi
+
+    if [ "$DEVICE" == "ql-pp3" ]; then
+      if [[ " ${OUT_ARR[@]} " =~ " post_verilog " ]]; then
+       cd $SOURCE;make -f Makefile.symbiflow  ${BUILDDIR}/${TOP}.bit.v || exit
       fi
       if [[ " ${OUT_ARR[@]} " =~ " binary " ]]; then
        cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.bin || exit
