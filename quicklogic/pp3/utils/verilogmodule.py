@@ -628,8 +628,8 @@ class VModule(object):
         name = loc2str(loc) + '_inout'
         # check if we have the original name for this io
         if self.pcf_data is not None:
-            pin = self.io_to_fbio[loc]
-            if pin in self.pcf_data:
+            pin = self.io_to_fbio.get(loc, None)
+            if pin is not None and pin in self.pcf_data:
                 name = self.pcf_data[pin]
                 name = name.replace('(', '[')
                 name = name.replace(')', ']')
@@ -745,11 +745,13 @@ class VModule(object):
     def generate_pcf(self):
         pcf = ''
         for io in self.ios.values():
-            pcf += f'set_io {io.name} {self.io_to_fbio[io.ioloc]}\n'
+            if io.ioloc in self.io_to_fbio:
+                pcf += f'set_io {io.name} {self.io_to_fbio[io.ioloc]}\n'
         return pcf
 
     def generate_qcf(self):
         qcf = '#[Fixed Pin Placement]\n'
         for io in self.ios.values():
-            qcf += f'place {io.name} {self.io_to_fbio[io.ioloc]}\n'
+            if io.ioloc in self.io_to_fbio:
+                qcf += f'place {io.name} {self.io_to_fbio[io.ioloc]}\n'
         return qcf
