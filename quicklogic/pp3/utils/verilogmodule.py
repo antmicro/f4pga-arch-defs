@@ -185,7 +185,6 @@ class VModule(object):
         return newparameters
 
     def form_simple_assign(self, loc, parameters):
-        bloc = loc2str(loc)
         ioname = self.get_io_name(loc)
 
         assign = ""

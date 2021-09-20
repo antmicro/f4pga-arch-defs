@@ -65,11 +65,13 @@ class Fasm2Bels(object):
         self.io_to_fbio = dict()
 
         if self.package_name not in db["package_pinmaps"]:
-            raise self.Fasm2BelsException("ERROR: '{}' is not a vaild package for device '{}'. Valid ones are: {}".format(
-                self.package_name,
-                self.device_name,
-                ", ".join(db["package_pinmaps"].keys())
-            ))
+            raise self.Fasm2BelsException(
+                "ERROR: '{}' is not a vaild package for device '{}'. Valid ones are: {}"
+                .format(
+                    self.package_name, self.device_name,
+                    ", ".join(db["package_pinmaps"].keys())
+                )
+            )
 
         for name, package in db['package_pinmaps'][self.package_name].items():
             self.io_to_fbio[package[0].loc] = name
@@ -1053,10 +1055,7 @@ if __name__ == '__main__':
     )
 
     parser.add_argument(
-        "--package-name",
-        type=str,
-        required=True,
-        help="Device package name"
+        "--package-name", type=str, required=True, help="Device package name"
     )
 
     parser.add_argument(
