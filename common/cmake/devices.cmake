@@ -1335,6 +1335,7 @@ function(ADD_FPGA_TARGET)
   #   [EMIT_CHECK_TESTS EQUIV_CHECK_SCRIPT <yosys to script verify two bitstreams gold and gate>]
   #   [NO_SYNTHESIS]
   #   [ASSERT_USAGE <usage_spec>]
+  #   [ASSERT_TIMING <timing_spec>]
   #   [DEFINES <definitions>]
   #   [BIT_TO_V_EXTRA_ARGS]
   #   [NET_PATCH_EXTRA_ARGS]
@@ -1395,7 +1396,7 @@ function(ADD_FPGA_TARGET)
   # * ${TOP}.${BITSTREAM_EXTENSION} - Bitstream for target.
   #
   set(options EXPLICIT_ADD_FILE_TARGET EMIT_CHECK_TESTS NO_SYNTHESIS ROUTE_ONLY INSTALL_CIRCUIT)
-  set(oneValueArgs NAME TOP BOARD INPUT_IO_FILE EQUIV_CHECK_SCRIPT AUTOSIM_CYCLES ASSERT_USAGE INPUT_SDC_FILE)
+  set(oneValueArgs NAME TOP BOARD INPUT_IO_FILE EQUIV_CHECK_SCRIPT AUTOSIM_CYCLES ASSERT_USAGE ASSERT_TIMING INPUT_SDC_FILE)
   set(multiValueArgs SOURCES TESTBENCH_SOURCES DEFINES BIT_TO_V_EXTRA_ARGS INPUT_XDC_FILES NET_PATCH_EXTRA_ARGS)
   cmake_parse_arguments(
     ADD_FPGA_TARGET
@@ -1868,7 +1869,7 @@ function(ADD_FPGA_TARGET)
       add_custom_target(
           ${NAME}_assert_usage
           COMMAND ${PYTHON3} ${USAGE_UTIL}
-            --assert_usage ${ADD_FPGA_TARGET_ASSERT_USAGE}
+            --assert_usage \"${ADD_FPGA_TARGET_ASSERT_USAGE}\"
             ${OUT_LOCAL}/pack.log
           DEPENDS ${PYTHON3} ${USAGE_UTIL} ${OUT_LOCAL}/pack.log
           )
@@ -2136,7 +2137,7 @@ function(ADD_FPGA_TARGET)
   # Generate routing.
   # -------------------------------------------------------------------------
   add_custom_command(
-    OUTPUT ${OUT_ROUTE}
+    OUTPUT ${OUT_ROUTE} ${OUT_LOCAL}/route.log
     DEPENDS ${OUT_NET} ${OUT_PLACE} ${VPR_DEPS}
     COMMAND ${VPR_CMD} ${OUT_EBLIF} ${VPR_ARGS} --route
     COMMAND
@@ -2159,6 +2160,17 @@ function(ADD_FPGA_TARGET)
     WORKING_DIRECTORY ${OUT_LOCAL}/echo
   )
   add_custom_target(${NAME}_route_echo DEPENDS ${ECHO_ATOM_NETLIST_ORIG})
+
+  if(NOT "${ADD_FPGA_TARGET_ASSERT_TIMING}" STREQUAL "")
+      set(TIMING_UTIL ${symbiflow-arch-defs_SOURCE_DIR}/utils/report_timing.py)
+      add_custom_target(
+          ${NAME}_assert_timing
+          COMMAND ${PYTHON3} ${TIMING_UTIL}
+            --assert \"${ADD_FPGA_TARGET_ASSERT_TIMING}\"
+            ${OUT_LOCAL}/route.log
+          DEPENDS ${PYTHON3} ${TIMING_UTIL} ${OUT_LOCAL}/route.log
+          )
+  endif()
 
   if(${ADD_FPGA_TARGET_ROUTE_ONLY})
     return()
