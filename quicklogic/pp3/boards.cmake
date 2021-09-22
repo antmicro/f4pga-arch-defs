@@ -4,7 +4,6 @@ add_quicklogic_board(
   DEVICE ql-eos-s3
   PACKAGE wlcsp
   FABRIC_PACKAGE PD64
-  BIT_TO_V_EXTRA_ARGS "--device-name eos-s3 --package-name PD64"
 )
 
 add_quicklogic_board(
@@ -13,7 +12,6 @@ add_quicklogic_board(
   DEVICE ql-eos-s3
   PACKAGE wlcsp
   FABRIC_PACKAGE PU64
-  BIT_TO_V_EXTRA_ARGS "--device-name eos-s3 --package-name PU64"
 )
 
 add_quicklogic_board(
@@ -22,7 +20,6 @@ add_quicklogic_board(
   DEVICE ql-eos-s3
   PACKAGE wlcsp
   FABRIC_PACKAGE WR42
-  BIT_TO_V_EXTRA_ARGS "--device-name eos-s3 --package-name WR42"
 )
 
 add_quicklogic_board(
@@ -31,7 +28,6 @@ add_quicklogic_board(
   DEVICE ql-eos-s3
   PACKAGE wlcsp
   FABRIC_PACKAGE WR42
-  BIT_TO_V_EXTRA_ARGS "--device-name eos-s3 --package-name WR42"
 )
 
 add_quicklogic_board(
@@ -40,7 +36,6 @@ add_quicklogic_board(
   DEVICE ql-pp3e
   PACKAGE wlcsp
   FABRIC_PACKAGE WD30
-  BIT_TO_V_EXTRA_ARGS "--device-name pp3e --package-name WD30"
 )
 
 add_quicklogic_board(
@@ -49,5 +44,4 @@ add_quicklogic_board(
   DEVICE ql-pp3
   PACKAGE wlcsp
   FABRIC_PACKAGE WD30
-  BIT_TO_V_EXTRA_ARGS "--device-name pp3 --package-name WD30"
 )

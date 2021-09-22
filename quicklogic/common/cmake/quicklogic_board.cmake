@@ -80,6 +80,12 @@ function(ADD_QUICKLOGIC_BOARD)
 
     add_file_target(FILE ${PINMAP_CSV} GENERATED)
 
+    # Setup extra args for bit to v
+    set(BIT_TO_V_EXTRA_ARGS_FOR_BOARD ${BIT_TO_V_EXTRA_ARGS})
+    string(REPLACE "ql-" "" DEVICE_FOR_BIT_TO_V "${DEVICE}")
+    string(APPEND BIT_TO_V_EXTRA_ARGS_FOR_BOARD " --device-name ${DEVICE_FOR_BIT_TO_V}")
+    string(APPEND BIT_TO_V_EXTRA_ARGS_FOR_BOARD " --package-name ${ADD_QUICKLOGIC_BOARD_FABRIC_PACKAGE}")
+
     # Set the board properties
     set_target_properties(
       ${BOARD}
@@ -89,7 +95,7 @@ function(ADD_QUICKLOGIC_BOARD)
         CLKMAP
         ${CMAKE_CURRENT_SOURCE_DIR}/${CLKMAP_CSV}
         BIT_TO_V_EXTRA_ARGS
-        "${BIT_TO_V_EXTRA_ARGS}"
+        "${BIT_TO_V_EXTRA_ARGS_FOR_BOARD}"
     )
 
     set_target_properties(
