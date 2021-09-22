@@ -22,5 +22,9 @@ add_subdirectory(btn_counter)
 # Test designs that use clock
 add_subdirectory(counter)
 
+# RAM designs
+add_subdirectory(ram)
+add_subdirectory(bram)
+
 add_subdirectory(features)
 add_subdirectory(design_flow)
