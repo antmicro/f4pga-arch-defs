@@ -85,8 +85,8 @@ def main():
         if 'alias' in pin_map_entry:
             alias = pin_map_entry['alias']
 
-        for type in IOB_TYPES[pin_map_entry['type']]:
-            pad_map[name][type] = (
+        for t in IOB_TYPES[pin_map_entry['type']]:
+            pad_map[name][t] = (
                 int(pin_map_entry['x']),
                 int(pin_map_entry['y']),
                 int(pin_map_entry['z']),
@@ -95,6 +95,11 @@ def main():
                 pad_alias_map[alias] = name
 
     for pcf_constraint in parse_simple_pcf(args.pcf):
+
+        # Skip non-io constraints
+        if type(pcf_constraint).__name__ != 'PcfIoConstraint':
+            continue
+
         pad_name = pcf_constraint.pad
         if not io_place.is_net(pcf_constraint.net):
             print(
