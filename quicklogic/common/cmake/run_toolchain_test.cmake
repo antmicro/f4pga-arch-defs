@@ -33,6 +33,6 @@ if (NOT "${ASSERT_USAGE}" STREQUAL "")
 endif ()
 
 if (NOT "${ASSERT_TIMING}" STREQUAL "")
-    run("PYTHONPATH=${PYTHONPATH} python3 ${TIMING_UTIL} ${ROUTE_LOG} --assert_timing ${ASSERT_USAGE}")
+    run("PYTHONPATH=${PYTHONPATH} python3 ${TIMING_UTIL} ${ROUTE_LOG} --assert ${ASSERT_TIMING}")
 endif ()
 
