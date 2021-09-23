@@ -2,10 +2,20 @@
 import re
 
 PATTERNS = {
-    "cpd": re.compile(r"Final critical path delay \(least slack\):\s(?P<val>[0-9.]+)"),
-    "fmax": re.compile(r".*Fmax:\s(?P<val>[0-9.]+)"),
-    "swns": re.compile(r"Final setup Worst Negative Slack \(sWNS\):\s(?P<val>[0-9.-]+)"),
-    "stns": re.compile(r"Final setup Total Negative Slack \(sTNS\):\s(?P<val>[0-9.-]+)"),
+    "cpd":
+        re.compile(
+            r"Final critical path delay \(least slack\):\s(?P<val>[0-9.]+)"
+        ),
+    "fmax":
+        re.compile(r".*Fmax:\s(?P<val>[0-9.]+)"),
+    "swns":
+        re.compile(
+            r"Final setup Worst Negative Slack \(sWNS\):\s(?P<val>[0-9.-]+)"
+        ),
+    "stns":
+        re.compile(
+            r"Final setup Total Negative Slack \(sTNS\):\s(?P<val>[0-9.-]+)"
+        ),
 }
 
 

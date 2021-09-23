@@ -4,7 +4,10 @@ import re
 
 from lib.parse_usage import parse_usage
 
-USAGE_SPEC = re.compile(r"(?P<type>[A-Za-z0-9_-]+)(?P<op>=|<|<=|>=|>)(?P<val>[0-9]+)")
+USAGE_SPEC = re.compile(
+    r"(?P<type>[A-Za-z0-9_-]+)(?P<op>=|<|<=|>=|>)(?P<val>[0-9]+)"
+)
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -45,8 +48,9 @@ def main():
             count = int(usage.get(type, 0))
 
             msg = "Expect usage of block {} {} {}, found {}".format(
-                type, op, val, count)
- 
+                type, op, val, count
+            )
+
             if op == "=":
                 assert count == val, msg
             elif op == "<":
@@ -59,6 +63,7 @@ def main():
                 assert count >= val, msg
             else:
                 assert False, op
+
 
 if __name__ == "__main__":
     main()
