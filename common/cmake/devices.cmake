@@ -2136,13 +2136,15 @@ function(ADD_FPGA_TARGET)
 
   # Generate routing.
   # -------------------------------------------------------------------------
+  set(ROUTE_LOG ${OUT_LOCAL}/route.log)
+
   add_custom_command(
-    OUTPUT ${OUT_ROUTE} ${OUT_LOCAL}/route.log
+    OUTPUT ${OUT_ROUTE} ${ROUTE_LOG}
     DEPENDS ${OUT_NET} ${OUT_PLACE} ${VPR_DEPS}
     COMMAND ${VPR_CMD} ${OUT_EBLIF} ${VPR_ARGS} --route
     COMMAND
       ${CMAKE_COMMAND} -E copy ${OUT_LOCAL}/vpr_stdout.log
-        ${OUT_LOCAL}/route.log
+      ${ROUTE_LOG}
     WORKING_DIRECTORY ${OUT_LOCAL}
   )
   add_custom_target(${NAME}_route DEPENDS ${OUT_ROUTE})
@@ -2156,7 +2158,7 @@ function(ADD_FPGA_TARGET)
     COMMAND ${VPR_CMD} ${OUT_EBLIF} ${VPR_ARGS} --echo_file on --route
     COMMAND
       ${CMAKE_COMMAND} -E copy ${OUT_LOCAL}/echo/vpr_stdout.log
-        ${OUT_LOCAL}/echo/route.log
+      ${OUT_LOCAL}/echo/route.log
     WORKING_DIRECTORY ${OUT_LOCAL}/echo
   )
   add_custom_target(${NAME}_route_echo DEPENDS ${ECHO_ATOM_NETLIST_ORIG})
@@ -2167,8 +2169,8 @@ function(ADD_FPGA_TARGET)
           ${NAME}_assert_timing
           COMMAND ${PYTHON3} ${TIMING_UTIL}
             --assert \"${ADD_FPGA_TARGET_ASSERT_TIMING}\"
-            ${OUT_LOCAL}/route.log
-          DEPENDS ${PYTHON3} ${TIMING_UTIL} ${OUT_LOCAL}/route.log
+            ${ROUTE_LOG}
+          DEPENDS ${PYTHON3} ${TIMING_UTIL} ${ROUTE_LOG}
           )
   endif()
 
