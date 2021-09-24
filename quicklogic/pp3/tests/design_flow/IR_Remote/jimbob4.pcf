@@ -3,7 +3,7 @@ set_io Reset_i_N B1
 
 set_io IR_Emitter_Gpio_Port_io[0] A1
 set_io IR_Emitter_Gpio_Port_io[1] A2
-set_io IR_Emitter_Gpio_Port_io[2] A3
+set_io IR_Emitter_Gpio_Port_io[2] E4
 set_io IR_Emitter_Gpio_Port_io[3] E2
 set_io IR_Emitter_Gpio_Port_io[4] B3
 set_io IR_Emitter_Gpio_Port_io[5] C2
