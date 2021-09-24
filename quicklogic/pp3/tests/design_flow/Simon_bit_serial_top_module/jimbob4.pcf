@@ -2,6 +2,6 @@ set_io clk A3
 set_io data_in A1
 
 set_io data_rdy[0] A2
-set_io data_rdy[1] A3
+set_io data_rdy[1] B3
 
 set_io cipher_out F5
