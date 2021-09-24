@@ -7,7 +7,11 @@ add_fpga_target(
   SOURCES
     ${DESIGN_DIR}/unsigned_mult_50.v
   AUTO_ADD_FILE_TARGET
+
+  ASSERT_USAGE PB-LOGIC<=908
 )
 
 add_dependencies(all_ql_tests_bit   unsigned_mult_50-ql-jimbob4-pp3_bit)
 add_dependencies(all_ql_tests_bit_v unsigned_mult_50-ql-jimbob4-pp3_bit_v)
+
+add_dependencies(all_ql_tests_regression unsigned_mult_50-ql-jimbob4-pp3_assert_usage)
