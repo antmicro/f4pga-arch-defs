@@ -5,7 +5,6 @@ add_fpga_target(
   TOP top
   BOARD jimbob4-pp3
   SOURCES
-    ${DESIGN_DIR}/adder_8.v
     ${DESIGN_DIR}/af512x9_512x9.v
     ${DESIGN_DIR}/cmd_control.v
     ${DESIGN_DIR}/crc16.v
@@ -26,6 +25,8 @@ add_fpga_target(
     ${DESIGN_DIR}/sync.v
   INPUT_IO_FILE jimbob4.pcf
   AUTO_ADD_FILE_TARGET
+
+  ASSERT_USAGE PB-CLOCK=1,PB-GMUX=1,PB-LOGIC<=595
 )
 
 add_dependencies(all_ql_tests_bit   sdio_client_top-ql-jimbob4-pp3_bit)
