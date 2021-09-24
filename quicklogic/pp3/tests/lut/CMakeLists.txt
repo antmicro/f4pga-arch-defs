@@ -117,7 +117,7 @@ add_fpga_target(
   EXPLICIT_ADD_FILE_TARGET
   )
 
-add_dependencies(all_ql_tests lut1-ql-jimbob4-pp3_route)
-add_dependencies(all_ql_tests lut2-ql-jimbob4-pp3_route)
-add_dependencies(all_ql_tests lut3-ql-jimbob4-pp3_route)
-add_dependencies(all_ql_tests lut4-ql-jimbob4-pp3_route)
+add_dependencies(all_ql_tests lut1-ql-jimbob4-pp3_bit)
+add_dependencies(all_ql_tests lut2-ql-jimbob4-pp3_bit)
+add_dependencies(all_ql_tests lut3-ql-jimbob4-pp3_bit)
+add_dependencies(all_ql_tests lut4-ql-jimbob4-pp3_bit)

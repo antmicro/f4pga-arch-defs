@@ -53,12 +53,21 @@ fi
 # Run fasm2bels
 if [[ "$DEVICE" =~ ^(ql-eos-s3|ql-pp3|ql-pp3e)$ ]]; then
 
-    VPR_DB=`readlink -f ${MYPATH}/../share/arch/${DEVICE}/db_phy.pickle`
-    FASM2BEL=`readlink -f ${MYPATH}/../bin/python/fasm2bels.py`
+    VPR_DB=`readlink -f ${MYPATH}/../share/symbiflow/arch/${DEVICE}_wlcsp/db_phy.pickle`
+    FASM2BELS=`readlink -f ${MYPATH}/../bin/python/fasm2bels.py`
+    FASM2BELS_DEVICE=${DEVICE/ql-/}
     VERILOG_FILE="${BIT}.v"
+    PCF_FILE="${BIT}.v.pcf"
+    QCF_FILE="${BIT}.v.qcf"
+
+    if [ ! -z "{PCF}" ]; then
+        PCF_ARGS="--input-pcf ${PCF}"
+    else
+        PCF_ARGS=""
+    fi
 
     echo "Running fasm2bels"
-    python3 ${FASM2BEL} ${BIT} --vpr-db ${VPR_DB} --package-name ${PART} --input-type bitstream --output-verilog ../${VERILOG_FILE} --input-pcf ${PCF}
+    python3 ${FASM2BELS} ${BIT} --phy-db ${VPR_DB} --device-name ${FASM2BELS_DEVICE} --package-name ${PART} --input-type bitstream --output-verilog ../${VERILOG_FILE} ${PCF_ARGS} --output-pcf ../${PCF_FILE} --output-qcf ../${QCF_FILE}
 
 else
 

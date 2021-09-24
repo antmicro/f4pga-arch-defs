@@ -94,6 +94,8 @@ def main():
             if 'alias' in pin_map_entry:
                 pad_alias_map[alias] = name
 
+    used_pads = set()
+
     for pcf_constraint in parse_simple_pcf(args.pcf):
 
         # Skip non-io constraints
@@ -126,6 +128,18 @@ def main():
         # Alias is specified in pcf file so assign it to corresponding pad name
         if pad_name in pad_alias_map:
             pad_name = pad_alias_map[pad_name]
+
+        # Catch the same pad used multiple times
+        if pad_name in used_pads:
+            print(
+                'PCF constraint "{}" from line {} constraints pad {} \
+                        which has already been constrained'.format(
+                    pcf_constraint.line_str, pcf_constraint.line_num, pad_name
+                ),
+                file=sys.stderr
+            )
+            sys.exit(1)
+        used_pads.add(pad_name)
 
         # Get the top-level block instance, strip its index
         inst = io_place.get_top_level_block_instance_for_net(

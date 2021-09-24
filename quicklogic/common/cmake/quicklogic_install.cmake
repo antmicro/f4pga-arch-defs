@@ -139,6 +139,30 @@ function(DEFINE_QL_TOOLCHAIN_TARGET)
           DESTINATION bin/python
           PERMISSIONS WORLD_EXECUTE WORLD_READ OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ)
 
+  if("${FAMILY}" STREQUAL "pp3")
+
+    install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/pp3/utils/fasm2bels.py
+      DESTINATION bin/python
+      PERMISSIONS WORLD_EXECUTE WORLD_READ OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ)
+
+    install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/pp3/utils/verilogmodule.py
+      DESTINATION bin/python
+      PERMISSIONS WORLD_READ OWNER_WRITE OWNER_READ GROUP_READ)
+
+    install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/pp3/utils/connections.py
+      DESTINATION bin/python
+      PERMISSIONS WORLD_READ OWNER_WRITE OWNER_READ GROUP_READ)
+
+    install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/pp3/utils/data_structs.py
+      DESTINATION bin/python
+      PERMISSIONS WORLD_READ OWNER_WRITE OWNER_READ GROUP_READ)
+
+    install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/pp3/utils/utils.py
+      DESTINATION bin/python
+      PERMISSIONS WORLD_READ OWNER_WRITE OWNER_READ GROUP_READ)
+
+  endif()
+
   # install the repacker
   set(REPACKER_FILES
     arch_xml_utils.py

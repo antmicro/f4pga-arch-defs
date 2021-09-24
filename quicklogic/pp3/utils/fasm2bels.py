@@ -11,7 +11,8 @@ from data_structs import Loc, SwitchboxPinLoc, PinDirection, ConnectionType
 from utils import get_quadrant_for_loc
 from verilogmodule import VModule
 
-from quicklogic_fasm.qlfasm import QL732BAssembler, load_quicklogic_database, get_db_dir
+from quicklogic_fasm.qlfasm import load_quicklogic_database, get_db_dir
+from quicklogic_fasm.qlfasm import QL732BAssembler, QL725AAssembler
 
 Feature = namedtuple('Feature', 'loc typ signature value')
 RouteEntry = namedtuple('RouteEntry', 'typ stage_id switch_id mux_id sel_id')
@@ -38,28 +39,39 @@ class Fasm2Bels(object):
         def __str__(self):
             return self.message
 
-    def __init__(self, vpr_db, package_name):
+    def __init__(self, phy_db, device_name, package_name):
         '''Prepares required structures for converting FASM to BELs.
 
         Parameters
         ----------
-        vpr_db: dict
+        phy_db: dict
             A dictionary containing cell_library, loc_map, vpr_tile_types,
             vpr_tile_grid, vpr_switchbox_types, vpr_switchbox_grid,
             connections, vpr_package_pinmaps
         '''
 
-        # load vpr_db data
-        self.quadrants = vpr_db["phy_quadrants"]
-        self.cells_library = vpr_db["cells_library"]
-        self.vpr_tile_types = vpr_db["tile_types"]
-        self.vpr_tile_grid = vpr_db["phy_tile_grid"]
-        self.vpr_switchbox_types = vpr_db["switchbox_types"]
-        self.vpr_switchbox_grid = vpr_db["switchbox_grid"]
-        self.connections = vpr_db["connections"]
+        # load phy_db data
+        self.quadrants = phy_db["phy_quadrants"]
+        self.cells_library = phy_db["cells_library"]
+        self.vpr_tile_types = phy_db["tile_types"]
+        self.vpr_tile_grid = phy_db["phy_tile_grid"]
+        self.vpr_switchbox_types = phy_db["switchbox_types"]
+        self.vpr_switchbox_grid = phy_db["switchbox_grid"]
+        self.connections = phy_db["connections"]
+
+        self.device_name = device_name
         self.package_name = package_name
 
         self.io_to_fbio = dict()
+
+        if self.package_name not in db["package_pinmaps"]:
+            raise self.Fasm2BelsException(
+                "ERROR: '{}' is not a vaild package for device '{}'. Valid ones are: {}"
+                .format(
+                    self.package_name, self.device_name,
+                    ", ".join(db["package_pinmaps"].keys())
+                )
+            )
 
         for name, package in db['package_pinmaps'][self.package_name].items():
             self.io_to_fbio[package[0].loc] = name
@@ -1018,6 +1030,7 @@ def parse_pcf(pcf):
 
 
 if __name__ == '__main__':
+
     # Parse arguments
     parser = argparse.ArgumentParser(
         description=__doc__,
@@ -1027,16 +1040,22 @@ if __name__ == '__main__':
     parser.add_argument("input_file", type=Path, help="Input fasm file")
 
     parser.add_argument(
-        "--vpr-db", type=str, required=True, help="VPR database file"
+        "--phy-db",
+        type=str,
+        required=True,
+        help="Physical device database file"
     )
 
     parser.add_argument(
-        "--package-name",
+        "--device-name",
         type=str,
         required=True,
-        choices=['PD64', 'PU64', 'WR42'],
-        default='PD64',
-        help="The package name"
+        choices=["eos-s3", "pp3"],
+        help="Device name"
+    )
+
+    parser.add_argument(
+        "--package-name", type=str, required=True, help="Device package name"
     )
 
     parser.add_argument(
@@ -1061,39 +1080,52 @@ if __name__ == '__main__':
     )
 
     parser.add_argument("--output-pcf", type=Path, help="Output PCF file")
-
     parser.add_argument("--output-qcf", type=Path, help="Output QCF file")
 
     args = parser.parse_args()
 
     pcf_data = {}
-
     if args.input_pcf is not None:
         pcf_data = parse_pcf(args.input_pcf)
 
     # Load data from the database
-    with open(args.vpr_db, "rb") as fp:
+    with open(args.phy_db, "rb") as fp:
         db = pickle.load(fp)
 
-    f2b = Fasm2Bels(db, args.package_name)
+    # Initialize fasm2bels
+    f2b = Fasm2Bels(db, args.device_name, args.package_name)
 
+    # Disassemble bitstream / load FASM
     if args.input_type == 'bitstream':
-        qlfasmdb = load_quicklogic_database(get_db_dir("ql-eos-s3"))
-        assembler = QL732BAssembler(qlfasmdb)
+        qlfasmdb = load_quicklogic_database(
+            get_db_dir("ql-" + args.device_name)
+        )
+
+        if args.device_name == "eos-s3":
+            assembler = QL732BAssembler(qlfasmdb)
+        elif args.device_name == "pp3":
+            assembler = QL725AAssembler(qlfasmdb)
+        else:
+            assert False, args.device_name
+
         assembler.read_bitstream(args.input_file)
         fasmlines = assembler.disassemble()
         fasmlines = [
             line for line in fasm.parse_fasm_string('\n'.join(fasmlines))
         ]
+
     else:
         fasmlines = [
             line for line in fasm.parse_fasm_filename(args.input_file)
         ]
 
+    # Run fasm2bels
     verilog, pcf, qcf = f2b.convert_to_verilog(fasmlines)
 
+    # Write output files
     with open(args.output_verilog, 'w') as outv:
         outv.write(verilog)
+
     if args.output_pcf:
         with open(args.output_pcf, 'w') as outpcf:
             outpcf.write(pcf)
