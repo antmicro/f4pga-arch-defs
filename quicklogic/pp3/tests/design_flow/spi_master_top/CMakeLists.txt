@@ -13,7 +13,11 @@ add_fpga_target(
     ${DESIGN_DIR}/spi_master_top.v
   INPUT_IO_FILE jimbob4.pcf
   AUTO_ADD_FILE_TARGET
+
+  ASSERT_USAGE PB-CLOCK=2,PB-GMUX=2,PB-LOGIC<=134
 )
 
 add_dependencies(all_ql_tests_bit   spi_master_top-ql-jimbob4-pp3_bit)
 add_dependencies(all_ql_tests_bit_v spi_master_top-ql-jimbob4-pp3_bit_v)
+
+add_dependencies(all_ql_tests_regression spi_master_top-ql-jimbob4-pp3_assert_usage)

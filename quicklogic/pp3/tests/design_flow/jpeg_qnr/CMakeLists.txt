@@ -10,7 +10,13 @@ add_fpga_target(
     ${DESIGN_DIR}/jpeg_qnr.v
   INPUT_IO_FILE jimbob4.pcf
   AUTO_ADD_FILE_TARGET
+
+  ASSERT_USAGE PB-CLOCK=1,PB-GMUX=1,PB-LOGIC<=465
+  ASSERT_TIMING fmax>=19.0
 )
 
 add_dependencies(all_ql_tests_bit   jpeg_qnr-ql-jimbob4-pp3_bit)
 add_dependencies(all_ql_tests_bit_v jpeg_qnr-ql-jimbob4-pp3_bit_v)
+
+add_dependencies(all_ql_tests_regression jpeg_qnr-ql-jimbob4-pp3_assert_usage)
+add_dependencies(all_ql_tests_regression jpeg_qnr-ql-jimbob4-pp3_assert_timing)
