@@ -45,3 +45,11 @@ add_quicklogic_board(
   PACKAGE wlcsp
   FABRIC_PACKAGE WD30
 )
+
+add_quicklogic_board(
+  BOARD pd64
+  FAMILY pp3
+  DEVICE ql-pp3
+  PACKAGE wlcsp
+  FABRIC_PACKAGE PD64
+)
