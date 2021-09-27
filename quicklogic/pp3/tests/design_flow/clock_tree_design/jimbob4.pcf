@@ -1,0 +1,5 @@
+set_io clk[0] A3
+set_io clk[1] B1
+set_io clk[2] E2
+set_io clk[3] F2
+set_io clk[4] F3
