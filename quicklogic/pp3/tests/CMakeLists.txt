@@ -13,22 +13,6 @@ add_dependencies(all_ql_tests all_ql_tests_regression)
 
 add_custom_target(all_quick_tests)
 
-# Tests for packing and placing primitives. Not to be run on actual HW !
-add_subdirectory(wire)
-add_subdirectory(lut)
-add_subdirectory(consts)
-
-# Test designs controlled by buttons
-add_subdirectory(btn_counter)
-
-# Test designs that use clock
-add_subdirectory(counter)
-
-add_subdirectory(features)
-add_subdirectory(design_flow)
-
-
-
 # A test for LUT -> LOGIC cell techmaps
 add_subdirectory(techmaps)
 
@@ -48,7 +32,7 @@ add_subdirectory(ext_counter)
 add_subdirectory(ext_mult)
 
 # Global clock network tests
-add_subdirectory(gclk_counter)
+#add_subdirectory(gclk_counter)
 
 # Test designs that use clock
 add_subdirectory(counter)
@@ -59,9 +43,11 @@ add_subdirectory(sdiomux_counter)
 add_subdirectory(soc_litex_pwm)
 
 # QuickLogic test suite
-add_subdirectory(quicklogic_testsuite)
+add_subdirectory(design_flow)
 
 # Hardblocks tests
 add_subdirectory(ram)
 add_subdirectory(bram)
 add_subdirectory(mult)
+
+add_subdirectory(features)
