@@ -1,5 +1,5 @@
 macro(RUN CMD)
-  message(STATUS "${CMD}")
+  message(STATUS "Running \"${CMD}\"")
   separate_arguments(CMD_LIST NATIVE_COMMAND ${CMD})
   execute_process(
     COMMAND
@@ -19,6 +19,26 @@ file(REMOVE_RECURSE ${BUILD_DIR})
 # Run the toolchain
 set(TOOLCHAIN_COMMAND "PATH=${INSTALLATION_DIR}/bin:$ENV{PATH} ${TOOLCHAIN_COMMAND}")
 run(${TOOLCHAIN_COMMAND} "")
+
+# Verify that all required output files are generated
+message(STATUS "Checking output files...")
+
+string(REPLACE "," ";" ASSERT_EXISTS "${ASSERT_EXISTS}")
+set(MISSING_FILES FALSE)
+
+foreach(FILE ${ASSERT_EXISTS})
+  file(RELATIVE_PATH FNAME ${BUILD_DIR} ${FILE})
+  if(NOT EXISTS "${FILE}")
+    message(STATUS "[X] '${FNAME}'")
+    set(MISSING_FILES TRUE)
+  else()
+    message(STATUS "[V] '${FNAME}'")
+  endif()
+endforeach()
+
+if(MISSING_FILES)
+  message(FATAL_ERROR "Some output files are missing!")
+endif()
 
 # Assert usage and timing if any
 set(PYTHONPATH ${SYMBIFLOW_DIR}/utils)
