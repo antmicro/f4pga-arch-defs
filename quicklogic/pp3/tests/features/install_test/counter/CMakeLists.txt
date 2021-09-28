@@ -17,6 +17,7 @@ add_binary_toolchain_test(
 
 add_binary_toolchain_test(
     TEST_NAME counter_wd30
+    SOURCES   counter.v
     DEVICE    ql-pp3
     PINMAP    WD30
     PCF       jimbob4.pcf
@@ -34,6 +35,7 @@ add_binary_toolchain_test(
 
 add_binary_toolchain_test(
     TEST_NAME counter_pd64
+    SOURCES   counter.v
     DEVICE    ql-pp3
     PINMAP    PD64
     PCF       pd64.pcf
