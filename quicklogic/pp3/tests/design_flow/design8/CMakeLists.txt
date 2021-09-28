@@ -17,6 +17,7 @@ add_file_target(FILE AL4S3B_Fabric_Registers.v SCANNER TYPE verilog)
 add_file_target(FILE AL4S3B_Fabric_IP.v SCANNER TYPE verilog)
 add_file_target(FILE AL4S3B_Fabric_Top.v SCANNER TYPE verilog)
 add_file_target(FILE chandalar.pcf)
+add_file_target(FILE jimbob4.pcf)
 
 add_fpga_target(
   NAME design8-ql-chandalar
@@ -38,4 +39,46 @@ add_dependencies(all_ql_tests_bit  design8-ql-chandalar_bit)
 add_dependencies(all_ql_tests_bit_v design8-ql-chandalar_bit_v)
 add_dependencies(all_ql_tests_prog design8-ql-chandalar_jlink)
 add_dependencies(all_ql_tests_prog design8-ql-chandalar_openocd)
+
+add_fpga_target(
+  NAME design8-ql-jimbob4
+  BOARD jimbob4
+  SOURCES AL4S3B_Fabric_Top.v AL4S3B_Fabric_IP.v AL4S3B_Fabric_Registers.v AL4S3B_Fabric_QL_Reserved.v in_vga_wrapper_Top.v vga_frame_capture.v vga_rx_reg.v vga_rx_fifo_interface.v vga_rx_dma_ctrl.v UART_16550.v UART_16550_Tx_Logic.v UART_16550_Rx_Logic.v UART_16550_Registers.v UART_16550_Interrupt_Control.v UART_16550_Tx_Rx_FIFOs.v f512x18_512x9.v af1024x16_1024x16.v fifo_blk.v
+  INPUT_IO_FILE jimbob4.pcf
+  EXPLICIT_ADD_FILE_TARGET
+  )
+
+add_jlink_output(
+  PARENT design8-ql-jimbob4
+)
+
+add_openocd_output(
+  PARENT design8-ql-jimbob4
+)
+
+add_dependencies(all_ql_tests_bit  design8-ql-jimbob4_bit)
+add_dependencies(all_ql_tests_bit_v design8-ql-jimbob4_bit_v)
+add_dependencies(all_ql_tests_prog design8-ql-jimbob4_jlink)
+add_dependencies(all_ql_tests_prog design8-ql-jimbob4_openocd)
+
+add_fpga_target(
+  NAME design8-ql-jimbob4-pp3
+  BOARD jimbob4-pp3
+  SOURCES AL4S3B_Fabric_Top.v AL4S3B_Fabric_IP.v AL4S3B_Fabric_Registers.v AL4S3B_Fabric_QL_Reserved.v in_vga_wrapper_Top.v vga_frame_capture.v vga_rx_reg.v vga_rx_fifo_interface.v vga_rx_dma_ctrl.v UART_16550.v UART_16550_Tx_Logic.v UART_16550_Rx_Logic.v UART_16550_Registers.v UART_16550_Interrupt_Control.v UART_16550_Tx_Rx_FIFOs.v f512x18_512x9.v af1024x16_1024x16.v fifo_blk.v
+  INPUT_IO_FILE jimbob4.pcf
+  EXPLICIT_ADD_FILE_TARGET
+  )
+
+add_jlink_output(
+  PARENT design8-ql-jimbob4-pp3
+)
+
+add_openocd_output(
+  PARENT design8-ql-jimbob4-pp3
+)
+
+add_dependencies(all_ql_tests_bit  design8-ql-jimbob4-pp3_bit)
+add_dependencies(all_ql_tests_bit_v design8-ql-jimbob4-pp3_bit_v)
+add_dependencies(all_ql_tests_prog design8-ql-jimbob4-pp3_jlink)
+add_dependencies(all_ql_tests_prog design8-ql-jimbob4-pp3_openocd)
 

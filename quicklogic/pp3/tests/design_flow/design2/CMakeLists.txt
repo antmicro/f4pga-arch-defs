@@ -18,6 +18,7 @@ add_file_target(FILE r1024x8_1024x8.v SCANNER_TYPE verilog)
 add_file_target(FILE ram_blk.v SCANNER_TYPE verilog)
 add_file_target(FILE AL4S3B_FPGA_Top.v SCANNER_TYPE verilog)
 add_file_target(FILE chandalar.pcf)
+add_file_target(FILE jimbob4.pcf)
 
 add_fpga_target(
   NAME design2-ql-chandalar
@@ -39,4 +40,46 @@ add_dependencies(all_ql_tests_bit  design2-ql-chandalar_bit)
 add_dependencies(all_ql_tests_bit_v design2-ql-chandalar_bit_v)
 add_dependencies(all_ql_tests_prog design2-ql-chandalar_jlink)
 add_dependencies(all_ql_tests_prog design2-ql-chandalar_openocd)
+
+add_fpga_target(
+  NAME design2-ql-jimbob4
+  BOARD jimbob4
+  SOURCES AL4S3B_FPGA_Top.v af1024x16_512x32.v AL4S3B_FPGA_IP.v fifo_blk.v i2s_slave_Rx_FIFOs.v i2s_slave_w_DMA_registers.v ir_counters.v ir_rx_ctrl.v ir_tx_rx.v r1024x8_1024x8.v af512x16_512x16.v AL4S3B_FPGA_Registers.v i2s_slave_rx.v i2s_slave_w_DMA.v i2s_slave_w_DMA_StateMachine.v ir_reg_if.v ir_tx_ctrl.v ir_tx_rx_wrap.v ram_blk.v
+  INPUT_IO_FILE jimbob4.pcf
+  EXPLICIT_ADD_FILE_TARGET
+  )
+
+add_jlink_output(
+  PARENT design2-ql-jimbob4
+)
+
+add_openocd_output(
+  PARENT design2-ql-jimbob4
+)
+
+add_dependencies(all_ql_tests_bit  design2-ql-jimbob4_bit)
+add_dependencies(all_ql_tests_bit_v design2-ql-jimbob4_bit_v)
+add_dependencies(all_ql_tests_prog design2-ql-jimbob4_jlink)
+add_dependencies(all_ql_tests_prog design2-ql-jimbob4_openocd)
+
+add_fpga_target(
+  NAME design2-ql-jimbob4-pp3
+  BOARD jimbob4-pp3
+  SOURCES AL4S3B_FPGA_Top.v af1024x16_512x32.v AL4S3B_FPGA_IP.v fifo_blk.v i2s_slave_Rx_FIFOs.v i2s_slave_w_DMA_registers.v ir_counters.v ir_rx_ctrl.v ir_tx_rx.v r1024x8_1024x8.v af512x16_512x16.v AL4S3B_FPGA_Registers.v i2s_slave_rx.v i2s_slave_w_DMA.v i2s_slave_w_DMA_StateMachine.v ir_reg_if.v ir_tx_ctrl.v ir_tx_rx_wrap.v ram_blk.v
+  INPUT_IO_FILE jimbob4.pcf
+  EXPLICIT_ADD_FILE_TARGET
+  )
+
+add_jlink_output(
+  PARENT design2-ql-jimbob4-pp3
+)
+
+add_openocd_output(
+  PARENT design2-ql-jimbob4-pp3
+)
+
+add_dependencies(all_ql_tests_bit  design2-ql-jimbob4-pp3_bit)
+add_dependencies(all_ql_tests_bit_v design2-ql-jimbob4-pp3_bit_v)
+add_dependencies(all_ql_tests_prog design2-ql-jimbob4-pp3_jlink)
+add_dependencies(all_ql_tests_prog design2-ql-jimbob4-pp3_openocd)
 

@@ -30,6 +30,7 @@ add_file_target(FILE UART_16550_Tx_FIFO.v SCANNER TYPE verilog)
 add_file_target(FILE UART_16550_Tx_Logic.v SCANNER TYPE verilog)
 add_file_target(FILE AL4S3B_FPGA_Top.v SCANNER TYPE verilog)
 add_file_target(FILE chandalar.pcf)
+add_file_target(FILE jimbob4.pcf)
 
 add_fpga_target(
   NAME design7-ql-chandalar
@@ -51,4 +52,44 @@ add_openocd_output(
 #add_dependencies(all_ql_tests design7-ql-chandalar_bit)
 #add_dependencies(all_ql_tests design7-ql-chandalar_jlink)
 #add_dependencies(all_ql_tests design7-ql-chandalar_openocd)
+
+add_fpga_target(
+  NAME design7-ql-jimbob4
+  BOARD jimbob4
+  SOURCES AL4S3B_FPGA_Top.v AL4S3B_FPGA_IP.v AL4S3B_FPGA_QL_Reserved.v AL4S3B_FPGA_Registers.v f512x18_512x18.v f512x36_512x36.v f512x9_512x9.v fifo_blk.v i2c_master_bit_ctrl.v i2c_master_byte_ctrl.v i2c_master_defines.v i2c_master_top.v I2C_Master_w_CmdQueue.v I2C_Master_w_CmdQueue_Registers_dma.v I2C_Master_w_CmdQueue_StateMachine.v I2C_Master_w_CmdQueue_Top.v I2C_Master_w_CmdQueue_Tx_FIFO.v I2C_Master_w_DMA.v I2C_Master_w_DMA_Registers.v I2C_Master_w_DMA_StateMachine.v LCD_controller_registers.v LCD_Controller_StateMachine.v r512x32_2048x8.v ram_blk.v UART_16550.v UART_16550_Interrupt_Control.v UART_16550_Registers.v UART_16550_Rx_FIFO.v UART_16550_Rx_Logic.v UART_16550_Tx_FIFO.v UART_16550_Tx_Logic.v
+  INPUT_IO_FILE jimbob4.pcf
+  EXPLICIT_ADD_FILE_TARGET
+  )
+
+add_jlink_output(
+  PARENT design7-ql-jimbob4
+)
+
+add_openocd_output(
+  PARENT design7-ql-jimbob4
+)
+
+add_dependencies(all_ql_tests design7-ql-jimbob4_bit)
+add_dependencies(all_ql_tests design7-ql-jimbob4_jlink)
+add_dependencies(all_ql_tests design7-ql-jimbob4_openocd)
+
+add_fpga_target(
+  NAME design7-ql-jimbob4-pp3
+  BOARD jimbob4-pp3
+  SOURCES AL4S3B_FPGA_Top.v AL4S3B_FPGA_IP.v AL4S3B_FPGA_QL_Reserved.v AL4S3B_FPGA_Registers.v f512x18_512x18.v f512x36_512x36.v f512x9_512x9.v fifo_blk.v i2c_master_bit_ctrl.v i2c_master_byte_ctrl.v i2c_master_defines.v i2c_master_top.v I2C_Master_w_CmdQueue.v I2C_Master_w_CmdQueue_Registers_dma.v I2C_Master_w_CmdQueue_StateMachine.v I2C_Master_w_CmdQueue_Top.v I2C_Master_w_CmdQueue_Tx_FIFO.v I2C_Master_w_DMA.v I2C_Master_w_DMA_Registers.v I2C_Master_w_DMA_StateMachine.v LCD_controller_registers.v LCD_Controller_StateMachine.v r512x32_2048x8.v ram_blk.v UART_16550.v UART_16550_Interrupt_Control.v UART_16550_Registers.v UART_16550_Rx_FIFO.v UART_16550_Rx_Logic.v UART_16550_Tx_FIFO.v UART_16550_Tx_Logic.v
+  INPUT_IO_FILE jimbob4.pcf
+  EXPLICIT_ADD_FILE_TARGET
+  )
+
+add_jlink_output(
+  PARENT design7-ql-jimbob4-pp3
+)
+
+add_openocd_output(
+  PARENT design7-ql-jimbob4-pp3
+)
+
+add_dependencies(all_ql_tests design7-ql-jimbob4-pp3_bit)
+add_dependencies(all_ql_tests design7-ql-jimbob4-pp3_jlink)
+add_dependencies(all_ql_tests design7-ql-jimbob4-pp3_openocd)
 
