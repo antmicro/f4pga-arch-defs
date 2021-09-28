@@ -19,10 +19,18 @@ add_subdirectory(lut)
 add_subdirectory(consts)
 
 # Test designs controlled by buttons
+add_subdirectory(btn_xor)
+add_subdirectory(btn_ff)
 add_subdirectory(btn_counter)
+add_subdirectory(sdiomux_xor)
 
 # Test designs that use clock
 add_subdirectory(counter)
+# Tests that require an external clock/data
+add_subdirectory(ext_counter)
+add_subdirectory(ext_mult)		# Too big (IO)
+
+# QuickLogic test suite
+add_subdirectory(design_flow)
 
 add_subdirectory(features)
-add_subdirectory(design_flow)
