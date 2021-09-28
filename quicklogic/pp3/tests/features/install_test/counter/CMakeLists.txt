@@ -7,6 +7,12 @@ add_binary_toolchain_test(
 
     ASSERT_USAGE  PB-CLOCK=0,PB-GMUX=0,PB-BIDIR=5
     ASSERT_TIMING fmax>=30.0
+
+    ASSERT_EXISTS
+        "top_post_synthesis.v"
+        "top_post_synthesis.sdf"
+        "top.bit.v"
+        "top.bit.v.pcf"
 )
 
 add_binary_toolchain_test(
@@ -18,4 +24,10 @@ add_binary_toolchain_test(
 
     ASSERT_USAGE  PB-CLOCK=0,PB-GMUX=0,PB-BIDIR=5
     ASSERT_TIMING fmax>=30.0
+
+    ASSERT_EXISTS
+        "top_post_synthesis.v"
+        "top_post_synthesis.sdf"
+        "top.bit.v"
+        "top.bit.v.pcf"
 )

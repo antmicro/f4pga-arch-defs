@@ -9,7 +9,7 @@ function(ADD_BINARY_TOOLCHAIN_TEST)
 
   set(options)
   set(oneValueArgs TEST_NAME DIRECTIVE DEVICE PINMAP PCF SDC EXTRA_ARGS ASSERT_USAGE ASSERT_TIMING)
-  set(multiValueArgs)
+  set(multiValueArgs ASSERT_EXISTS)
 
   cmake_parse_arguments(
     ADD_BINARY_TOOLCHAIN_TEST
@@ -60,6 +60,35 @@ function(ADD_BINARY_TOOLCHAIN_TEST)
     set(TOOLCHAIN_COMMAND "${TOOLCHAIN_COMMAND} -s \"${SDC}\"")
   endif()
 
+  set(BUILD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/build)
+
+  # Build a list of files which existence is to be checked after the toolchain
+  # is executed.
+  set(ASSERT_EXISTS "")
+  list(APPEND ASSERT_EXISTS "${BUILD_DIR}/top.eblif")
+
+  if("${DIRECTIVE}" STREQUAL "compile")
+    list(APPEND ASSERT_EXISTS "${BUILD_DIR}/top.net")
+    list(APPEND ASSERT_EXISTS "${BUILD_DIR}/top.place")
+    list(APPEND ASSERT_EXISTS "${BUILD_DIR}/top.fasm")
+    list(APPEND ASSERT_EXISTS "${BUILD_DIR}/top.bit")
+  endif()
+
+  # qlf* architectures use repacker hence the "top.route" name is
+  # different.
+  if("${DEVICE}" MATCHES "qlf_.*")
+    list(APPEND ASSERT_EXISTS "${BUILD_DIR}/top.repacked.route")
+  else()
+    list(APPEND ASSERT_EXISTS "${BUILD_DIR}/top.route")
+  endif()
+
+  foreach(FILE ${ADD_BINARY_TOOLCHAIN_TEST_ASSERT_EXISTS})
+    list(APPEND ASSERT_EXISTS "${BUILD_DIR}/${FILE}")
+  endforeach()
+
+  string(REPLACE ";" "," ASSERT_EXISTS "${ASSERT_EXISTS}")
+
+  # Add the test
   set(TOOLCHAIN_COMMAND "${TOOLCHAIN_COMMAND} ${EXTRA_ARGS}")
   add_test(NAME quicklogic_toolchain_test_${TEST_NAME}_${DEVICE}
     COMMAND
@@ -67,9 +96,10 @@ function(ADD_BINARY_TOOLCHAIN_TEST)
         -DTOOLCHAIN_COMMAND=${TOOLCHAIN_COMMAND}
         -DSYMBIFLOW_DIR=${symbiflow-arch-defs_SOURCE_DIR}
         -DINSTALLATION_DIR=${CMAKE_INSTALL_PREFIX}
-        -DBUILD_DIR=${CMAKE_CURRENT_SOURCE_DIR}/build
+        -DBUILD_DIR=${BUILD_DIR}
         -DASSERT_USAGE=${ADD_BINARY_TOOLCHAIN_TEST_ASSERT_USAGE}
         -DASSERT_TIMING=${ADD_BINARY_TOOLCHAIN_TEST_ASSERT_TIMING}
+        -DASSERT_EXISTS=${ASSERT_EXISTS}
         -P ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/common/cmake/run_toolchain_test.cmake
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   )
