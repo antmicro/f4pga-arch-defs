@@ -1,11 +1,13 @@
-add_file_target(FILE bin2seven.v SCANNER_TYPE verilog)
+set(DESIGN_DIR ${QL_DESIGNS_DIR}/bin2seven)
+
+add_file_target(FILE ${DESIGN_DIR}/bin2seven.v SCANNER_TYPE verilog)
 add_file_target(FILE chandalar.pcf)
 add_file_target(FILE jimbob4.pcf)
 
 add_fpga_target(
   NAME bin2seven-ql-chandalar
   BOARD chandalar
-  SOURCES bin2seven.v
+  SOURCES ${DESIGN_DIR}/bin2seven.v
   INPUT_IO_FILE chandalar.pcf
   EXPLICIT_ADD_FILE_TARGET
   )
@@ -26,7 +28,7 @@ add_dependencies(all_ql_tests_prog bin2seven-ql-chandalar_openocd)
 add_fpga_target(
   NAME bin2seven-ql-jimbob4
   BOARD jimbob4
-  SOURCES bin2seven.v
+  SOURCES ${DESIGN_DIR}/bin2seven.v
   INPUT_IO_FILE jimbob4.pcf
   EXPLICIT_ADD_FILE_TARGET
   )
@@ -47,7 +49,7 @@ add_dependencies(all_ql_tests_prog bin2seven-ql-jimbob4_openocd)
 add_fpga_target(
   NAME bin2seven-ql-jimbob4-pp3
   BOARD jimbob4-pp3
-  SOURCES bin2seven.v
+  SOURCES ${DESIGN_DIR}/bin2seven.v
   INPUT_IO_FILE jimbob4.pcf
   EXPLICIT_ADD_FILE_TARGET
   )
