@@ -64,7 +64,10 @@ function(ADD_BINARY_TOOLCHAIN_TEST)
     set(TOOLCHAIN_COMMAND "${TOOLCHAIN_COMMAND} -s \"${SDC}\"")
   endif()
 
-  set(BUILD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/build)
+  set(BUILD_DIR_REL "build.${TEST_NAME}")
+  set(TOOLCHAIN_COMMAND "${TOOLCHAIN_COMMAND} -build_dir \"${BUILD_DIR_REL}\"")
+
+  set(BUILD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${BUILD_DIR_REL})
 
   # Build a list of files which existence is to be checked after the toolchain
   # is executed.
