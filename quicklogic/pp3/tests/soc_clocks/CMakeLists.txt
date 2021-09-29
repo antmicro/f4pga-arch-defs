@@ -1,5 +1,6 @@
 add_file_target(FILE soc_clocks.v SCANNER_TYPE verilog)
 add_file_target(FILE chandalar.pcf)
+add_file_target(FILE jimbob4.pcf)
 
 add_fpga_target(
   NAME soc_clocks-ql-chandalar
@@ -51,3 +52,4 @@ add_dependencies(all_ql_tests_bit  soc_clocks-ql-quickfeather_bit)
 add_dependencies(all_ql_tests_bit_v soc_clocks-ql-quickfeather_bit_v)
 add_dependencies(all_ql_tests_prog soc_clocks-ql-quickfeather_jlink)
 add_dependencies(all_ql_tests_prog soc_clocks-ql-quickfeather_openocd)
+
