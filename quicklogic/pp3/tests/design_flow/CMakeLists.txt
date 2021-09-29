@@ -42,7 +42,7 @@ add_subdirectory(counter_8bit)
 #add_subdirectory(design4)		# Failed to find matching architecture model for 'MULT'
 #add_subdirectory(design5)		# Failed to find matching architecture model for 'MULT'
 #add_subdirectory(design6)		# Too big (IO)
-add_subdirectory(design7)		# EOS-S3 specific macros (ASSP)
+#add_subdirectory(design7)		# EOS-S3 specific macros (ASSP)
 #add_subdirectory(design8)		# EOS-S3 specific macros (ASSP)
 #add_subdirectory(design9)		# EOS-S3 specific macros (ASSP)
 #add_subdirectory(design10)		# EOS-S3 specific macros (ASSP)
