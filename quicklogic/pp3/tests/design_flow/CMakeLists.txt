@@ -25,7 +25,7 @@ add_subdirectory(unsigned_mult_50)
 
 # Designs not working for PP3:
 
-#add_subdirectory(dct_mac)		# Missing file timescale.v
+add_subdirectory(dct_mac)		# Missing file timescale.v
 #add_subdirectory(sha_top)		# FIXME: The design gets mostly pruned by Yosys
 #add_subdirectory(smithwaterman)	# VPR packing requires >64GB of RAM
 #add_subdirectory(sudoku_check)		# FIXME: missing the "dcfifo" module

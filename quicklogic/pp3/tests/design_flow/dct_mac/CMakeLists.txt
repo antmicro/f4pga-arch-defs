@@ -5,6 +5,7 @@ add_fpga_target(
   TOP dct_mac
   BOARD jimbob4-pp3
   SOURCES
+    ${DESIGN_DIR}/timescale.v
     ${DESIGN_DIR}/dct_cos_table.v
     ${DESIGN_DIR}/dct_syn.v
     ${DESIGN_DIR}/dctub.v
