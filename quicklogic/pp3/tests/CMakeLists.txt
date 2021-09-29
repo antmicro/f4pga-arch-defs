@@ -29,25 +29,25 @@ add_subdirectory(sdiomux_xor)
 
 # Tests that require an external clock/data
 add_subdirectory(ext_counter)
-add_subdirectory(ext_mult)
+#add_subdirectory(ext_mult)		# Too big (IO)
 
 # Global clock network tests
-#add_subdirectory(gclk_counter)
+#add_subdirectory(gclk_counter)		# get_target_property() called with non-existent target "file_quicklogic_pp3_tests_gclk_counter_SDC_FILE".
 
 # Test designs that use clock
-add_subdirectory(counter)
-add_subdirectory(soc_clocks)
-add_subdirectory(sdiomux_counter)
+#add_subdirectory(counter)		# EOS-S3 specific macro (ASSP)
+#add_subdirectory(soc_clocks)		# EOS-S3 specific macro (ASSP)
+#add_subdirectory(sdiomux_counter)	# EOS-S3 specific macro (ASSP)
 
 # More complex tests/examples that use the SoC interface.
-add_subdirectory(soc_litex_pwm)
+#add_subdirectory(soc_litex_pwm)	# EOS-S3 specific macro (ASSP)
 
 # QuickLogic test suite
 add_subdirectory(design_flow)
 
 # Hardblocks tests
-add_subdirectory(ram)
-add_subdirectory(bram)
-add_subdirectory(mult)
+add_subdirectory(ram)			# EOS-S3 specific macro (ASSP)
+add_subdirectory(bram)			# Routing issues
+add_subdirectory(mult)			# Failed to find matching architecture model for 'MULT'
 
 add_subdirectory(features)
