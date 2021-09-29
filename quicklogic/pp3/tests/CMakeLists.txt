@@ -14,7 +14,7 @@ add_dependencies(all_ql_tests all_ql_tests_regression)
 add_custom_target(all_quick_tests)
 
 # A test for LUT -> LOGIC cell techmaps
-add_subdirectory(techmaps)
+#add_subdirectory(techmaps)	# 'quicklogic/pp3/tests/techmaps/VVP_TARGET-NOTFOUND', needed by 'quicklogic/pp3/tests/techmaps/CMakeFiles/test_techmap_lut1_x10', missing and no known rule to make it
 
 # Tests for packing and placing primitives. Not to be run on actual HW !
 add_subdirectory(wire)
@@ -47,7 +47,7 @@ add_subdirectory(design_flow)
 
 # Hardblocks tests
 add_subdirectory(ram)			# EOS-S3 specific macro (ASSP)
-add_subdirectory(bram)			# Routing issues
+add_subdirectory(bram)			# Packing/Routing issues
 add_subdirectory(mult)			# Failed to find matching architecture model for 'MULT'
 
 add_subdirectory(features)
