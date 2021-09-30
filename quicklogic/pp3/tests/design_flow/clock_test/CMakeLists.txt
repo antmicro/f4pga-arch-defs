@@ -1,11 +1,12 @@
-add_file_target(FILE AL4S3B_FPGA_Top.v SCANNER TYPE verilog)
+set(DESIGN_DIR ${QL_DESIGNS_DIR}/clock_test)
+
+add_file_target(FILE ${DESIGN_DIR}/AL4S3B_FPGA_Top.v SCANNER TYPE verilog)
 add_file_target(FILE chandalar.pcf)
-add_file_target(FILE jimbob4.pcf)
 
 add_fpga_target(
   NAME clock_test-ql-chandalar
   BOARD chandalar
-  SOURCES AL4S3B_FPGA_Top.v
+  SOURCES ${DESIGN_DIR}/AL4S3B_FPGA_Top.v
   INPUT_IO_FILE chandalar.pcf
   EXPLICIT_ADD_FILE_TARGET
   )

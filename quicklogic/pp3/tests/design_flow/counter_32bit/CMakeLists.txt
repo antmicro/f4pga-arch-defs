@@ -1,10 +1,12 @@
-add_file_target(FILE counter_32bit.v SCANNER_TYPE verilog)
+set(DESIGN_DIR ${QL_DESIGNS_DIR}/counter_32bit)
+add_file_target(FILE ${DESIGN_DIR}/counter_32bit.v SCANNER_TYPE verilog)
 add_file_target(FILE chandalar.pcf)
 
 add_fpga_target(
   NAME counter_32bit-ql-chandalar
   BOARD chandalar
-  SOURCES counter_32bit.v
+  SOURCES
+    ${DESIGN_DIR}/counter_32bit.v
   INPUT_IO_FILE chandalar.pcf
   EXPLICIT_ADD_FILE_TARGET
   )

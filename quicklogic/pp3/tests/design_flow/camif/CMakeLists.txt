@@ -1,11 +1,15 @@
-add_file_target(FILE camif_new.v SCANNER_TYPE verilog)
-add_file_target(FILE af512x16_512x16.v SCANNER_TYPE verilog)
+set(DESIGN_DIR ${QL_DESIGNS_DIR}/camif)
+
+add_file_target(FILE ${DESIGN_DIR}/camif_new.v SCANNER_TYPE verilog)
+add_file_target(FILE ${DESIGN_DIR}/af512x16_512x16.v SCANNER_TYPE verilog)
 add_file_target(FILE chandalar.pcf)
 
 add_fpga_target(
   NAME camif-ql-chandalar
   BOARD chandalar
-  SOURCES camif_new.v af512x16_512x16.v
+  SOURCES
+    ${DESIGN_DIR}/camif_new.v
+    ${DESIGN_DIR}/af512x16_512x16.v
   INPUT_IO_FILE chandalar.pcf
   EXPLICIT_ADD_FILE_TARGET
   )
