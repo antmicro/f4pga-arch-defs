@@ -42,7 +42,7 @@ add_binary_toolchain_test(
     EXTRA_ARGS "-dump post_verilog"
 
     ASSERT_USAGE  PB-CLOCK=1,PB-GMUX=1,PB-BIDIR=4
-    ASSERT_TIMING fmax>56.0
+    ASSERT_TIMING fmax>40.0
 
     ASSERT_EXISTS
         "top_post_synthesis.v"
