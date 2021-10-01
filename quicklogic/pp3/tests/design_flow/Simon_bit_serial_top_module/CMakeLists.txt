@@ -2,7 +2,6 @@ set(DESIGN_DIR ${QL_DESIGNS_DIR}/Simon_bit_serial_top_module)
 
 add_fpga_target(
   NAME Simon_bit_serial_top_module-ql-jimbob4-pp3
-  TOP Simon_bit_serial_top
   BOARD jimbob4-pp3
   SOURCES
     ${DESIGN_DIR}/Simon_bit_serial_datapath_FPGA.v
