@@ -34,4 +34,4 @@ add_subdirectory(VexRiscv)
 #add_subdirectory(conv2d) # Has a global clock going to a device output pin
 #add_subdirectory(conv2d_no_ksa) # Has a global clock going to a device output pin
 add_subdirectory(mac_16)
-add_subdirectory(multi_enc_decx2x4)
+#add_subdirectory(multi_enc_decx2x4) # No LUT output definition found
