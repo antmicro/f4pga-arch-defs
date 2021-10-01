@@ -1,6 +1,5 @@
 set(QL_DESIGNS_DIR ../../../../designs)
 
-add_subdirectory(adder_8)
 add_subdirectory(bin2bcd)
 add_subdirectory(bin2seven)
 add_subdirectory(clock_tree_design)
@@ -30,6 +29,7 @@ add_subdirectory(dct_mac)		# Missing file timescale.v
 #add_subdirectory(smithwaterman)	# VPR packing requires >64GB of RAM
 #add_subdirectory(sudoku_check)		# FIXME: missing the "dcfifo" module
 
+#add_subdirectory(adder_8)		# Too big (IO)
 #add_subdirectory(cf_fft_256_8)		# Too big
 add_subdirectory(camif)			# Too big (IO)
 add_subdirectory(cavlc_top)		# Too big (IO)
