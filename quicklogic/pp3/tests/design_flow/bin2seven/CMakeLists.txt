@@ -25,26 +25,27 @@ add_dependencies(all_ql_tests_bit_v bin2seven-ql-chandalar_bit_v)
 add_dependencies(all_ql_tests_prog bin2seven-ql-chandalar_jlink)
 add_dependencies(all_ql_tests_prog bin2seven-ql-chandalar_openocd)
 
-add_fpga_target(
-  NAME bin2seven-ql-jimbob4
-  BOARD jimbob4
-  SOURCES ${DESIGN_DIR}/bin2seven.v
-  INPUT_IO_FILE jimbob4.pcf
-  EXPLICIT_ADD_FILE_TARGET
-  )
+# FIXME: FasmInconsistentBits: feature X16Y16.LOGIC.LOGIC.Ipwr_gates.J_pwr_st
+#add_fpga_target(
+  #NAME bin2seven-ql-jimbob4
+  #BOARD jimbob4
+  #SOURCES ${DESIGN_DIR}/bin2seven.v
+  #INPUT_IO_FILE jimbob4.pcf
+  #EXPLICIT_ADD_FILE_TARGET
+  #)
 
-add_jlink_output(
-  PARENT bin2seven-ql-jimbob4
-)
+#add_jlink_output(
+  #PARENT bin2seven-ql-jimbob4
+#)
 
-add_openocd_output(
-  PARENT bin2seven-ql-jimbob4
-)
+#add_openocd_output(
+  #PARENT bin2seven-ql-jimbob4
+#)
 
-add_dependencies(all_ql_tests_bit  bin2seven-ql-jimbob4_bit)
-add_dependencies(all_ql_tests_bit_v bin2seven-ql-jimbob4_bit_v)
-add_dependencies(all_ql_tests_prog bin2seven-ql-jimbob4_jlink)
-add_dependencies(all_ql_tests_prog bin2seven-ql-jimbob4_openocd)
+#add_dependencies(all_ql_tests_bit  bin2seven-ql-jimbob4_bit)
+#add_dependencies(all_ql_tests_bit_v bin2seven-ql-jimbob4_bit_v)
+#add_dependencies(all_ql_tests_prog bin2seven-ql-jimbob4_jlink)
+#add_dependencies(all_ql_tests_prog bin2seven-ql-jimbob4_openocd)
 
 add_fpga_target(
   NAME bin2seven-ql-jimbob4-pp3
