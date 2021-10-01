@@ -4,7 +4,6 @@ set -e
 
 
 MYPATH=$(dirname "$(readlink -f "$BASH_SOURCE")")
-BUILDDIR=build
 
 source ${MYPATH}/env
 source ${VPRPATH}/vpr_common
@@ -49,6 +48,7 @@ JSON=""
 PNR_CORNER="slow"
 ANALYSIS_CORNER="slow"
 COMPILE_EXTRA_ARGS=()
+BUILDDIR="build"
 DEVICE_CHECK="INVALID"
 OPT=""
 RUN_TILL=""
@@ -98,6 +98,9 @@ for arg in $@; do
             ;;
         -f)
             OPT="options_file"
+            ;;
+        -build_dir)
+            OPT="build_dir"
             ;;
 		-h|--help)
             exit 0
@@ -155,6 +158,10 @@ for arg in $@; do
                     ;;
                 "options_file")
                     COMPILE_EXTRA_ARGS+=("-f \"`realpath $arg`\" ")
+                    ;;
+                "build_dir")
+                    BUILDDIR=$arg
+                    OPT=""
                     ;;
                 *)
                     echo "Refer help for more details: ql_symbiflow -h "
@@ -383,8 +390,8 @@ LOG_FILE=${CURR_DIR}/${BUILDDIR}/${TOP}.log
 if [ -f "$SOURCE"/$PCF_FILE ];then
 	PCF_MAKE="\${current_dir}/$PCF_FILE"
 else
-    touch ${CURR_DIR}/build/${TOP}_dummy.pcf
-    PCF_MAKE="\${current_dir}/build/${TOP}_dummy.pcf"
+    touch ${CURR_DIR}/${BUILDDIR}/${TOP}_dummy.pcf
+    PCF_MAKE="\${current_dir}/${BUILDDIR}/${TOP}_dummy.pcf"
 fi
 
 PROCESS_SDC=`realpath ${MYPATH}/python/process_sdc_constraints.py`
@@ -396,15 +403,15 @@ if ! [ -z "$SDC" ]; then
         SDC_MAKE="$SOURCE/$SDC"
     fi
 else
-    touch ${CURR_DIR}/build/${TOP}_dummy.sdc
-    SDC_MAKE="\${current_dir}/build/${TOP}_dummy.sdc"
+    touch ${CURR_DIR}/${BUILDDIR}/${TOP}_dummy.sdc
+    SDC_MAKE="\${current_dir}/${BUILDDIR}/${TOP}_dummy.sdc"
 fi
 
 if ! [ -z "$CSV_PATH" ]; then
     CSV_MAKE=$CSV_PATH
 else
-    touch ${CURR_DIR}/build/${TOP}_dummy.csv
-    CSV_MAKE="\${current_dir}/build/${TOP}_dummy.csv"
+    touch ${CURR_DIR}/${BUILDDIR}/${TOP}_dummy.csv
+    CSV_MAKE="\${current_dir}/${BUILDDIR}/${TOP}_dummy.csv"
 fi
 
 echo -e ".PHONY:\${BUILDDIR}\n
@@ -421,7 +428,7 @@ PNR_CORNER := $ANALYSIS_CORNER\n\
 PCF := $PCF_MAKE\n\
 PINMAP_CSV := $CSV_MAKE\n\
 SDC_IN := $SDC_MAKE\n\
-BUILDDIR := build\n\n\
+BUILDDIR := $BUILDDIR\n\n\
 SDC := \${current_dir}/\${BUILDDIR}/\${TOP}.sdc
 
 all: \${BUILDDIR}/\${TOP}.${RUN_TILL}\n\

@@ -9,7 +9,7 @@ function(ADD_BINARY_TOOLCHAIN_TEST)
 
   set(options)
   set(oneValueArgs TEST_NAME DIRECTIVE DEVICE PINMAP PCF SDC EXTRA_ARGS ASSERT_USAGE ASSERT_TIMING)
-  set(multiValueArgs ASSERT_EXISTS)
+  set(multiValueArgs SOURCES ASSERT_EXISTS)
 
   cmake_parse_arguments(
     ADD_BINARY_TOOLCHAIN_TEST
@@ -22,6 +22,7 @@ function(ADD_BINARY_TOOLCHAIN_TEST)
   set(INSTALLATION_DIR_BIN "${CMAKE_INSTALL_PREFIX}/bin")
 
   set(TEST_NAME  ${ADD_BINARY_TOOLCHAIN_TEST_TEST_NAME})
+  set(SOURCES    ${ADD_BINARY_TOOLCHAIN_TEST_SOURCES})
   set(DIRECTIVE  ${ADD_BINARY_TOOLCHAIN_TEST_DIRECTIVE})
   set(DEVICE     ${ADD_BINARY_TOOLCHAIN_TEST_DEVICE})
   set(PINMAP     ${ADD_BINARY_TOOLCHAIN_TEST_PINMAP})
@@ -29,7 +30,10 @@ function(ADD_BINARY_TOOLCHAIN_TEST)
   set(SDC        ${ADD_BINARY_TOOLCHAIN_TEST_SDC})
   set(EXTRA_ARGS ${ADD_BINARY_TOOLCHAIN_TEST_EXTRA_ARGS})
 
-  set(SOURCES "${TEST_NAME}.v")
+  string(REPLACE " " ";" SOURCES "${SOURCES}")
+  if("${SOURCES}" STREQUAL "")
+      set(SOURCES "${TEST_NAME}.v")
+  endif()
 
   if("${PCF}" STREQUAL "")
     set(PCF "${TEST_NAME}.pcf")
@@ -60,7 +64,10 @@ function(ADD_BINARY_TOOLCHAIN_TEST)
     set(TOOLCHAIN_COMMAND "${TOOLCHAIN_COMMAND} -s \"${SDC}\"")
   endif()
 
-  set(BUILD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/build)
+  set(BUILD_DIR_REL "build.${TEST_NAME}")
+  set(TOOLCHAIN_COMMAND "${TOOLCHAIN_COMMAND} -build_dir \"${BUILD_DIR_REL}\"")
+
+  set(BUILD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${BUILD_DIR_REL})
 
   # Build a list of files which existence is to be checked after the toolchain
   # is executed.

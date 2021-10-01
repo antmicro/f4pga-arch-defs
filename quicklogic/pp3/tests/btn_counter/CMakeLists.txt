@@ -2,6 +2,7 @@ add_file_target(FILE btn_counter.v SCANNER_TYPE verilog)
 add_file_target(FILE chandalar.pcf)
 add_file_target(FILE quickfeather.pcf)
 add_file_target(FILE jimbob4.pcf)
+add_file_target(FILE pd64.pcf)
 
 add_fpga_target(
   NAME btn_counter-ql-chandalar
@@ -91,3 +92,16 @@ add_dependencies(all_quick_tests btn_counter-ql-jimbob4-pp3_route)
 
 add_dependencies(all_ql_tests_bit btn_counter-ql-jimbob4-pp3_route)
 add_dependencies(all_ql_tests_bit_v btn_counter-ql-jimbob4-pp3_bit)
+
+add_fpga_target(
+  NAME btn_counter-ql-pd64
+  BOARD pd64
+  SOURCES btn_counter.v
+  INPUT_IO_FILE pd64.pcf
+  EXPLICIT_ADD_FILE_TARGET
+)
+
+add_dependencies(all_quick_tests btn_counter-ql-pd64_route)
+add_dependencies(all_ql_tests_bit btn_counter-ql-pd64_route)
+add_dependencies(all_ql_tests_bit_v btn_counter-ql-pd64_bit)
+
