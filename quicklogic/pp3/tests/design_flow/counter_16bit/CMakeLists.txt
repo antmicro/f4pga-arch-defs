@@ -10,7 +10,7 @@ add_fpga_target(
   AUTO_ADD_FILE_TARGET
 
   ASSERT_USAGE PB-CLOCK=1,PB-GMUX=1,PB-LOGIC<=18
-  ASSERT_TIMING fmax>=25.0
+  ASSERT_TIMING fmax>=20.0
 )
 
 add_dependencies(all_ql_tests_bit   counter_16bit-ql-jimbob4-pp3_bit)
