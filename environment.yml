@@ -13,7 +13,7 @@ dependencies:
   - litex-hub::prjxray-db=0.0_248_g2e51ad3=20210312_125539
   - litex-hub::vtr-optimized=8.0.0_4118_g06317d042=20210813_070938
   - litex-hub::yosys=0.9_5567_g539d4ee9=20210813_070938_py37
-  - litex-hub::symbiflow-yosys-plugins=1.0.0_7_375_ge9e412b=20210813_070938
+  - litex-hub::symbiflow-yosys-plugins=1.0.0_7_405_g041f93b=20210928_224703
   - litex-hub::zachjs-sv2v=0.0.5_0025_ge9f9696=20201120_205532
   - cmake
   - make
