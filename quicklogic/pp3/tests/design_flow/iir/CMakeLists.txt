@@ -2,7 +2,6 @@ set(DESIGN_DIR ${QL_DESIGNS_DIR}/iir)
 
 add_fpga_target(
   NAME iir-ql-jimbob4-pp3
-  TOP iir
   BOARD jimbob4-pp3
   SOURCES
     ${DESIGN_DIR}/iir.v
