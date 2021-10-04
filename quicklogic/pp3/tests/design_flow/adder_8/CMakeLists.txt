@@ -12,7 +12,7 @@ add_fpga_target(
   AUTO_ADD_FILE_TARGET
 
   ASSERT_USAGE PB-BIDIR=26,PB-LOGIC<=8
-  ASSERT_TIMING fmax>=14.0
+  ASSERT_TIMING fmax>=13.5
 )
 
 add_dependencies(all_ql_tests_bit   adder_8-ql-pd64_bit)
