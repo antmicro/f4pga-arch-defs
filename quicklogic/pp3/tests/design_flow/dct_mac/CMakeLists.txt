@@ -20,5 +20,6 @@ add_fpga_target(
   AUTO_ADD_FILE_TARGET
 )
 
-add_dependencies(all_ql_tests_bit   dct_mac-ql-jimbob4-pp3_bit)
-add_dependencies(all_ql_tests_bit_v dct_mac-ql-jimbob4-pp3_bit_v)
+# FIXME: design requires over 32GB of RAM for packing step
+#add_dependencies(all_ql_tests_bit   dct_mac-ql-jimbob4-pp3_bit)
+#add_dependencies(all_ql_tests_bit_v dct_mac-ql-jimbob4-pp3_bit_v)
