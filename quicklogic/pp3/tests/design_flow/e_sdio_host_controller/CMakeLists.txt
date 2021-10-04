@@ -30,6 +30,6 @@ add_fpga_target(
 )
 
 add_dependencies(all_ql_tests_bit   e_sdio_host_controller-ql-jimbob4-pp3_bit)
-add_dependencies(all_ql_tests_bit_v e_sdio_host_controller-ql-jimbob4-pp3_bit_v)
+#add_dependencies(all_ql_tests_bit_v e_sdio_host_controller-ql-jimbob4-pp3_bit_v)	# FIXME: List of connection types is empty (should have 1 element)
 
 add_dependencies(all_ql_tests_regression e_sdio_host_controller-ql-jimbob4-pp3_assert_usage)

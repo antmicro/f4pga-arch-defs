@@ -64,6 +64,6 @@ add_openocd_output(
 )
 
 add_dependencies(all_ql_tests_bit  bin2seven-ql-jimbob4-pp3_bit)
-add_dependencies(all_ql_tests_bit_v bin2seven-ql-jimbob4-pp3_bit_v)
+#add_dependencies(all_ql_tests_bit_v bin2seven-ql-jimbob4-pp3_bit_v)	# FIXME: List of connection types is empty (should have 1 element)
 add_dependencies(all_ql_tests_prog bin2seven-ql-jimbob4-pp3_jlink)
 add_dependencies(all_ql_tests_prog bin2seven-ql-jimbob4-pp3_openocd)

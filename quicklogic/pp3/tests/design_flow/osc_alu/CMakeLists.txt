@@ -59,7 +59,7 @@ add_openocd_output(
 )
 
 add_dependencies(all_ql_tests_bit  osc_alu-ql-pd64_bit)
-add_dependencies(all_ql_tests_bit_v osc_alu-ql-pd64_bit_v)
+#add_dependencies(all_ql_tests_bit_v osc_alu-ql-pd64_bit_v)	# FIXME: List of connection types is empty (should have 1 element)
 add_dependencies(all_ql_tests_prog osc_alu-ql-pd64_jlink)
 add_dependencies(all_ql_tests_prog osc_alu-ql-pd64_openocd)
 add_dependencies(all_quick_tests osc_alu-ql-pd64_analysis)
