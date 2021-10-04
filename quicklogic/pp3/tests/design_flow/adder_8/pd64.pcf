@@ -1,0 +1,29 @@
+set_io a[0]   A2
+set_io a[1]   A3
+set_io a[2]   A4
+set_io a[3]   A5
+set_io a[4]   A6
+set_io a[5]   A7
+set_io a[6]   A8
+set_io a[7]   B2
+
+set_io b[0]   B3
+set_io b[1]   B5
+set_io b[2]   B6
+set_io b[3]   B7
+set_io b[4]   B8
+set_io b[5]   C2
+set_io b[6]   C3
+set_io b[7]   C7
+
+set_io sum[0]   C8
+set_io sum[1]   D1
+set_io sum[2]   D2
+set_io sum[3]   D3
+set_io sum[4]   D7
+set_io sum[5]   D8
+set_io sum[6]   E1
+set_io sum[7]   E2
+
+set_io cout	E7
+set_io cin	F1

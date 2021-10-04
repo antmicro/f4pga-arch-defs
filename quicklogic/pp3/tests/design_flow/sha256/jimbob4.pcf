@@ -1,2 +1,0 @@
-set_io clk_i A3
-set_io rst_i B1

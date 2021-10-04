@@ -10,6 +10,7 @@ set(DESIGN_DIR ${QL_DESIGNS_DIR}/cavlc_top)
 #add_file_target(FILE ${DESIGN_DIR}/cavlc_read_total_zeros.v SCANNER_TYPE verilog)
 #add_file_target(FILE ${DESIGN_DIR}/cavlc_top.v SCANNER_TYPE verilog)
 add_file_target(FILE chandalar.pcf)
+add_file_target(FILE pd64.pcf)
 
 add_fpga_target(
   NAME cavlc-ql-chandalar
@@ -39,3 +40,31 @@ add_openocd_output(
 #add_dependencies(all_ql_tests cavlc-ql-chandalar_jlink)
 #add_dependencies(all_ql_tests cavlc-ql-chandalar_openocd)
 
+
+add_fpga_target(
+  NAME cavlc-ql-pd64
+  BOARD pd64
+  SOURCES
+    ${DESIGN_DIR}/cavlc_fsm.v
+    ${DESIGN_DIR}/cavlc_len_gen.v
+    ${DESIGN_DIR}/cavlc_read_levels.v
+    ${DESIGN_DIR}/cavlc_read_run_befores.v
+    ${DESIGN_DIR}/cavlc_read_total_coeffs.v
+    ${DESIGN_DIR}/cavlc_read_total_zeros.v
+    ${DESIGN_DIR}/cavlc_top.v
+  INPUT_IO_FILE pd64.pcf
+  EXPLICIT_ADD_FILE_TARGET
+  )
+
+add_jlink_output(
+  PARENT cavlc-ql-pd64
+)
+
+add_openocd_output(
+  PARENT cavlc-ql-pd64
+)
+
+# FIXME: Temporarily disable due to not enough resources after packing
+#add_dependencies(all_ql_tests cavlc-ql-pd64_bit)
+#add_dependencies(all_ql_tests cavlc-ql-pd64_jlink)
+#add_dependencies(all_ql_tests cavlc-ql-pd64_openocd)

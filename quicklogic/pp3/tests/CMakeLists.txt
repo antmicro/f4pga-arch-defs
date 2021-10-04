@@ -28,7 +28,7 @@ add_subdirectory(sdiomux_xor)
 add_subdirectory(counter)
 # Tests that require an external clock/data
 add_subdirectory(ext_counter)
-add_subdirectory(ext_mult)		# Too big (IO)
+add_subdirectory(ext_mult)
 
 # QuickLogic test suite
 add_subdirectory(design_flow)

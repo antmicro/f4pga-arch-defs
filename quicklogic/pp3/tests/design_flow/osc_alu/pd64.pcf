@@ -1,0 +1,92 @@
+set_io srcCy		A2
+set_io srcAc		A3
+
+set_io bit_in		A4
+
+set_io desCy		A5
+set_io desAc		A6
+
+set_io src1[0]		A7
+set_io src1[1]		A8
+set_io src1[2]		B2
+set_io src1[3]		B3
+set_io src1[4]		B5
+set_io src1[5]		B6
+set_io src1[6]		B7
+set_io src1[7]		B8
+
+set_io desOv		C2
+
+set_io op_code[0]	C3
+set_io op_code[1]	C7
+set_io op_code[2]	C8
+set_io op_code[3]	D1
+
+set_io src2[0]		D2
+set_io src2[1]		D3
+set_io src2[2]		D7
+set_io src2[3]		D8
+set_io src2[4]		E1
+set_io src2[5]		E2
+set_io src2[6]		E7
+set_io src2[7]		F1
+
+set_io des2[0]		F2
+set_io des2[1]		F3
+set_io des2[2]		F4
+set_io des2[3]		F7
+set_io des2[4]		F8
+set_io des2[5]		G1
+set_io des2[6]		G2
+set_io des2[7]		G3
+set_io des1[0]		G5
+set_io des1[1]		G6
+set_io des1[2]		G7
+set_io des1[3]		G8
+set_io des1[4]		H1
+set_io des1[5]		H2
+set_io des1[6]		H3
+set_io des1[7]		H4
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
