@@ -1050,7 +1050,7 @@ if __name__ == '__main__':
         "--device-name",
         type=str,
         required=True,
-        choices=["eos-s3", "pp3"],
+        choices=["eos-s3", "pp3", "pp3e"],
         help="Device name"
     )
 
@@ -1105,6 +1105,10 @@ if __name__ == '__main__':
             assembler = QL732BAssembler(qlfasmdb)
         elif args.device_name == "pp3":
             assembler = QL725AAssembler(qlfasmdb)
+        elif args.device_name == "pp3e":
+            assembler = QL732BAssembler(
+                qlfasmdb
+            )  # Workaround: use EOS-S3 assembler for PP3E
         else:
             assert False, args.device_name
 

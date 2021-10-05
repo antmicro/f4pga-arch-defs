@@ -1,0 +1,13 @@
+set_io clk A1
+set_io async_set A2
+set_io comb_out A3
+set_io enable B1
+set_io count[0] B3
+set_io count[1] C2
+set_io count[2] C4
+set_io count[3] D4
+set_io count[4] D5
+set_io count[5] E1
+set_io count[6] E2
+set_io count[7] E4
+

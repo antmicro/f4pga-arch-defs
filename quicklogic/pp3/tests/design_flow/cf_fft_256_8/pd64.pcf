@@ -1,0 +1,116 @@
+set_io clock_c		A2
+set_io enable_i		A3
+set_io reset_i		A4
+set_io sync_i		A5
+set_io sync_o		A6
+set_io data_0_i[]	A7
+set_io data_0_i[]	A8
+set_io data_0_i[]	B2
+set_io data_0_i[]	B3
+set_io data_0_i[]	B5
+set_io data_0_i[]	B6
+set_io data_0_i[]	B7
+set_io data_0_i[]	B8
+set_io data_0_i[]	C2
+set_io data_0_i[]	C3
+set_io data_0_i[]	C7
+set_io data_0_i[]	C8
+set_io data_0_i[]	D1
+set_io data_0_i[]	D2
+set_io data_0_i[]	D3
+set_io data_0_i[]	D7
+set_io data_1_i[]	D8
+set_io data_1_i[]	E1
+set_io data_1_i[]	E2
+set_io data_1_i[]	E7
+set_io data_1_i[]	F1
+set_io data_1_i[]	F2
+set_io data_1_i[]	F3
+set_io data_1_i[]	F4
+set_io data_1_i[]	F7
+set_io data_1_i[]	F8
+set_io data_1_i[]	G1
+set_io data_1_i[]	G2
+set_io data_1_i[]	G3
+set_io data_1_i[]	G5
+set_io data_1_i[]	G6
+set_io data_1_i[]	G7
+set_io data_0_o[]	G8
+set_io data_0_o[]	H1
+set_io data_0_o[]	H2
+set_io data_0_o[]	H3
+set_io data_0_o[]	H4
+set_io data_0_o[]	H5
+set_io data_0_o[]	H6
+set_io data_0_o[]	H7
+set_io data_0_o[]	H8
+set_io data_0_o[]	
+set_io data_0_o[]	
+set_io data_0_o[]	
+set_io data_0_o[]	
+set_io data_0_o[]	
+set_io data_0_o[]	
+set_io data_0_o[]	
+set_io data_1_o[]	
+set_io data_1_o[]	
+set_io data_1_o[]	
+set_io data_1_o[]	
+set_io data_1_o[]	
+set_io data_1_o[]	
+set_io data_1_o[]	
+set_io data_1_o[]	
+set_io data_1_o[]	
+set_io data_1_o[]	
+set_io data_1_o[]	
+set_io data_1_o[]	
+set_io data_1_o[]	
+set_io data_1_o[]	
+set_io data_1_o[]	
+set_io data_1_o[]	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

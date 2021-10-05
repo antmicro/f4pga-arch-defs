@@ -1,0 +1,75 @@
+set_io clk		A2
+set_io enable		A3
+
+set_io set		A4
+set_io comb_out		A5
+
+set_io count[0]		A6
+set_io count[1]		A7
+set_io count[2]		A8
+set_io count[3]		B2
+set_io count[4]		B3
+set_io count[5]		B5
+set_io count[6]		B6
+set_io count[7]		B7
+set_io count[8]		B8
+set_io count[9]		C2
+set_io count[10]	C3
+set_io count[11]	C7
+set_io count[12]	C8
+set_io count[13]	D1
+set_io count[14]	D2
+set_io count[15]	D3
+set_io count[16]	D7
+set_io count[17]	D8
+set_io count[18]	E1
+set_io count[19]	E2
+set_io count[20]	E7
+set_io count[21]	F1
+set_io count[22]	F2
+set_io count[23]	F3
+set_io count[24]	F4
+set_io count[25]	F7
+set_io count[26]	F8
+set_io count[27]	G1
+set_io count[28]	G2
+set_io count[29]	G3
+set_io count[30]	G5
+set_io count[31]	G6
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
