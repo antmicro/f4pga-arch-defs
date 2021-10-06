@@ -13,6 +13,11 @@ read_verilog -lib $::env(DEVICE_CELLS_SIM)
 # Synthesize
 synth_quicklogic -family pp3
 
+splitnets -ports -format ()
+quicklogic_eqn
+write_ql_edif -nogndvcc -attrprop -pvector par top.edf
+write_edif -nogndvcc -attrprop -pvector par top_std.edf
+
 # Optimize the netlist by adaptively splitting cells that fit into C_FRAG into
 # smaller that can fit into F_FRAG.
 set mypath [ file dirname [ file normalize [ info script ] ] ]
