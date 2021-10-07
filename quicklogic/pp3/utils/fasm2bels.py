@@ -1117,7 +1117,7 @@ if __name__ == '__main__':
             assert False, args.device_name
 
         assembler.read_bitstream(args.input_file)
-        fasmlines = assembler.disassemble()
+        fasmlines = assembler.disassemble(outfilepath="fasmlines.fasm")
         fasmlines = [
             line for line in fasm.parse_fasm_string('\n'.join(fasmlines))
         ]
@@ -1126,6 +1126,11 @@ if __name__ == '__main__':
         fasmlines = [
             line for line in fasm.parse_fasm_filename(args.input_file)
         ]
+
+    # with open("spde.fasm", 'w') as outfasm:
+        # for line in fasmlines:
+            # outfasm.write("{}\n".format(line.set_feature.feature))
+            # outfasm.write("F: {}\n  S: {}\n  E: {}\n  V: {}\n  VF: {}\n".format(line.set_feature.feature, line.set_feature.start, line.set_feature.end, line.set_feature.value, line.set_feature.value_format))
 
     # Run fasm2bels
     verilog, pcf, qcf = f2b.convert_to_verilog(fasmlines)
