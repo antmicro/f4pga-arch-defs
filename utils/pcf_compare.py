@@ -8,6 +8,7 @@ import argparse
 
 from lib.parse_pcf import parse_simple_pcf
 
+
 def main():
     parser = argparse.ArgumentParser(
         description="Compares IO constraints across two PCF files"
@@ -21,11 +22,12 @@ def main():
         with open(args.pcf[i], "r") as fp:
             constrs = set()
             for constr in parse_simple_pcf(fp):
-                key = tuple([
-                    type(constr).__name__,
-                    constr.net,
-                    None if not hasattr(constr, "pad") else constr.pad
-                ])
+                key = tuple(
+                    [
+                        type(constr).__name__, constr.net,
+                        None if not hasattr(constr, "pad") else constr.pad
+                    ]
+                )
                 constrs.add(key)
             pcf.append(constrs)
 
@@ -41,6 +43,7 @@ def main():
             print("", key)
 
     exit(-1)
+
 
 if __name__ == "__main__":
     main()
