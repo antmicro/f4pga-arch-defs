@@ -23,14 +23,13 @@ add_subdirectory(sdio_client_top)
 add_subdirectory(spi_master_top)
 add_subdirectory(test_logic_cell)
 add_subdirectory(unsigned_mult_50)
-
+add_subdirectory(camif)
 
 # Designs not working for PP3:
 #add_subdirectory(dct_mac)		# VPR packing requires >32GB of RAM
 #add_subdirectory(sha_top)		# FIXME: The design gets mostly pruned by Yosys
 #add_subdirectory(smithwaterman)	# VPR packing requires >64GB of RAM
 #add_subdirectory(sudoku_check)		# FIXME: missing the "dcfifo" module
-#add_subdirectory(camif)		# Packing errors (RAM)
 #add_subdirectory(cavlc_top)		# FIXME: Not enough resources after packing
 #add_subdirectory(cf_fft_256_8)		# Too big (IO)
 #add_subdirectory(sha256)		# Too big (device overfitted)
