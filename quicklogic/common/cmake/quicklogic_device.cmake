@@ -167,6 +167,7 @@ function(QUICKLOGIC_DEFINE_DEVICE_TYPE)
   add_custom_command(
       OUTPUT ${RAM_MODEL_XML} ${RAM_PBTYPE_XML} ${RAM_CELLS_SIM} ${RAM_CELLS_MAP}
       COMMAND ${PYTHON3} ${RAM_GENERATOR}
+          --device ${DEVICE}
           --sdf ${RAM_SDF_FILE}
           --mode-defs ${RAM_MODE_DEFS}
           --xml-path ${CMAKE_CURRENT_BINARY_DIR}
