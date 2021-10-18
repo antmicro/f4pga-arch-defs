@@ -2,7 +2,7 @@ set(QL_DESIGNS_DIR ../../../../designs)
 
 add_subdirectory(adder_8)
 add_subdirectory(bin2bcd)
-add_subdirectory(bin2seven)
+#add_subdirectory(bin2seven) # Causes ABC9 segfault: https://github.com/QuickLogic-Corp/symbiflow-arch-defs/issues/590
 add_subdirectory(clock_tree_design)
 add_subdirectory(counter_8bit)
 add_subdirectory(counter_32bit)

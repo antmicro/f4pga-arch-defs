@@ -17,7 +17,7 @@ add_fpga_target(
   INPUT_IO_FILE jimbob4.pcf
   AUTO_ADD_FILE_TARGET
 
-  ASSERT_USAGE PB-CLOCK=1,PB-GMUX=1,PB-LOGIC<=383
+  ASSERT_USAGE PB-CLOCK=1,PB-GMUX=1,PB-LOGIC<=386
 )
 
 add_dependencies(all_ql_tests_bit   IR_Remote-ql-jimbob4-pp3_bit)
