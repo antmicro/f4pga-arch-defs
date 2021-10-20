@@ -6,7 +6,7 @@ MYPATH=$(dirname "$(readlink -f "$BASH_SOURCE")")
 
 source ${MYPATH}/env
 
-JLINK2HEADER=`readlink -f ${MYPATH}/../bin/python/bitstream_to_header.py`
+BIT2HEADER=`readlink -f ${MYPATH}/../bin/python/bitstream_to_header.py`
 
 
-python3 ${JLINK2HEADER} ${TOP_F}.bit ../${TOP_F}_bit.h
+python3 ${BIT2HEADER} $@

@@ -339,7 +339,6 @@ fi
 
 export PCF_FILE=$PCF
 export JSON=$JSON
-export TOP_F=$TOP
 export PINMAP_FILE=$PINMAPCSV
 export MAX_CRITICALITY=$MAX_CRITICALITY
 ##### Create Makefile #####
@@ -494,17 +493,17 @@ fi
 # EOS-S3 specific targets
 if [ "$DEVICE" == "ql-eos-s3" ]; then
     echo -e "\
-\${BUILDDIR}/\${TOP}_bit.h: \${BUILDDIR}/\${TOP}.bit\n\
-	cd \${BUILDDIR} && symbiflow_write_bitheader -b \${TOP}.bit >> $LOG_FILE 2>&1\n\
+\${TOP}_bit.h: \${BUILDDIR}/\${TOP}.bit\n\
+	symbiflow_write_bitheader \$^ \$@ >> $LOG_FILE 2>&1\n\
 \n\
 \${BUILDDIR}/\${TOP}.bin: \${BUILDDIR}/\${TOP}.bit\n\
 	cd \${BUILDDIR} && symbiflow_write_binary -b \${TOP}.bit >> $LOG_FILE 2>&1\n\
 \n\
-\${BUILDDIR}/\${TOP}.jlink: \${BUILDDIR}/\${TOP}.bit\n\
-	cd \${BUILDDIR} && symbiflow_write_jlink -f \${TOP}.fasm -P \${PACKAGENAME} -b \${TOP}.bit >> $LOG_FILE 2>&1\n\
+\${TOP}.jlink: \${BUILDDIR}/\${TOP}.bit\n\
+	symbiflow_write_jlink \$^ \$@ >> $LOG_FILE 2>&1\n\
 \n\
-\${BUILDDIR}/\${TOP}.openocd: \${BUILDDIR}/\${TOP}.bit\n\
-	cd \${BUILDDIR} && symbiflow_write_openocd -f \${TOP}.fasm -P \${PACKAGENAME} -b \${TOP}.bit >> $LOG_FILE 2>&1\n\
+\${TOP}.openocd: \${BUILDDIR}/\${TOP}.bit\n\
+	symbiflow_write_openocd \$^ \$@ >> $LOG_FILE 2>&1\n\
 \n\
 \${BUILDDIR}/\${TOP}_jlink.h: \${BUILDDIR}/\${TOP}.jlink >> $LOG_FILE 2>&1\n\
 	cd \${BUILDDIR} && symbiflow_write_jlinkheader\n\
