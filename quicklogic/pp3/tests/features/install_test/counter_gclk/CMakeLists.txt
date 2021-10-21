@@ -5,6 +5,7 @@ add_binary_toolchain_test(
     PCF       chandalar.pcf
     EXTRA_ARGS "-dump post_verilog"
 
+    CHECK_CONSTRAINTS
     ASSERT_USAGE  PB-CLOCK=1,PB-GMUX=1,PB-BIDIR=4
     ASSERT_TIMING fmax>56.0
 
@@ -23,6 +24,7 @@ add_binary_toolchain_test(
     PCF       jimbob4.pcf
     EXTRA_ARGS "-dump post_verilog"
 
+    CHECK_CONSTRAINTS
     ASSERT_USAGE  PB-CLOCK=1,PB-GMUX=1,PB-BIDIR=4
     ASSERT_TIMING fmax>56.0
 
@@ -41,6 +43,7 @@ add_binary_toolchain_test(
     PCF       pd64.pcf
     EXTRA_ARGS "-dump post_verilog"
 
+    CHECK_CONSTRAINTS
     ASSERT_USAGE  PB-CLOCK=1,PB-GMUX=1,PB-BIDIR=4
     ASSERT_TIMING fmax>40.0
 

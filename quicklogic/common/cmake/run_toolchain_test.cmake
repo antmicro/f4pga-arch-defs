@@ -56,3 +56,13 @@ if (NOT "${ASSERT_TIMING}" STREQUAL "")
     run("PYTHONPATH=${PYTHONPATH} python3 ${TIMING_UTIL} ${ROUTE_LOG} --assert ${ASSERT_TIMING}")
 endif ()
 
+# Check if IO constraints has been correctly applied. This is done by verifying
+# the original PCF file agains the one produced by fasm2bels. For this to work
+# "post_verilog" dump option must be enabled for a test (i.e. provided within
+# EXTRA_ARGS).
+set(PCF_UTIL ${PYTHONPATH}/pcf_compare.py)
+set(OUT_PCF  ${BUILD_DIR}/top.bit.v.pcf)
+
+if (NOT "${REF_PCF}" STREQUAL "")
+    run("PYTHONPATH=${PYTHONPATH} python3 ${PCF_UTIL} ${REF_PCF} ${OUT_PCF}")
+endif()

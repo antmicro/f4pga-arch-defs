@@ -6,6 +6,7 @@ add_binary_toolchain_test(
     EXTRA_ARGS "-dump post_verilog"
 
     ASSERT_USAGE PB-ASSP=1,PB-GMUX=1
+    CHECK_CONSTRAINTS
 
     ASSERT_EXISTS
         "top_post_synthesis.v"
