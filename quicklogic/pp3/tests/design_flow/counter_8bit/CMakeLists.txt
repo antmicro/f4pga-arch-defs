@@ -56,13 +56,5 @@ add_fpga_target(
   EXPLICIT_ADD_FILE_TARGET
   )
 
-add_jlink_output(
-  PARENT counter_8bit-ql-jimbob4-pp3
-)
-
-add_openocd_output(
-  PARENT counter_8bit-ql-jimbob4-pp3
-)
-
 add_dependencies(all_pp3_tests_bit  counter_8bit-ql-jimbob4-pp3_bit)
 add_dependencies(all_pp3_tests_bit_v counter_8bit-ql-jimbob4-pp3_bit_v)

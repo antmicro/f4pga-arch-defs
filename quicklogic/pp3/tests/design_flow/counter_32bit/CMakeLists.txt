@@ -35,14 +35,6 @@ add_fpga_target(
   EXPLICIT_ADD_FILE_TARGET
   )
 
-add_jlink_output(
-  PARENT counter_32bit-ql-pd64
-)
-
-add_openocd_output(
-  PARENT counter_32bit-ql-pd64
-)
-
-add_dependencies(all_pp3_tests_bit  counter_32bit-ql-pd64_bit)
-add_dependencies(all_pp3_tests_bit_v counter_32bit-ql-pd64_bit_v)
+add_dependencies(all_ql_tests_bit  counter_32bit-ql-pd64_bit)
+add_dependencies(all_ql_tests_bit_v counter_32bit-ql-pd64_bit_v)
 

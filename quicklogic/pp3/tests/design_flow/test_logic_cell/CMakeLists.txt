@@ -1,16 +1,12 @@
 set(DESIGN_DIR ${QL_DESIGNS_DIR}/test_logic_cell)
 
-add_file_target(FILE ${DESIGN_DIR}/test_logic_cell.v SCANNER_TYPE verilog)
-add_file_target(FILE chandalar.pcf)
-add_file_target(FILE jimbob4.pcf)
-
 add_fpga_target(
   NAME test_logic_cell-ql-chandalar
   BOARD chandalar
   SOURCES
     ${DESIGN_DIR}/test_logic_cell.v
   INPUT_IO_FILE chandalar.pcf
-  EXPLICIT_ADD_FILE_TARGET
+  AUTO_ADD_FILE_TARGET
   )
 
 add_jlink_output(
@@ -53,7 +49,7 @@ add_fpga_target(
   SOURCES
     ${DESIGN_DIR}/test_logic_cell.v
   INPUT_IO_FILE jimbob4.pcf
-  EXPLICIT_ADD_FILE_TARGET
+  AUTO_ADD_FILE_TARGET
   )
 
 add_jlink_output(

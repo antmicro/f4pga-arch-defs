@@ -11,7 +11,21 @@ add_fpga_target(
   ASSERT_USAGE PB-LOGIC<=908
 )
 
-add_dependencies(all_pp3_tests_bit   unsigned_mult_50-ql-jimbob4-pp3_bit)
-#add_dependencies(all_pp3_tests_bit_v unsigned_mult_50-ql-jimbob4-pp3_bit_v)	# FIXME: PCF file is required by the BIT_TO_V_CMD
+add_dependencies(all_ql_tests_bit        unsigned_mult_50-ql-jimbob4-pp3_bit)
+add_dependencies(all_ql_tests_regression unsigned_mult_50-ql-jimbob4-pp3_assert_usage)
 
-add_dependencies(all_pp3_tests_regression unsigned_mult_50-ql-jimbob4-pp3_assert_usage)
+add_fpga_target(
+  NAME unsigned_mult_50-ql-chandalar
+  TOP top
+  BOARD chandalar
+  SOURCES
+    ${DESIGN_DIR}/unsigned_mult_50.v
+  AUTO_ADD_FILE_TARGET
+
+  ASSERT_USAGE PB-LOGIC<=908
+)
+
+# FIXME: The EOS-S3 fabric does not provide sufficient IO count
+#add_dependencies(all_ql_tests_bit        unsigned_mult_50-ql-chandalar_bit)
+#add_dependencies(all_ql_tests_regression unsigned_mult_50-ql-chandalar_assert_usage)
+

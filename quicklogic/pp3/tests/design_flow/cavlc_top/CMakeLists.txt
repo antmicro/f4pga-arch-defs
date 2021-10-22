@@ -56,15 +56,5 @@ add_fpga_target(
   EXPLICIT_ADD_FILE_TARGET
   )
 
-add_jlink_output(
-  PARENT cavlc-ql-pd64
-)
-
-add_openocd_output(
-  PARENT cavlc-ql-pd64
-)
-
 # FIXME: Temporarily disable due to not enough resources after packing
-#add_dependencies(all_pp3_tests cavlc-ql-pd64_bit)
-#add_dependencies(all_pp3_tests cavlc-ql-pd64_jlink)
-#add_dependencies(all_pp3_tests cavlc-ql-pd64_openocd)
+#add_dependencies(all_ql_tests cavlc-ql-pd64_bit)

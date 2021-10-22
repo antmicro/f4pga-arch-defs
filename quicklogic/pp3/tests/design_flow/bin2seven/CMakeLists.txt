@@ -53,13 +53,5 @@ add_fpga_target(
   EXPLICIT_ADD_FILE_TARGET
   )
 
-add_jlink_output(
-  PARENT bin2seven-ql-jimbob4-pp3
-)
-
-add_openocd_output(
-  PARENT bin2seven-ql-jimbob4-pp3
-)
-
-add_dependencies(all_pp3_tests_bit  bin2seven-ql-jimbob4-pp3_bit)
-#add_dependencies(all_pp3_tests_bit_v bin2seven-ql-jimbob4-pp3_bit_v)	# FIXME: List of connection types is empty (should have 1 element)
+add_dependencies(all_ql_tests_bit  bin2seven-ql-jimbob4-pp3_bit)
+add_dependencies(all_ql_tests_bit_v bin2seven-ql-jimbob4-pp3_bit_v)
