@@ -22,13 +22,57 @@ IOB_TYPES = {
     "SDIOMUX": ["PB-SDIOMUX", ],
 }
 
-# Default configuration of the IOMUX pad
-PAD_DEFAULT = {
+# Default configuration of the specific IOMUX pads
+PADS_1 = {
+    2, 3, 4, 5, 6, 7, 10, 11, 12, 13, 18, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+    30, 31, 32, 33, 35, 37, 40, 41, 42, 43
+}
+PAD_DEFAULTS_1 = {
     "func_sel": 0,
-    "ctrl_sel": 0,
-    "mode": "none",
+    "ctrl_sel": "A0",
+    "mode": "output",
     "pull": "none",
-    "drive": 2,
+    "drive": 4,
+    "slew": "slow",
+    "schmitt": 0
+}
+PADS_2 = {6, 14, 15, 17, 34, 36, 38, 39, 44, 45}
+PAD_DEFAULTS_2 = {
+    "func_sel": 0,
+    "ctrl_sel": "others",
+    "mode": "output",
+    "pull": "none",
+    "drive": 4,
+    "slew": "slow",
+    "schmitt": 0
+}
+PADS_3 = {8, 9, 19, 20}
+PAD_DEFAULTS_3 = {
+    "func_sel": 0,
+    "ctrl_sel": "A0",
+    "mode": "inout",
+    "pull": "down",
+    "drive": 4,
+    "slew": "slow",
+    "schmitt": 0
+}
+PADS_4 = {0, 1}
+PAD_DEFAULTS_4 = {
+    "func_sel": 0,
+    "ctrl_sel": "A0",
+    "mode": "output",
+    "pull": "up",
+    "drive": 4,
+    "slew": "slow",
+    "schmitt": 0
+}
+PADS_5 = {16}
+PAD_DEFAULTS_5 = {
+    "func_sel": 0,
+    "ctrl_sel": "A0",
+    "mode": "inout",
+    "pull": "none",
+    "drive": 4,
     "slew": "slow",
     "schmitt": 0
 }
@@ -52,9 +96,6 @@ def generate_iomux_register_content(config):
     for pad, pad_cfg in config["pads"].items():
         pad = int(pad)
         reg = 0
-
-        # Patch default settings with settings read from the config file
-        pad_cfg = dict(PAD_DEFAULT, **pad_cfg)
 
         func_sel = pad_cfg["func_sel"]
         assert func_sel in [0, 1], func_sel
@@ -137,6 +178,49 @@ def generate_iomux_register_content(config):
     return iomux_regs
 
 
+def get_pad_no(pad_alias):
+    pad = None
+
+    match = re.match(r"^IO_([0-9]+)$", pad_alias)
+    if match is not None:
+        pad = int(match.group(1))
+
+    # Pad not found or out of range
+    if pad is None or pad < 0 or pad >= 46:
+        return -1
+
+    return pad
+
+
+def prepare_default_config(pad_map):
+    config = {"pads": {}}
+
+    # Populate IO config with default configuration for each pad
+    for pin in pad_map.items():
+        pad = get_pad_no(pin[1])
+        if (pad == -1):
+            continue
+
+        pad_config = None
+
+        if pad in PADS_1:
+            pad_config = PAD_DEFAULTS_1
+        elif pad in PADS_2:
+            pad_config = PAD_DEFAULTS_2
+        elif pad in PADS_3:
+            pad_config = PAD_DEFAULTS_3
+        elif pad in PADS_4:
+            pad_config = PAD_DEFAULTS_4
+        elif pad in PADS_5:
+            pad_config = PAD_DEFAULTS_5
+        else:
+            raise ValueError("Unknown default IOMUX configuration")
+
+        config["pads"][str(pad)] = pad_config
+
+    return config
+
+
 # =============================================================================
 
 
@@ -189,6 +273,26 @@ def main():
 
     args = parser.parse_args()
 
+    pad_map = {}
+    pad_alias_map = {}
+
+    # Read pinmap
+    for pin_map_entry in csv.DictReader(args.map):
+
+        if pin_map_entry['type'] not in IOB_TYPES:
+            continue
+
+        name = pin_map_entry['name']
+        alias = ""
+        if 'alias' in pin_map_entry:
+            alias = pin_map_entry['alias']
+            pad_alias_map[alias] = name
+            pad_map[name] = alias
+        else:
+            pad_map[name] = name
+
+    config = prepare_default_config(pad_map)
+
     # Read the requested configurtion from a JSON file
     if args.json is not None:
 
@@ -197,7 +301,13 @@ def main():
             exit(-1)
 
         with open(args.json, "r") as fp:
-            config = json.load(fp)
+            json_config = json.load(fp)
+
+        # Overlay default config
+        for design_pad, pad_config in json_config["pads"].items():
+            config["pads"][str(design_pad)] = dict(
+                config["pads"][str(design_pad)], **pad_config
+            )
 
     # Generate the config according to the EBLIF netlist and PCF constraints.
     else:
@@ -206,23 +316,6 @@ def main():
             print("Use either '--json' or '--pcf' + '--eblif' options!")
             exit(-1)
 
-        pad_map = {}
-        pad_alias_map = {}
-
-        for pin_map_entry in csv.DictReader(args.map):
-
-            if pin_map_entry['type'] not in IOB_TYPES:
-                continue
-
-            name = pin_map_entry['name']
-            alias = ""
-            if 'alias' in pin_map_entry:
-                alias = pin_map_entry['alias']
-                pad_alias_map[alias] = name
-                pad_map[name] = alias
-            else:
-                pad_map[name] = name
-
         # Read and parse PCF
         with open(args.pcf, "r") as fp:
             pcf = list(parse_simple_pcf(fp))
@@ -230,9 +323,6 @@ def main():
         # Read and parse BLIF/EBLIF
         with open(args.eblif, "r") as fp:
             eblif = parse_blif(fp)
-
-        # Build the config
-        config = {"pads": {}}
 
         eblif_inputs = eblif["inputs"]["args"]
         eblif_outputs = eblif["outputs"]["args"]
@@ -261,19 +351,14 @@ def main():
             if pad_name in pad_alias_map:
                 pad_alias = pad_name
 
-            pad = None
-
-            match = re.match(r"^IO_([0-9]+)$", pad_alias)
-            if match is not None:
-                pad = int(match.group(1))
-
-            # Pad not found or out of range
-            if pad is None or pad < 0 or pad >= 46:
+            pad_no = get_pad_no(pad_alias)
+            if (pad_no == -1):
                 continue
 
             # Detect inouts:
             is_inout_in = constraint.net + '_$inp' in eblif_inputs
             is_inout_out = constraint.net + '_$out' in eblif_outputs
+
             if is_inout_in and is_inout_out:
                 pad_config = {
                     "ctrl_sel": "fabric",
@@ -296,7 +381,9 @@ def main():
             else:
                 assert False, (constraint.net, constraint.pad)
 
-            config["pads"][str(pad)] = pad_config
+            # Overlay default config
+            config["pads"][str(pad_no)
+                           ] = dict(config["pads"][str(pad_no)], **pad_config)
 
     # Convert the config to IOMUX register content
     iomux_regs = generate_iomux_register_content(config)
