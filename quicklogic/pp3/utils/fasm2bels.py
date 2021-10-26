@@ -1104,7 +1104,17 @@ if __name__ == '__main__':
         if args.device_name == "eos-s3":
             assembler = QL732BAssembler(qlfasmdb)
         elif args.device_name == "pp3":
-            assembler = QL725AAssembler(qlfasmdb)
+            assembler = QL725AAssembler(
+                qlfasmdb,
+                spi_master=True,
+                osc_freq=True,
+                ram_en=False,
+                cfg_write_chcksum_post=True,
+                cfg_read_chcksum_post=False,
+                cfg_done_out_mask=False,
+                add_header=True,
+                add_checksum=True
+            )
         elif args.device_name == "pp3e":
             assembler = QL732BAssembler(
                 qlfasmdb
