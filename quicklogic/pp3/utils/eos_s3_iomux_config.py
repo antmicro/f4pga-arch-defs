@@ -279,7 +279,7 @@ def main():
         "--output-format",
         default=None,
         type=str,
-        help='Output format of IOMUX commands (openocd/jlink)'
+        help='Output format of IOMUX commands (openocd/jlink/binary)'
     )
 
     args = parser.parse_args()
