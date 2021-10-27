@@ -66,23 +66,14 @@ function(ADD_JLINK_OUTPUT)
   add_file_target(FILE ${WORK_DIR_REL}/${IOMUX_CONFIG} GENERATED)
 
   # Convert the binary bitstream to a JLINK script
-  set(BIT_AS_JLINK "top.bit.jlink")
-
-  add_custom_command(
-    OUTPUT ${WORK_DIR}/${BIT_AS_JLINK}
-    COMMAND ${PYTHON3} -m quicklogic_fasm.bitstream_to_jlink ${BITSTREAM_LOC} ${WORK_DIR}/${BIT_AS_JLINK}
-    DEPENDS ${BITSTREAM}
-  )
-
-  add_file_target(FILE ${WORK_DIR_REL}/${BIT_AS_JLINK} GENERATED)
-
-  # Concatenate th bitstream JLink script and the IOMUX config JLink script
   set(OUT_JLINK "top.jlink")
   add_custom_command(
     OUTPUT ${WORK_DIR}/${OUT_JLINK}
-    COMMAND cat ${WORK_DIR}/${BIT_AS_JLINK} ${WORK_DIR}/${IOMUX_CONFIG} >${WORK_DIR}/${OUT_JLINK}
-    DEPENDS ${WORK_DIR}/${BIT_AS_JLINK} ${WORK_DIR}/${IOMUX_CONFIG}
+    COMMAND ${PYTHON3} -m quicklogic_fasm.bitstream_to_jlink ${BITSTREAM_LOC} ${WORK_DIR}/${OUT_JLINK}
+    DEPENDS ${BITSTREAM} ${WORK_DIR}/${IOMUX_CONFIG}
   )
+
+  add_file_target(FILE ${WORK_DIR_REL}/${OUT_JLINK} GENERATED)
 
   add_custom_target(${PARENT}_jlink DEPENDS ${WORK_DIR}/${OUT_JLINK})
 
