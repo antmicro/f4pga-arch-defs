@@ -41,7 +41,7 @@ function(ADD_OPENOCD_OUTPUT)
   set(PINMAP ${symbiflow-arch-defs_BINARY_DIR}/quicklogic/pp3/${BOARD}_pinmap.csv)
 
   # Generate a OpenOCD script that sets IOMUX configuration.
-  set(IOMUX_CONFIG_GEN ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/pp3/utils/eos_s3_iomux_config.py)
+  set(IOMUX_CONFIG_GEN ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/pp3/utils/iomux_config.py)
   set(IOMUX_CONFIG "top_iomux.openocd")
 
   set(IOMUX_CONFIG_DEPS)
