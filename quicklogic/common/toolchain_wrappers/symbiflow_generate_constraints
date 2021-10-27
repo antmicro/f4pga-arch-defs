@@ -64,7 +64,7 @@ elif [[ "$DEVICE" =~ ^(ql-.*)$ ]]; then
     # EOS-S3 IOMUX configuration
     if [[ "$DEVICE" =~ ^(ql-eos-s3)$ ]]; then
 
-        IOMUXGEN=`realpath ${MYPATH}/python/pp3_eos_s3_iomux_config.py`
+        IOMUXGEN=`realpath ${MYPATH}/python/pp3_iomux_config.py` # script renamed during installation, prefixed with family name
 
         IOMUX_JLINK="${PROJECT%.*}_iomux.jlink"
         IOMUX_OPENOCD="${PROJECT%.*}_iomux.openocd"

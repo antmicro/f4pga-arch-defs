@@ -214,7 +214,7 @@ function(DEFINE_QL_TOOLCHAIN_TARGET)
   set(SCRIPTS
     create_ioplace.py
     create_place_constraints.py
-    eos_s3_iomux_config.py
+    iomux_config.py
   )
 
   foreach(NAME ${SCRIPTS})
