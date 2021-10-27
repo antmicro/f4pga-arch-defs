@@ -185,8 +185,8 @@ def get_pad_no(pad_alias):
     if match is not None:
         pad = int(match.group(1))
 
-    # Pad not found or out of range
     if pad is None or pad < 0 or pad >= 46:
+        print("Pad not found or out of range: {}".format(pad))
         return -1
 
     return pad
@@ -263,6 +263,14 @@ def main():
         required=True,
         help='Pin map CSV file'
     )
+    parser.add_argument(
+        "--device-name",
+        "-d",
+        type=str,
+        default="eos-s3",
+        choices=["eos-s3", "pp3"],
+        help='Device family name'
+    )
 
     parser.add_argument(
         "--output-format",
@@ -277,6 +285,8 @@ def main():
     pad_alias_map = {}
 
     # Read pinmap
+    io_count = -1
+    prev_name = ""
     for pin_map_entry in csv.DictReader(args.map):
 
         if pin_map_entry['type'] not in IOB_TYPES:
@@ -284,12 +294,18 @@ def main():
 
         name = pin_map_entry['name']
         alias = ""
+        if prev_name != name:
+            io_count += 1
         if 'alias' in pin_map_entry:
             alias = pin_map_entry['alias']
             pad_alias_map[alias] = name
             pad_map[name] = alias
         else:
-            pad_map[name] = name
+            if args.device_name == "pp3":
+                pad_map[name] = "IO_" + str(io_count)
+            else:
+                pad_map[name] = name
+        prev_name = name
 
     config = prepare_default_config(pad_map)
 
