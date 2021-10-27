@@ -6,9 +6,9 @@ plugin -i ql-qlf
 yosys -import
 
 # Read VPR cells library
-read_verilog -lib $::env(TECHMAP_PATH)/cells_sim.v
+read_verilog -lib -specify $::env(TECHMAP_PATH)/cells_sim.v
 # Read device specific cells library
-read_verilog -lib $::env(DEVICE_CELLS_SIM)
+read_verilog -lib -specify $::env(DEVICE_CELLS_SIM)
 
 # Synthesize
 synth_quicklogic -family pp3
