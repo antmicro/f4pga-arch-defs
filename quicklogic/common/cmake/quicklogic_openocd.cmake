@@ -66,23 +66,15 @@ function(ADD_OPENOCD_OUTPUT)
   add_file_target(FILE ${WORK_DIR_REL}/${IOMUX_CONFIG} GENERATED)
 
   # Convert the binary bitstream to a OpenOCD script
-  set(BIT_AS_OPENOCD "top.bit.openocd")
-
-  add_custom_command(
-    OUTPUT ${WORK_DIR}/${BIT_AS_OPENOCD}
-    COMMAND ${PYTHON3} -m quicklogic_fasm.bitstream_to_openocd ${BITSTREAM_LOC} ${WORK_DIR}/${BIT_AS_OPENOCD}
-    DEPENDS ${BITSTREAM}
-  )
-
-  add_file_target(FILE ${WORK_DIR_REL}/${BIT_AS_OPENOCD} GENERATED)
-
-  # Concatenate the bitstream OpenOCD script and the IOMUX config OpenOCD script
   set(OUT_OPENOCD "top.openocd")
+
   add_custom_command(
     OUTPUT ${WORK_DIR}/${OUT_OPENOCD}
-    COMMAND head -n -1 ${WORK_DIR}/${BIT_AS_OPENOCD} > ${WORK_DIR}/${OUT_OPENOCD} && cat ${WORK_DIR}/${IOMUX_CONFIG} >> ${WORK_DIR}/${OUT_OPENOCD} && echo '}' >> ${WORK_DIR}/${OUT_OPENOCD}
-    DEPENDS ${WORK_DIR}/${BIT_AS_OPENOCD} ${WORK_DIR}/${IOMUX_CONFIG}
+    COMMAND ${PYTHON3} -m quicklogic_fasm.bitstream_to_openocd ${BITSTREAM_LOC} ${WORK_DIR}/${OUT_OPENOCD}
+    DEPENDS ${BITSTREAM} ${WORK_DIR}/${IOMUX_CONFIG}
   )
+
+  add_file_target(FILE ${WORK_DIR_REL}/${OUT_OPENOCD} GENERATED)
 
   add_custom_target(${PARENT}_openocd DEPENDS ${WORK_DIR}/${OUT_OPENOCD})
 
