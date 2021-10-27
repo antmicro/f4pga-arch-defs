@@ -25,6 +25,10 @@ function(ADD_JLINK_OUTPUT)
   get_target_property_required(PCF ${PARENT} INPUT_IO_FILE)
   get_target_property_required(BITSTREAM ${PARENT} BIT)
 
+  get_target_property_required(BOARD ${PARENT} BOARD)
+  get_target_property_required(DEVICE ${BOARD} DEVICE)
+  string(REPLACE "ql-" "" DEVICE_NAME "${DEVICE}")
+
   # Get the output directory
   get_file_location(BITSTREAM_LOC ${BITSTREAM})
   get_filename_component(WORK_DIR ${BITSTREAM_LOC} DIRECTORY)
@@ -59,6 +63,7 @@ function(ADD_JLINK_OUTPUT)
         ${IOMUX_CONFIG_ARGS}
         --map ${PINMAP}
         --output-format jlink
+        --device-name ${DEVICE_NAME}
         >${WORK_DIR}/${IOMUX_CONFIG}
     DEPENDS ${IOMUX_CONFIG_GEN} ${IOMUX_CONFIG_DEPS}
   )

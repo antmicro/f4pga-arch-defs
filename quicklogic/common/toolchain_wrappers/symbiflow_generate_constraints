@@ -70,9 +70,9 @@ elif [[ "$DEVICE" =~ ^(ql-.*)$ ]]; then
         IOMUX_OPENOCD="${PROJECT%.*}_iomux.openocd"
         IOMUX_BINARY="${PROJECT%.*}_iomux.bin"
 
-        python3 ${IOMUXGEN} --eblif $EBLIF --pcf $PCF --map $PINMAP --output-format=jlink > ${IOMUX_JLINK}
-        python3 ${IOMUXGEN} --eblif $EBLIF --pcf $PCF --map $PINMAP --output-format=openocd > ${IOMUX_OPENOCD}
-        python3 ${IOMUXGEN} --eblif $EBLIF --pcf $PCF --map $PINMAP --output-format=binary > ${IOMUX_BINARY}
+        python3 ${IOMUXGEN} --eblif $EBLIF --pcf $PCF --map $PINMAP --output-format=jlink --device-name eos-s3 > ${IOMUX_JLINK}
+        python3 ${IOMUXGEN} --eblif $EBLIF --pcf $PCF --map $PINMAP --output-format=openocd --device-name eos-s3 > ${IOMUX_OPENOCD}
+        python3 ${IOMUXGEN} --eblif $EBLIF --pcf $PCF --map $PINMAP --output-format=binary --device-name eos-s3 > ${IOMUX_BINARY}
     fi
 
 else
