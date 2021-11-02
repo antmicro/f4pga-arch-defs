@@ -21,11 +21,15 @@ add_openocd_output(
 add_dependencies(all_quick_tests sdiomux_xor-ql-chandalar_bit)
 add_dependencies(all_quick_tests sdiomux_xor-ql-chandalar_jlink)
 add_dependencies(all_quick_tests sdiomux_xor-ql-chandalar_openocd)
+add_dependencies(all_quick_tests sdiomux_xor-ql-chandalar_jlink_test)
+add_dependencies(all_quick_tests sdiomux_xor-ql-chandalar_openocd_test)
 
 add_dependencies(all_ql_tests_bit sdiomux_xor-ql-chandalar_bit)
 add_dependencies(all_ql_tests_bit_v sdiomux_xor-ql-chandalar_bit_v)
 add_dependencies(all_ql_tests_prog sdiomux_xor-ql-chandalar_jlink)
 add_dependencies(all_ql_tests_prog sdiomux_xor-ql-chandalar_openocd)
+add_dependencies(all_ql_tests_prog sdiomux_xor-ql-chandalar_jlink_test)
+add_dependencies(all_ql_tests_prog sdiomux_xor-ql-chandalar_openocd_test)
 
 add_fpga_target(
   NAME sdiomux_xor-ql-jimbob4

@@ -21,11 +21,15 @@ add_openocd_output(
 add_dependencies(all_quick_tests ext_counter-ql-chandalar_bit)
 add_dependencies(all_quick_tests ext_counter-ql-chandalar_jlink)
 add_dependencies(all_quick_tests ext_counter-ql-chandalar_openocd)
+add_dependencies(all_quick_tests ext_counter-ql-chandalar_jlink_test)
+add_dependencies(all_quick_tests ext_counter-ql-chandalar_openocd_test)
 
 add_dependencies(all_ql_tests_bit ext_counter-ql-chandalar_bit)
 add_dependencies(all_ql_tests_bit_v ext_counter-ql-chandalar_bit_v)
 add_dependencies(all_ql_tests_prog ext_counter-ql-chandalar_jlink)
 add_dependencies(all_ql_tests_prog ext_counter-ql-chandalar_openocd)
+add_dependencies(all_ql_tests_prog ext_counter-ql-chandalar_jlink_test)
+add_dependencies(all_ql_tests_prog ext_counter-ql-chandalar_openocd_test)
 
 
 add_file_target(FILE quickfeather.pcf)
@@ -50,6 +54,8 @@ add_dependencies(all_ql_tests_bit ext_counter-ql-quickfeather_bit)
 add_dependencies(all_ql_tests_bit_v ext_counter-ql-quickfeather_bit_v)
 add_dependencies(all_ql_tests_prog ext_counter-ql-quickfeather_jlink)
 add_dependencies(all_ql_tests_prog ext_counter-ql-quickfeather_openocd)
+add_dependencies(all_ql_tests_prog ext_counter-ql-quickfeather_jlink_test)
+add_dependencies(all_ql_tests_prog ext_counter-ql-quickfeather_openocd_test)
 
 
 add_fpga_target(
