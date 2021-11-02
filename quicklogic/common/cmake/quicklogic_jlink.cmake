@@ -104,4 +104,15 @@ function(ADD_JLINK_OUTPUT)
 
   add_custom_target(${PARENT}_jlink_hardware DEPENDS ${PARENT}_jlink_copy ${WORK_DIR}/${OUT_JLINK_HARDWARE})
 
+  set(VERIFY_SCRIPT ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/pp3/utils/verify_jlink_openocd.sh)
+  set(DUPLICATES_JLINK "duplicates.jlink")
+  add_custom_command(
+    OUTPUT ${WORK_DIR}/${DUPLICATES_JLINK}
+    COMMAND ${VERIFY_SCRIPT} ${WORK_DIR}/${OUT_JLINK} ${WORK_DIR}/${DUPLICATES_JLINK}
+    DEPENDS ${WORK_DIR}/${OUT_JLINK}
+  )
+
+  add_file_target(FILE ${WORK_DIR_REL}/${DUPLICATES_JLINK} GENERATED)
+  add_custom_target(${PARENT}_jlink_test DEPENDS ${WORK_DIR}/${DUPLICATES_JLINK})
+
 endfunction()

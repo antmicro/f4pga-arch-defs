@@ -78,4 +78,15 @@ function(ADD_OPENOCD_OUTPUT)
 
   add_custom_target(${PARENT}_openocd DEPENDS ${WORK_DIR}/${OUT_OPENOCD})
 
+  set(VERIFY_SCRIPT ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/pp3/utils/verify_jlink_openocd.sh)
+  set(DUPLICATES_OPENOCD "duplicates.openocd")
+  add_custom_command(
+	  OUTPUT ${WORK_DIR}/${DUPLICATES_OPENOCD}
+	  COMMAND ${VERIFY_SCRIPT} ${WORK_DIR}/${OUT_OPENOCD} ${WORK_DIR}/${DUPLICATES_OPENOCD}
+	  DEPENDS ${WORK_DIR}/${OUT_OPENOCD}
+  )
+
+  add_file_target(FILE ${WORK_DIR_REL}/${DUPLICATES_OPENOCD} GENERATED)
+  add_custom_target(${PARENT}_openocd_test DEPENDS ${WORK_DIR}/${DUPLICATES_OPENOCD})
+
 endfunction()
