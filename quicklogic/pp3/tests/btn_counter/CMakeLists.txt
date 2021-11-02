@@ -69,8 +69,6 @@ add_jlink_output(
 
  add_dependencies(all_ql_tests btn_counter-ql-jimbob4_route)
  #add_dependencies(all_ql_tests btn_counter-ql-jimbob4_bit)
- #add_dependencies(all_ql_tests btn_counter-ql-jimbob4_jlink)
- #add_dependencies(all_ql_tests btn_counter-ql-jimbob4_openocd)
 
  add_fpga_target(
   NAME btn_counter-ql-jimbob4-pp3

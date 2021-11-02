@@ -46,8 +46,6 @@ add_dependencies(all_ql_tests_prog test_logic_cell-ql-chandalar_openocd)
 
 #add_dependencies(all_ql_tests_bit  test_logic_cell-ql-jimbob4_bit)
 #add_dependencies(all_ql_tests_bit_v test_logic_cell-ql-jimbob4_bit_v)
-#add_dependencies(all_ql_tests_prog test_logic_cell-ql-jimbob4_jlink)
-#add_dependencies(all_ql_tests_prog test_logic_cell-ql-jimbob4_openocd)
 
 add_fpga_target(
   NAME test_logic_cell-ql-jimbob4-pp3
@@ -68,5 +66,3 @@ add_openocd_output(
 
 add_dependencies(all_ql_tests_bit  test_logic_cell-ql-jimbob4-pp3_bit)
 add_dependencies(all_ql_tests_bit_v test_logic_cell-ql-jimbob4-pp3_bit_v)
-add_dependencies(all_ql_tests_prog test_logic_cell-ql-jimbob4-pp3_jlink)
-add_dependencies(all_ql_tests_prog test_logic_cell-ql-jimbob4-pp3_openocd)

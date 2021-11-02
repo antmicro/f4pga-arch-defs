@@ -44,13 +44,8 @@ add_openocd_output(
 )
 
 add_dependencies(all_quick_tests btn_ff-ql-jimbob4_bit)
-add_dependencies(all_quick_tests btn_ff-ql-jimbob4_jlink)
-add_dependencies(all_quick_tests btn_ff-ql-jimbob4_openocd)
-
 add_dependencies(all_ql_tests_bit btn_ff-ql-jimbob4_bit)
 #add_dependencies(all_ql_tests_bit_v btn_ff-ql-jimbob4_bit_v)	# Failure in mux expanding
-add_dependencies(all_ql_tests_prog btn_ff-ql-jimbob4_jlink)
-add_dependencies(all_ql_tests_prog btn_ff-ql-jimbob4_openocd)
 
 add_fpga_target(
   NAME btn_ff-ql-jimbob4-pp3
@@ -69,10 +64,5 @@ add_openocd_output(
 )
 
 add_dependencies(all_quick_tests btn_ff-ql-jimbob4-pp3_bit)
-add_dependencies(all_quick_tests btn_ff-ql-jimbob4-pp3_jlink)
-add_dependencies(all_quick_tests btn_ff-ql-jimbob4-pp3_openocd)
-
 add_dependencies(all_ql_tests_bit btn_ff-ql-jimbob4-pp3_bit)
 add_dependencies(all_ql_tests_bit_v btn_ff-ql-jimbob4-pp3_bit_v)
-add_dependencies(all_ql_tests_prog btn_ff-ql-jimbob4-pp3_jlink)
-add_dependencies(all_ql_tests_prog btn_ff-ql-jimbob4-pp3_openocd)
