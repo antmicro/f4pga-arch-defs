@@ -12,7 +12,7 @@ add_fpga_target(
   ASSERT_USAGE PB-CLOCK=3,PB-GMUX=3,PB-LOGIC<=380
 )
 
-add_dependencies(all_ql_tests_bit   top_120_13-ql-jimbob4-pp3_bit)
-add_dependencies(all_ql_tests_bit_v top_120_13-ql-jimbob4-pp3_bit_v)
+add_dependencies(all_pp3_tests_bit   top_120_13-ql-jimbob4-pp3_bit)
+add_dependencies(all_pp3_tests_bit_v top_120_13-ql-jimbob4-pp3_bit_v)
 
-add_dependencies(all_ql_tests_regression top_120_13-ql-jimbob4-pp3_assert_usage)
+add_dependencies(all_pp3_tests_regression top_120_13-ql-jimbob4-pp3_assert_usage)

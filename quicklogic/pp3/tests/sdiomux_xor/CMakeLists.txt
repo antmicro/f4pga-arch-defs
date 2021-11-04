@@ -18,18 +18,10 @@ add_openocd_output(
   PARENT sdiomux_xor-ql-chandalar
 )
 
-add_dependencies(all_quick_tests sdiomux_xor-ql-chandalar_bit)
-add_dependencies(all_quick_tests sdiomux_xor-ql-chandalar_jlink)
-add_dependencies(all_quick_tests sdiomux_xor-ql-chandalar_openocd)
-add_dependencies(all_quick_tests sdiomux_xor-ql-chandalar_jlink_test)
-add_dependencies(all_quick_tests sdiomux_xor-ql-chandalar_openocd_test)
-
-add_dependencies(all_ql_tests_bit sdiomux_xor-ql-chandalar_bit)
-add_dependencies(all_ql_tests_bit_v sdiomux_xor-ql-chandalar_bit_v)
-add_dependencies(all_ql_tests_prog sdiomux_xor-ql-chandalar_jlink)
-add_dependencies(all_ql_tests_prog sdiomux_xor-ql-chandalar_openocd)
-add_dependencies(all_ql_tests_prog sdiomux_xor-ql-chandalar_jlink_test)
-add_dependencies(all_ql_tests_prog sdiomux_xor-ql-chandalar_openocd_test)
+add_dependencies(all_eos_s3_tests_bit sdiomux_xor-ql-chandalar_bit)
+add_dependencies(all_eos_s3_tests_bit_v sdiomux_xor-ql-chandalar_bit_v)
+add_dependencies(all_eos_s3_tests_prog sdiomux_xor-ql-chandalar_jlink)
+add_dependencies(all_eos_s3_tests_prog sdiomux_xor-ql-chandalar_openocd)
 
 add_fpga_target(
   NAME sdiomux_xor-ql-jimbob4
@@ -47,10 +39,8 @@ add_openocd_output(
   PARENT sdiomux_xor-ql-jimbob4
 )
 
-add_dependencies(all_quick_tests sdiomux_xor-ql-jimbob4_bit)
-
-add_dependencies(all_ql_tests_bit sdiomux_xor-ql-jimbob4_bit)
-#add_dependencies(all_ql_tests_bit_v sdiomux_xor-ql-jimbob4_bit_v)	# Failure in mux expanding
+add_dependencies(all_pp3e_tests_bit sdiomux_xor-ql-jimbob4_bit)
+#add_dependencies(all_pp3e_tests_bit_v sdiomux_xor-ql-jimbob4_bit_v)	# Failure in mux expanding
 
 add_fpga_target(
   NAME sdiomux_xor-ql-jimbob4-pp3
@@ -68,8 +58,5 @@ add_openocd_output(
   PARENT sdiomux_xor-ql-jimbob4-pp3
 )
 
-add_dependencies(all_quick_tests sdiomux_xor-ql-jimbob4-pp3_bit)
-
-add_dependencies(all_ql_tests_bit sdiomux_xor-ql-jimbob4-pp3_bit)
-add_dependencies(all_ql_tests_bit_v sdiomux_xor-ql-jimbob4-pp3_bit_v)
-
+add_dependencies(all_pp3_tests_bit sdiomux_xor-ql-jimbob4-pp3_bit)
+add_dependencies(all_pp3_tests_bit_v sdiomux_xor-ql-jimbob4-pp3_bit_v)

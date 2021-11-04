@@ -29,7 +29,7 @@ add_fpga_target(
   ASSERT_USAGE PB-CLOCK=1,PB-GMUX=1,PB-LOGIC<=598
 )
 
-add_dependencies(all_ql_tests_bit   sdio_client_top-ql-jimbob4-pp3_bit)
-#add_dependencies(all_ql_tests_bit_v sdio_client_top-ql-jimbob4-pp3_bit_v)	# FIXME: List of connection types is empty (should have 1 element)
+add_dependencies(all_pp3_tests_bit   sdio_client_top-ql-jimbob4-pp3_bit)
+#add_dependencies(all_pp3_tests_bit_v sdio_client_top-ql-jimbob4-pp3_bit_v)	# FIXME: List of connection types is empty (should have 1 element)
 
-add_dependencies(all_ql_tests_regression sdio_client_top-ql-jimbob4-pp3_assert_usage)
+add_dependencies(all_pp3_tests_regression sdio_client_top-ql-jimbob4-pp3_assert_usage)

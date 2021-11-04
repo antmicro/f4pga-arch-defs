@@ -1,17 +1,40 @@
-add_custom_target(all_ql_tests_bit_v)
-add_custom_target(all_ql_tests_bit)
-add_custom_target(all_ql_tests_regression)
-add_custom_target(all_ql_tests_prog)
+# EOS-S3 test targets
+add_custom_target(all_eos_s3_tests)
 
-add_dependencies(all_ql_tests_prog all_ql_tests_bit)
+add_custom_target(all_eos_s3_tests_regression)
+add_custom_target(all_eos_s3_tests_bit)
+add_custom_target(all_eos_s3_tests_bit_v)
+add_custom_target(all_eos_s3_tests_prog)
 
-add_custom_target(all_ql_tests)
-add_dependencies(all_quicklogic_tests all_ql_tests)
-add_dependencies(all_ql_tests all_ql_tests_bit)
-add_dependencies(all_ql_tests all_ql_tests_bit_v)
-add_dependencies(all_ql_tests all_ql_tests_regression)
+add_dependencies(all_eos_s3_tests all_eos_s3_tests_regression)
+add_dependencies(all_eos_s3_tests all_eos_s3_tests_bit)
+add_dependencies(all_eos_s3_tests all_eos_s3_tests_bit_v)
+add_dependencies(all_eos_s3_tests all_eos_s3_tests_prog)
 
-add_custom_target(all_quick_tests)
+# PP3 test targets
+add_custom_target(all_pp3_tests)
+
+add_custom_target(all_pp3_tests_regression)
+add_custom_target(all_pp3_tests_bit)
+add_custom_target(all_pp3_tests_bit_v)
+
+add_dependencies(all_pp3_tests all_pp3_tests_regression)
+add_dependencies(all_pp3_tests all_pp3_tests_bit)
+add_dependencies(all_pp3_tests all_pp3_tests_bit_v)
+
+# PP3E test targets
+add_custom_target(all_pp3e_tests)
+
+add_custom_target(all_pp3e_tests_bit)
+
+add_dependencies(all_pp3e_tests all_pp3e_tests_bit)
+
+# Bind to the all QuickLogic tests target
+add_dependencies(all_quicklogic_tests all_eos_s3_tests)
+add_dependencies(all_quicklogic_tests all_pp3_tests)
+add_dependencies(all_quicklogic_tests all_pp3e_tests)
+
+# =============================================================================
 
 # Tests for packing and placing primitives. Not to be run on actual HW !
 add_subdirectory(wire)
@@ -32,5 +55,5 @@ add_subdirectory(ext_mult)
 
 # QuickLogic test suite
 add_subdirectory(design_flow)
-
+# Feature / regression tests
 add_subdirectory(features)

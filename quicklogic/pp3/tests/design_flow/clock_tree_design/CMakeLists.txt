@@ -13,7 +13,7 @@ add_fpga_target(
   ASSERT_USAGE PB-CLOCK=5,PB-GMUX=5,PB-LOGIC<=133
 )
 
-add_dependencies(all_ql_tests_bit   clock_tree_design-ql-jimbob4-pp3_bit)
-add_dependencies(all_ql_tests_bit_v clock_tree_design-ql-jimbob4-pp3_bit_v)
+add_dependencies(all_pp3_tests_bit   clock_tree_design-ql-jimbob4-pp3_bit)
+add_dependencies(all_pp3_tests_bit_v clock_tree_design-ql-jimbob4-pp3_bit_v)
 
-add_dependencies(all_ql_tests_regression clock_tree_design-ql-jimbob4-pp3_assert_usage)
+add_dependencies(all_pp3_tests_regression clock_tree_design-ql-jimbob4-pp3_assert_usage)

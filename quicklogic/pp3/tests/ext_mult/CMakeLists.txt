@@ -10,8 +10,7 @@ add_fpga_target(
   EXPLICIT_ADD_FILE_TARGET
   )
 
-add_dependencies(all_ql_tests ext_mult-ql-chandalar_route)
-add_dependencies(all_quick_tests ext_mult-ql-chandalar_analysis)
+add_dependencies(all_eos_s3_tests ext_mult-ql-chandalar_route)
 add_dependencies(ext_mult-ql-chandalar_analysis ext_mult-ql-chandalar_bit_v)
 
 
@@ -23,7 +22,6 @@ add_fpga_target(
   EXPLICIT_ADD_FILE_TARGET
   )
 
-add_dependencies(all_ql_tests ext_mult-ql-pd64_route)
-add_dependencies(all_quick_tests ext_mult-ql-pd64_analysis)
+add_dependencies(all_pp3_tests ext_mult-ql-pd64_route)
 add_dependencies(ext_mult-ql-pd64_analysis ext_mult-ql-pd64_bit_v)
 

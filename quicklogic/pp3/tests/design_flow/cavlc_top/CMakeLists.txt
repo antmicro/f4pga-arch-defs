@@ -36,9 +36,9 @@ add_openocd_output(
 )
 
 # FIXME: Temporarily disable due to not enough resources after packing
-#add_dependencies(all_ql_tests cavlc-ql-chandalar_bit)
-#add_dependencies(all_ql_tests cavlc-ql-chandalar_jlink)
-#add_dependencies(all_ql_tests cavlc-ql-chandalar_openocd)
+#add_dependencies(all_eos_s3_tests cavlc-ql-chandalar_bit)
+#add_dependencies(all_eos_s3_tests cavlc-ql-chandalar_jlink)
+#add_dependencies(all_eos_s3_tests cavlc-ql-chandalar_openocd)
 
 
 add_fpga_target(
@@ -65,6 +65,6 @@ add_openocd_output(
 )
 
 # FIXME: Temporarily disable due to not enough resources after packing
-#add_dependencies(all_ql_tests cavlc-ql-pd64_bit)
-#add_dependencies(all_ql_tests cavlc-ql-pd64_jlink)
-#add_dependencies(all_ql_tests cavlc-ql-pd64_openocd)
+#add_dependencies(all_pp3_tests cavlc-ql-pd64_bit)
+#add_dependencies(all_pp3_tests cavlc-ql-pd64_jlink)
+#add_dependencies(all_pp3_tests cavlc-ql-pd64_openocd)

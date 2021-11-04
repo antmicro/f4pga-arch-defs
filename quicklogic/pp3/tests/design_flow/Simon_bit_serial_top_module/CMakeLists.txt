@@ -14,9 +14,9 @@ add_fpga_target(
   ASSERT_TIMING fmax>=20.0
 )
 
-add_dependencies(all_ql_tests_bit   Simon_bit_serial_top_module-ql-jimbob4-pp3_bit)
-add_dependencies(all_ql_tests_bit_v Simon_bit_serial_top_module-ql-jimbob4-pp3_bit_v)
+add_dependencies(all_pp3_tests_bit   Simon_bit_serial_top_module-ql-jimbob4-pp3_bit)
+add_dependencies(all_pp3_tests_bit_v Simon_bit_serial_top_module-ql-jimbob4-pp3_bit_v)
 
-add_dependencies(all_ql_tests_regression Simon_bit_serial_top_module-ql-jimbob4-pp3_assert_usage)
-add_dependencies(all_ql_tests_regression Simon_bit_serial_top_module-ql-jimbob4-pp3_assert_timing)
+add_dependencies(all_pp3_tests_regression Simon_bit_serial_top_module-ql-jimbob4-pp3_assert_usage)
+add_dependencies(all_pp3_tests_regression Simon_bit_serial_top_module-ql-jimbob4-pp3_assert_timing)
 

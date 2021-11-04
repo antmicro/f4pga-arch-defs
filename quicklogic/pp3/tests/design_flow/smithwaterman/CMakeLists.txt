@@ -10,5 +10,5 @@ add_fpga_target(
   AUTO_ADD_FILE_TARGET
 )
 
-add_dependencies(all_ql_tests_bit   smithwaterman-ql-jimbob4-pp3_bit)
-add_dependencies(all_ql_tests_bit_v smithwaterman-ql-jimbob4-pp3_bit_v)
+add_dependencies(all_pp3_tests_bit   smithwaterman-ql-jimbob4-pp3_bit)
+add_dependencies(all_pp3_tests_bit_v smithwaterman-ql-jimbob4-pp3_bit_v)
