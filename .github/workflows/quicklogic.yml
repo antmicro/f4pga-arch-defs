@@ -19,7 +19,7 @@ jobs:
 
       - name: Environment
         env:
-          CI: TEST
+          CI: 1
         run: |
           sudo rm -rf /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
           sudo apt update
@@ -45,8 +45,34 @@ jobs:
           ninja -j$(nproc) check_python
           ninja -j$(nproc) lint_python
 
+      - name: Python tests
+        run: |
+          cd ${ROOT}/build
+          source ../env/conda/bin/activate symbiflow_arch_def_base
+          ninja -j$(nproc) all_quicklogic_python_tests
+
   ci:
     runs-on: ubuntu-18.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+            - device: qlf_k4n8
+              family: qlf_k4n8
+
+            - device: qlf_k6n10
+              family: qlf_k6n10
+
+            - device: eos-s3
+              family: pp3
+
+            - device: pp3
+              family: pp3
+
+            - device: pp3e
+              family: pp3
+
     steps:
 
       - uses: actions/checkout@v2
@@ -56,7 +82,58 @@ jobs:
 
       - name: Environment
         env:
-          CI: TEST
+          CI: 1
+        run: |
+          sudo rm -rf /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+          sudo apt update
+          sudo apt install -y g++-8 gcc-8 colordiff coreutils graphviz inkscape make git git-lfs unzip cmake
+
+          mkdir .tmp
+          curl -L https://github.com/ninja-build/ninja/releases/download/v1.10.0/ninja-linux.zip -o .tmp/ninja-linux.zip
+          unzip .tmp/ninja-linux.zip -d .tmp
+
+          export VPR_NUM_WORKERS=$(nproc)
+          export PATH=$PATH:$PWD/.tmp
+          export ROOT=$(pwd)
+          export INSTALL_DIR=quicklogic-arch-defs
+          export CMAKE_FLAGS="-GNinja -DINSTALL_FAMILIES=${{ matrix.family }} -DCMAKE_INSTALL_PREFIX=${ROOT}/${INSTALL_DIR}"
+
+          mkdir ${ROOT}/${INSTALL_DIR}
+          make env
+
+          echo "PATH=${PATH}" >> $GITHUB_ENV
+          echo "ROOT=${ROOT}" >> $GITHUB_ENV
+
+      - name: Tests
+        run: |
+          cd ${ROOT}/build
+          source ../env/conda/bin/activate symbiflow_arch_def_base
+          export DEVICE=all_${{ matrix.device }}_tests
+          ninja -j$(nproc) ${DEVICE/-/_}
+
+      - name: Installation
+        run: |
+          cd ${ROOT}/build
+          source ../env/conda/bin/activate symbiflow_arch_def_base
+          ninja install -j$(nproc)
+
+      - name: Toolchain tests
+        # FIXME: Re-enable toolchain tests for PP3e and qlf_k6n10 once they are added
+        if:  "matrix.device != 'pp3e' && matrix.device != 'qlf_k6n10'"
+        run: |
+          cd ${ROOT}/build
+          source ../env/conda/bin/activate symbiflow_arch_def_base
+          export CTEST_OUTPUT_ON_FAILURE=1
+          ctest --no-tests=error -R "quicklogic_toolchain_test_.*${{ matrix.device }}" -VV
+
+  packaging:
+    runs-on: ubuntu-18.04
+    needs: [code-quality, ci]
+    steps:
+
+      - name: Environment
+        env:
+          CI: 1
         run: |
           sudo rm -rf /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
           sudo apt update
@@ -75,29 +152,14 @@ jobs:
           mkdir ${ROOT}/${INSTALL_DIR}
           make env
 
-          echo "VPR_NUM_WORKERS=${VPR_NUM_WORKERS}" >> $GITHUB_ENV
           echo "PATH=${PATH}" >> $GITHUB_ENV
           echo "ROOT=${ROOT}" >> $GITHUB_ENV
-          echo "INSTALL_DIR=${INSTALL_DIR}" >> $GITHUB_ENV
-
-      - name: QuickLogic Tests
-        run: |
-          cd ${ROOT}/build
-          source ../env/conda/bin/activate symbiflow_arch_def_base
-          ninja -j$(nproc) all_quicklogic_tests
 
       - name: Installation
         run: |
           cd ${ROOT}/build
           source ../env/conda/bin/activate symbiflow_arch_def_base
           ninja install -j$(nproc)
-
-      - name: Toolchain tests
-        run: |
-          cd ${ROOT}/build
-          source ../env/conda/bin/activate symbiflow_arch_def_base
-          export CTEST_OUTPUT_ON_FAILURE=1
-          ctest --no-tests=error -R "quicklogic_toolchain_test_.*" -E "quicklogic_toolchain_test_.*_qlf_k6n10" -VV
 
       - name: Packaging
         run: |
@@ -113,7 +175,7 @@ jobs:
 
   upload-architectures:
     runs-on: ubuntu-18.04
-    needs: [code-quality, ci]
+    needs: [packaging]
     steps:
 
       - uses: actions/download-artifact@v2
@@ -138,7 +200,7 @@ jobs:
 
   upload-latest:
     runs-on: ubuntu-18.04
-    needs: [code-quality, ci, upload-architectures]
+    needs: [upload-architectures]
     steps:
 
       - uses: actions/download-artifact@v2
