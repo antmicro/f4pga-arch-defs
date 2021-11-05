@@ -21,13 +21,13 @@ add_openocd_output(
   PARENT adder_8-ql-chandalar
 )
 
-add_dependencies(all_ql_tests_bit   adder_8-ql-chandalar_bit)
-add_dependencies(all_ql_tests_bit_v adder_8-ql-chandalar_bit_v)
-add_dependencies(all_ql_tests_prog  adder_8-ql-chandalar_jlink)
-add_dependencies(all_ql_tests_prog  adder_8-ql-chandalar_openocd)
+add_dependencies(all_eos_s3_tests_bit   adder_8-ql-chandalar_bit)
+add_dependencies(all_eos_s3_tests_bit_v adder_8-ql-chandalar_bit_v)
+add_dependencies(all_eos_s3_tests_prog  adder_8-ql-chandalar_jlink)
+add_dependencies(all_eos_s3_tests_prog  adder_8-ql-chandalar_openocd)
 
-add_dependencies(all_ql_tests_regression adder_8-ql-chandalar_assert_usage)
-add_dependencies(all_ql_tests_regression adder_8-ql-chandalar_assert_timing)
+add_dependencies(all_eos_s3_tests_regression adder_8-ql-chandalar_assert_usage)
+add_dependencies(all_eos_s3_tests_regression adder_8-ql-chandalar_assert_timing)
 
 add_fpga_target(
   NAME adder_8-ql-pd64

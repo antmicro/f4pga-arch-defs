@@ -13,11 +13,11 @@ add_fpga_target(
   ASSERT_TIMING fmax>=12.0
 )
 
-add_dependencies(all_ql_tests_bit   bin2bcd-ql-pd64_bit)
-add_dependencies(all_ql_tests_bit_v bin2bcd-ql-pd64_bit_v)
+add_dependencies(all_pp3_tests_bit   bin2bcd-ql-pd64_bit)
+add_dependencies(all_pp3_tests_bit_v bin2bcd-ql-pd64_bit_v)
 
-add_dependencies(all_ql_tests_regression bin2bcd-ql-pd64_assert_usage)
-add_dependencies(all_ql_tests_regression bin2bcd-ql-pd64_assert_timing)
+add_dependencies(all_pp3_tests_regression bin2bcd-ql-pd64_assert_usage)
+add_dependencies(all_pp3_tests_regression bin2bcd-ql-pd64_assert_timing)
 
 add_fpga_target(
   NAME bin2bcd-ql-chandalar
@@ -40,11 +40,11 @@ add_openocd_output(
   PARENT bin2bcd-ql-chandalar
 )
 
-add_dependencies(all_ql_tests_bit   bin2bcd-ql-chandalar_bit)
-add_dependencies(all_ql_tests_bit_v bin2bcd-ql-chandalar_bit_v)
-add_dependencies(all_ql_tests_prog  bin2bcd-ql-chandalar_jlink)
-add_dependencies(all_ql_tests_prog  bin2bcd-ql-chandalar_openocd)
+add_dependencies(all_eos_s3_tests_bit   bin2bcd-ql-chandalar_bit)
+add_dependencies(all_eos_s3_tests_bit_v bin2bcd-ql-chandalar_bit_v)
+add_dependencies(all_eos_s3_tests_prog  bin2bcd-ql-chandalar_jlink)
+add_dependencies(all_eos_s3_tests_prog  bin2bcd-ql-chandalar_openocd)
 
-add_dependencies(all_ql_tests_regression bin2bcd-ql-chandalar_assert_usage)
-add_dependencies(all_ql_tests_regression bin2bcd-ql-chandalar_assert_timing)
+add_dependencies(all_eos_s3_tests_regression bin2bcd-ql-chandalar_assert_usage)
+add_dependencies(all_eos_s3_tests_regression bin2bcd-ql-chandalar_assert_timing)
 

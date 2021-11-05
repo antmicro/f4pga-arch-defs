@@ -16,7 +16,7 @@ add_fpga_target(
 add_dependencies(all_pp3_tests_bit   clock_tree_design-ql-jimbob4-pp3_bit)
 add_dependencies(all_pp3_tests_bit_v clock_tree_design-ql-jimbob4-pp3_bit_v)
 
-add_dependencies(all_ql_tests_regression clock_tree_design-ql-jimbob4-pp3_assert_usage)
+add_dependencies(all_pp3_tests_regression clock_tree_design-ql-jimbob4-pp3_assert_usage)
 
 add_fpga_target(
   NAME clock_tree_design-ql-chandalar
@@ -39,10 +39,10 @@ add_openocd_output(
   PARENT clock_tree_design-ql-chandalar
 )
 
-add_dependencies(all_ql_tests_bit   clock_tree_design-ql-chandalar_bit)
-add_dependencies(all_ql_tests_bit_v clock_tree_design-ql-chandalar_bit_v)
-add_dependencies(all_ql_tests_prog  clock_tree_design-ql-chandalar_jlink)
-add_dependencies(all_ql_tests_prog  clock_tree_design-ql-chandalar_openocd)
+add_dependencies(all_eos_s3_tests_bit   clock_tree_design-ql-chandalar_bit)
+add_dependencies(all_eos_s3_tests_bit_v clock_tree_design-ql-chandalar_bit_v)
+add_dependencies(all_eos_s3_tests_prog  clock_tree_design-ql-chandalar_jlink)
+add_dependencies(all_eos_s3_tests_prog  clock_tree_design-ql-chandalar_openocd)
 
-add_dependencies(all_ql_tests_regression clock_tree_design-ql-chandalar_assert_usage)
+add_dependencies(all_eos_s3_tests_regression clock_tree_design-ql-chandalar_assert_usage)
 

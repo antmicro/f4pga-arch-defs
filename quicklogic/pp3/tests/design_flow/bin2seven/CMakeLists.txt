@@ -53,5 +53,5 @@ add_fpga_target(
   EXPLICIT_ADD_FILE_TARGET
   )
 
-add_dependencies(all_ql_tests_bit  bin2seven-ql-jimbob4-pp3_bit)
-add_dependencies(all_ql_tests_bit_v bin2seven-ql-jimbob4-pp3_bit_v)
+add_dependencies(all_pp3_tests_bit  bin2seven-ql-jimbob4-pp3_bit)
+add_dependencies(all_pp3_tests_bit_v bin2seven-ql-jimbob4-pp3_bit_v)

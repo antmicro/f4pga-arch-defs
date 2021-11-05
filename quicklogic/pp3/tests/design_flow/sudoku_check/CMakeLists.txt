@@ -21,8 +21,8 @@ add_fpga_target(
   AUTO_ADD_FILE_TARGET
 )
 
-add_dependencies(all_ql_tests_bit   sudoku_check-ql-jimbob4-pp3_bit)
-add_dependencies(all_ql_tests_bit_v sudoku_check-ql-jimbob4-pp3_bit_v)
+add_dependencies(all_pp3_tests_bit   sudoku_check-ql-jimbob4-pp3_bit)
+add_dependencies(all_pp3_tests_bit_v sudoku_check-ql-jimbob4-pp3_bit_v)
 
 add_fpga_target(
   NAME sudoku_check-ql-chandalar
@@ -54,10 +54,10 @@ add_openocd_output(
   PARENT sudoku_check-ql-chandalar
 )
 
-add_dependencies(all_ql_tests_prog  sudoku_check-ql-chandalar_jlink)
-add_dependencies(all_ql_tests_prog  sudoku_check-ql-chandalar_openocd)
+add_dependencies(all_eos_s3_tests_prog  sudoku_check-ql-chandalar_jlink)
+add_dependencies(all_eos_s3_tests_prog  sudoku_check-ql-chandalar_openocd)
 
-add_dependencies(all_ql_tests_bit   sudoku_check-ql-chandalar_bit)
-add_dependencies(all_ql_tests_bit_v sudoku_check-ql-chandalar_bit_v)
+add_dependencies(all_eos_s3_tests_bit   sudoku_check-ql-chandalar_bit)
+add_dependencies(all_eos_s3_tests_bit_v sudoku_check-ql-chandalar_bit_v)
 
 add_dependencies(sudoku_check-ql-chandalar_analysis sudoku_check-ql-chandalar_bit_v)

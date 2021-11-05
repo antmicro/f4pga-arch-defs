@@ -27,11 +27,11 @@ add_openocd_output(
   PARENT inferred_ram_test-ql-chandalar
 )
 
-add_dependencies(all_ql_tests_prog  inferred_ram_test-ql-chandalar_jlink)
-add_dependencies(all_ql_tests_prog  inferred_ram_test-ql-chandalar_openocd)
+add_dependencies(all_eos_s3_tests_prog  inferred_ram_test-ql-chandalar_jlink)
+add_dependencies(all_eos_s3_tests_prog  inferred_ram_test-ql-chandalar_openocd)
 
-add_dependencies(all_ql_tests_bit   inferred_ram_test-ql-chandalar_bit)
-add_dependencies(all_ql_tests_bit_v inferred_ram_test-ql-chandalar_bit_v)
+add_dependencies(all_eos_s3_tests_bit   inferred_ram_test-ql-chandalar_bit)
+add_dependencies(all_eos_s3_tests_bit_v inferred_ram_test-ql-chandalar_bit_v)
 
 add_dependencies(inferred_ram_test-ql-chandalar_analysis inferred_ram_test-ql-chandalar_bit_v)
 

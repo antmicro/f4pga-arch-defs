@@ -39,8 +39,7 @@ add_fpga_target(
   EXPLICIT_ADD_FILE_TARGET
 )
 
-add_dependencies(all_ql_tests_bit  camif-ql-pd64_bit)
-add_dependencies(all_ql_tests_bit_v camif-ql-pd64_bit_v)
-add_dependencies(all_quick_tests camif-ql-pd64_analysis)
+add_dependencies(all_pp3_tests_bit  camif-ql-pd64_bit)
+add_dependencies(all_pp3_tests_bit_v camif-ql-pd64_bit_v)
 add_dependencies(camif-ql-pd64_analysis camif-ql-pd64_bit_v)
 

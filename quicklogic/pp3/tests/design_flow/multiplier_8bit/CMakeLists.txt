@@ -12,10 +12,10 @@ add_fpga_target(
   ASSERT_USAGE PB-LOGIC<=105
 )
 
-add_dependencies(all_ql_tests_bit   multiplier_8bit-ql-pd64_bit)
-add_dependencies(all_ql_tests_bit_v multiplier_8bit-ql-pd64_bit_v)
+add_dependencies(all_pp3_tests_bit   multiplier_8bit-ql-pd64_bit)
+add_dependencies(all_pp3_tests_bit_v multiplier_8bit-ql-pd64_bit_v)
 
-add_dependencies(all_ql_tests_regression multiplier_8bit-ql-pd64_assert_usage)
+add_dependencies(all_pp3_tests_regression multiplier_8bit-ql-pd64_assert_usage)
 
 add_fpga_target(
   NAME multiplier_8bit-ql-chandalar
@@ -38,13 +38,13 @@ add_openocd_output(
   PARENT multiplier_8bit-ql-chandalar
 )
 
-add_dependencies(all_ql_tests_prog  multiplier_8bit-ql-chandalar_jlink)
-add_dependencies(all_ql_tests_prog  multiplier_8bit-ql-chandalar_openocd)
+add_dependencies(all_eos_s3_tests_prog  multiplier_8bit-ql-chandalar_jlink)
+add_dependencies(all_eos_s3_tests_prog  multiplier_8bit-ql-chandalar_openocd)
 
-add_dependencies(all_ql_tests_bit   multiplier_8bit-ql-chandalar_bit)
-add_dependencies(all_ql_tests_bit_v multiplier_8bit-ql-chandalar_bit_v)
+add_dependencies(all_eos_s3_tests_bit   multiplier_8bit-ql-chandalar_bit)
+add_dependencies(all_eos_s3_tests_bit_v multiplier_8bit-ql-chandalar_bit_v)
 
 add_dependencies(multiplier_8bit-ql-chandalar_analysis multiplier_8bit-ql-chandalar_bit_v)
 
-add_dependencies(all_ql_tests_regression multiplier_8bit-ql-chandalar_assert_usage)
+add_dependencies(all_eos_s3_tests_regression multiplier_8bit-ql-chandalar_assert_usage)
 

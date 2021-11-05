@@ -43,13 +43,13 @@ add_openocd_output(
   PARENT Simon_bit_serial_top_module-ql-chandalar
 )
 
-add_dependencies(all_ql_tests_prog  Simon_bit_serial_top_module-ql-chandalar_jlink)
-add_dependencies(all_ql_tests_prog  Simon_bit_serial_top_module-ql-chandalar_openocd)
+add_dependencies(all_eos_s3_tests_prog  Simon_bit_serial_top_module-ql-chandalar_jlink)
+add_dependencies(all_eos_s3_tests_prog  Simon_bit_serial_top_module-ql-chandalar_openocd)
 
-add_dependencies(all_ql_tests_bit   Simon_bit_serial_top_module-ql-chandalar_bit)
-add_dependencies(all_ql_tests_bit_v Simon_bit_serial_top_module-ql-chandalar_bit_v)
+add_dependencies(all_eos_s3_tests_bit   Simon_bit_serial_top_module-ql-chandalar_bit)
+add_dependencies(all_eos_s3_tests_bit_v Simon_bit_serial_top_module-ql-chandalar_bit_v)
 
 add_dependencies(Simon_bit_serial_top_module-ql-chandalar_analysis Simon_bit_serial_top_module-ql-chandalar_bit_v)
 
-add_dependencies(all_ql_tests_regression Simon_bit_serial_top_module-ql-chandalar_assert_usage)
-add_dependencies(all_ql_tests_regression Simon_bit_serial_top_module-ql-chandalar_assert_timing)
+add_dependencies(all_eos_s3_tests_regression Simon_bit_serial_top_module-ql-chandalar_assert_usage)
+add_dependencies(all_eos_s3_tests_regression Simon_bit_serial_top_module-ql-chandalar_assert_timing)

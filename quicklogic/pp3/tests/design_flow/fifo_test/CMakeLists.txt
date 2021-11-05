@@ -24,8 +24,8 @@ add_openocd_output(
   PARENT fifo_test-ql-chandalar
 )
 
-add_dependencies(all_ql_tests_bit  fifo_test-ql-chandalar_bit)
-add_dependencies(all_ql_tests_bit_v fifo_test-ql-chandalar_bit_v)
-add_dependencies(all_ql_tests_prog fifo_test-ql-chandalar_jlink)
-add_dependencies(all_ql_tests_prog fifo_test-ql-chandalar_openocd)
+add_dependencies(all_eos_s3_tests_bit  fifo_test-ql-chandalar_bit)
+add_dependencies(all_eos_s3_tests_bit_v fifo_test-ql-chandalar_bit_v)
+add_dependencies(all_eos_s3_tests_prog fifo_test-ql-chandalar_jlink)
+add_dependencies(all_eos_s3_tests_prog fifo_test-ql-chandalar_openocd)
 

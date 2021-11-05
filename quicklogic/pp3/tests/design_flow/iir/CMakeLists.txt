@@ -11,10 +11,10 @@ add_fpga_target(
   ASSERT_USAGE PB-CLOCK=2,PB-GMUX=2,PB-LOGIC<=878
 )
 
-add_dependencies(all_ql_tests_bit   iir-ql-jimbob4-pp3_bit)
-add_dependencies(all_ql_tests_bit_v iir-ql-jimbob4-pp3_bit_v)
+add_dependencies(all_pp3_tests_bit   iir-ql-jimbob4-pp3_bit)
+add_dependencies(all_pp3_tests_bit_v iir-ql-jimbob4-pp3_bit_v)
 
-add_dependencies(all_ql_tests_regression iir-ql-jimbob4-pp3_assert_usage)
+add_dependencies(all_pp3_tests_regression iir-ql-jimbob4-pp3_assert_usage)
 
 add_fpga_target(
   NAME iir-ql-chandalar
@@ -36,10 +36,10 @@ add_openocd_output(
 )
 
 # FIXME: The EOS-S3 fabric does not provide sufficient IO count
-#add_dependencies(all_ql_tests_bit   iir-ql-chandalar_bit)
-#add_dependencies(all_ql_tests_bit_v iir-ql-chandalar_bit_v)
-#add_dependencies(all_ql_tests_prog  iir-ql-chandalar_jlink)
-#add_dependencies(all_ql_tests_prog  iir-ql-chandalar_openocd)
+#add_dependencies(all_eos_s3_tests_bit   iir-ql-chandalar_bit)
+#add_dependencies(all_eos_s3_tests_bit_v iir-ql-chandalar_bit_v)
+#add_dependencies(all_eos_s3_tests_prog  iir-ql-chandalar_jlink)
+#add_dependencies(all_eos_s3_tests_prog  iir-ql-chandalar_openocd)
 
-#add_dependencies(all_ql_tests_regression iir-ql-chandalar_assert_usage)
+#add_dependencies(all_eos_s3_tests_regression iir-ql-chandalar_assert_usage)
 

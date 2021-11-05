@@ -21,7 +21,7 @@ add_openocd_output(
   PARENT counter_al4s3b-ql-chandalar
 )
 
-add_dependencies(all_ql_tests_bit  counter_al4s3b-ql-chandalar_bit)
-add_dependencies(all_ql_tests_bit_v counter_al4s3b-ql-chandalar_bit_v)
-add_dependencies(all_ql_tests_prog counter_al4s3b-ql-chandalar_jlink)
-add_dependencies(all_ql_tests_prog counter_al4s3b-ql-chandalar_openocd)
+add_dependencies(all_eos_s3_tests_bit  counter_al4s3b-ql-chandalar_bit)
+add_dependencies(all_eos_s3_tests_bit_v counter_al4s3b-ql-chandalar_bit_v)
+add_dependencies(all_eos_s3_tests_prog counter_al4s3b-ql-chandalar_jlink)
+add_dependencies(all_eos_s3_tests_prog counter_al4s3b-ql-chandalar_openocd)

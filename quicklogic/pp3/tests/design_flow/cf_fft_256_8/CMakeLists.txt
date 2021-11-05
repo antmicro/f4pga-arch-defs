@@ -10,8 +10,8 @@ add_fpga_target(
   AUTO_ADD_FILE_TARGET
 )
 
-add_dependencies(all_ql_tests_bit   cf_fft_256_8-ql-pd64_bit)
-add_dependencies(all_ql_tests_bit_v cf_fft_256_8-ql-pd64_bit_v)
+add_dependencies(all_pp3_tests_bit   cf_fft_256_8-ql-pd64_bit)
+add_dependencies(all_pp3_tests_bit_v cf_fft_256_8-ql-pd64_bit_v)
 
 add_fpga_target(
   NAME cf_fft_256_8-ql-chandalar
@@ -31,11 +31,11 @@ add_openocd_output(
   PARENT cf_fft_256_8-ql-chandalar
 )
 
-add_dependencies(all_ql_tests_prog  cf_fft_256_8-ql-chandalar_jlink)
-add_dependencies(all_ql_tests_prog  cf_fft_256_8-ql-chandalar_openocd)
+add_dependencies(all_eos_s3_tests_prog  cf_fft_256_8-ql-chandalar_jlink)
+add_dependencies(all_eos_s3_tests_prog  cf_fft_256_8-ql-chandalar_openocd)
 
-add_dependencies(all_ql_tests_bit   cf_fft_256_8-ql-chandalar_bit)
-add_dependencies(all_ql_tests_bit_v cf_fft_256_8-ql-chandalar_bit_v)
+add_dependencies(all_eos_s3_tests_bit   cf_fft_256_8-ql-chandalar_bit)
+add_dependencies(all_eos_s3_tests_bit_v cf_fft_256_8-ql-chandalar_bit_v)
 
 add_dependencies(cf_fft_256_8-ql-chandalar_analysis cf_fft_256_8-ql-chandalar_bit_v)
 
