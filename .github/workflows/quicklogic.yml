@@ -131,6 +131,11 @@ jobs:
     needs: [code-quality, ci]
     steps:
 
+      - uses: actions/checkout@v2
+        with:
+          lfs: 'true'
+          submodules: true
+
       - name: Environment
         env:
           CI: 1
