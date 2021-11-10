@@ -3,7 +3,7 @@ module top(
   output wire O
 );
 
-  LUT4 #(.INIT(0)) the_lut (
+  LUT4 #(.INIT(16'hFF13)) the_lut (
     .I0(I[0]),
     .I1(I[1]),
     .I2(I[2]),
