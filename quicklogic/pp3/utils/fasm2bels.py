@@ -139,6 +139,7 @@ class Fasm2Bels(object):
             'CAND2': self.parse_colclk_line,
             'CAND3': self.parse_colclk_line,
             'CAND4': self.parse_colclk_line,
+            'RAM': self.parse_ram_line,
         }
 
         # a mapping from cell type to a set of possible pin names
@@ -258,6 +259,16 @@ class Fasm2Bels(object):
 
     def parse_colclk_line(self, feature: Feature):
         self.colclk_data[feature.loc][feature.typ].append(feature)
+
+    def parse_ram_line(self, feature: Feature):
+        '''Parses a RAM line.
+
+        Parameters
+        ----------
+        feature: Feature
+            FASM line for BEL
+        '''
+        raise NotImplementedError("Parsing RAM FASM lines is not supported")
 
     def parse_fasm_lines(self, fasmlines):
         '''Parses FASM lines.
