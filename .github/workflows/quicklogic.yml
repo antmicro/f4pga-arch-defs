@@ -159,6 +159,7 @@ jobs:
 
           echo "PATH=${PATH}" >> $GITHUB_ENV
           echo "ROOT=${ROOT}" >> $GITHUB_ENV
+          echo "INSTALL_DIR=${INSTALL_DIR}" >> $GITHUB_ENV
 
       - name: Installation
         run: |
