@@ -65,8 +65,11 @@ if [[ "$DEVICE" =~ ^(qlf_k4n8.*)$ ]]; then
     DB_ROOT=`realpath ${MYPATH}/../share/symbiflow/fasm_database/${DEVICE}`
     ${QLF_FASM} --db-root ${DB_ROOT} --format ${BIT_FORMAT} --assemble $FASM $BIT
 
-elif [[ "$DEVICE" =~ ^(ql-eos-s3|ql-pp3|ql-pp3e)$ ]]; then
+elif [[ "$DEVICE" =~ ^(ql-eos-s3|ql-pp3e)$ ]]; then
     qlfasm --dev-type ${DEVICE} ${FASM} ${BIT}
+
+elif [[ "$DEVICE" =~ ^(ql-pp3)$ ]]; then
+    qlfasm --no-default-bitstream --dev-type ${DEVICE} ${FASM} ${BIT}
 
 else
 
