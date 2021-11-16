@@ -13,8 +13,8 @@ add_fpga_target(
   ASSERT_TIMING fmax>=25.0
 )
 
-add_dependencies(all_ql_tests_bit   rs_decoder_1-ql-jimbob4-pp3_bit)
-add_dependencies(all_ql_tests_bit_v rs_decoder_1-ql-jimbob4-pp3_bit_v)
+add_dependencies(all_pp3_tests_bit   rs_decoder_1-ql-jimbob4-pp3_bit)
+add_dependencies(all_pp3_tests_bit_v rs_decoder_1-ql-jimbob4-pp3_bit_v)
 
-add_dependencies(all_ql_tests_regression rs_decoder_1-ql-jimbob4-pp3_assert_usage)
-add_dependencies(all_ql_tests_regression rs_decoder_1-ql-jimbob4-pp3_assert_timing)
+add_dependencies(all_pp3_tests_regression rs_decoder_1-ql-jimbob4-pp3_assert_usage)
+add_dependencies(all_pp3_tests_regression rs_decoder_1-ql-jimbob4-pp3_assert_timing)

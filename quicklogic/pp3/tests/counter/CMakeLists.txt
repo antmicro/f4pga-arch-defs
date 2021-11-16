@@ -19,19 +19,10 @@ add_openocd_output(
   PARENT counter-ql-chandalar
 )
 
-add_dependencies(all_quick_tests counter-ql-chandalar_bit)
-add_dependencies(all_quick_tests counter-ql-chandalar_jlink)
-add_dependencies(all_quick_tests counter-ql-chandalar_openocd)
-add_dependencies(all_quick_tests counter-ql-chandalar_jlink_test)
-add_dependencies(all_quick_tests counter-ql-chandalar_openocd_test)
-
-add_dependencies(all_ql_tests_bit counter-ql-chandalar_bit)
-add_dependencies(all_ql_tests_bit_v counter-ql-chandalar_bit_v)
-add_dependencies(all_ql_tests_prog counter-ql-chandalar_jlink)
-add_dependencies(all_ql_tests_prog counter-ql-chandalar_openocd)
-add_dependencies(all_ql_tests_prog counter-ql-chandalar_jlink_test)
-add_dependencies(all_ql_tests_prog counter-ql-chandalar_openocd_test)
-
+add_dependencies(all_eos_s3_tests_bit counter-ql-chandalar_bit)
+add_dependencies(all_eos_s3_tests_bit_v counter-ql-chandalar_bit_v)
+add_dependencies(all_eos_s3_tests_prog counter-ql-chandalar_jlink)
+add_dependencies(all_eos_s3_tests_prog counter-ql-chandalar_openocd)
 
 add_fpga_target(
   NAME counter-ql-quickfeather
@@ -50,9 +41,7 @@ add_openocd_output(
   PARENT counter-ql-quickfeather
 )
 
-add_dependencies(all_ql_tests_bit counter-ql-quickfeather_bit)
-add_dependencies(all_ql_tests_bit_v counter-ql-quickfeather_bit_v)
-add_dependencies(all_ql_tests_prog counter-ql-quickfeather_jlink)
-add_dependencies(all_ql_tests_prog counter-ql-quickfeather_openocd)
-add_dependencies(all_ql_tests_prog counter-ql-quickfeather_jlink_test)
-add_dependencies(all_ql_tests_prog counter-ql-quickfeather_openocd_test)
+add_dependencies(all_eos_s3_tests_bit counter-ql-quickfeather_bit)
+add_dependencies(all_eos_s3_tests_bit_v counter-ql-quickfeather_bit_v)
+add_dependencies(all_eos_s3_tests_prog counter-ql-quickfeather_jlink)
+add_dependencies(all_eos_s3_tests_prog counter-ql-quickfeather_openocd)

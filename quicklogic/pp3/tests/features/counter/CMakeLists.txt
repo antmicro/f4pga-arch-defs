@@ -12,7 +12,7 @@ add_fpga_target(
   ASSERT_TIMING fmax>40.0
 )
 
-add_dependencies(all_ql_tests_regression regression-counter-ql-quickfeather_assert_usage)
+add_dependencies(all_eos_s3_tests_regression regression-counter-ql-quickfeather_assert_usage)
 
 add_fpga_target(
   NAME regression-counter-ql-jimbob4-pp3
@@ -24,5 +24,5 @@ add_fpga_target(
   ASSERT_TIMING fmax>40.0
 )
 
-add_dependencies(all_ql_tests_regression regression-counter-ql-jimbob4-pp3_assert_usage)
+add_dependencies(all_pp3_tests_regression regression-counter-ql-jimbob4-pp3_assert_usage)
 

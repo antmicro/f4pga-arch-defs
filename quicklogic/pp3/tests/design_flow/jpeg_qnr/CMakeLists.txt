@@ -15,8 +15,8 @@ add_fpga_target(
   ASSERT_TIMING fmax>=18.0
 )
 
-add_dependencies(all_ql_tests_bit   jpeg_qnr-ql-jimbob4-pp3_bit)
-#add_dependencies(all_ql_tests_bit_v jpeg_qnr-ql-jimbob4-pp3_bit_v)	# FIXME: List of connection types is empty (should have 1 element)
+add_dependencies(all_pp3_tests_bit   jpeg_qnr-ql-jimbob4-pp3_bit)
+#add_dependencies(all_pp3_tests_bit_v jpeg_qnr-ql-jimbob4-pp3_bit_v)	# FIXME: List of connection types is empty (should have 1 element)
 
-add_dependencies(all_ql_tests_regression jpeg_qnr-ql-jimbob4-pp3_assert_usage)
-add_dependencies(all_ql_tests_regression jpeg_qnr-ql-jimbob4-pp3_assert_timing)
+add_dependencies(all_pp3_tests_regression jpeg_qnr-ql-jimbob4-pp3_assert_usage)
+add_dependencies(all_pp3_tests_regression jpeg_qnr-ql-jimbob4-pp3_assert_timing)

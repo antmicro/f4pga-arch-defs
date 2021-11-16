@@ -28,7 +28,7 @@ foreach(FIELDS ${CONFIGURATIONS})
       ASSERT_USAGE PB-CLOCK=2,PB-GMUX=2,PB-RAM=${RAM_COUNT}
     )
 
-    add_dependencies(all_ql_tests_regression regression-ram_${NAME}-ql-chandalar_assert_usage)
+    add_dependencies(all_eos_s3_tests_regression regression-ram_${NAME}-ql-chandalar_assert_usage)
 
     add_fpga_target(
       NAME regression-ram_${NAME}-ql-pd64
@@ -39,6 +39,6 @@ foreach(FIELDS ${CONFIGURATIONS})
       ASSERT_USAGE PB-CLOCK=2,PB-GMUX=2,PB-RAM=${RAM_COUNT}
     )
 
-    add_dependencies(all_ql_tests_regression regression-ram_${NAME}-ql-pd64_assert_usage)
+    add_dependencies(all_pp3_tests_regression regression-ram_${NAME}-ql-pd64_assert_usage)
 
 endforeach()

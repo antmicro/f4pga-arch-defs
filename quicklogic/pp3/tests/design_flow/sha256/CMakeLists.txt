@@ -11,5 +11,5 @@ add_fpga_target(
   AUTO_ADD_FILE_TARGET
 )
 
-add_dependencies(all_ql_tests_bit   sha256-ql-pd64_bit)
-add_dependencies(all_ql_tests_bit_v sha256-ql-pd64_bit_v)
+add_dependencies(all_pp3_tests_bit   sha256-ql-pd64_bit)
+add_dependencies(all_pp3_tests_bit_v sha256-ql-pd64_bit_v)

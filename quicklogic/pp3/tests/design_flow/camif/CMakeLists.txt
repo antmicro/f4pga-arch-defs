@@ -23,11 +23,10 @@ add_openocd_output(
   PARENT camif-ql-chandalar
 )
 
-add_dependencies(all_ql_tests_bit  camif-ql-chandalar_bit)
-add_dependencies(all_ql_tests_bit_v camif-ql-chandalar_bit_v)
-add_dependencies(all_ql_tests_prog camif-ql-chandalar_jlink)
-add_dependencies(all_ql_tests_prog camif-ql-chandalar_openocd)
-add_dependencies(all_quick_tests camif-ql-chandalar_analysis)
+add_dependencies(all_eos_s3_tests_bit  camif-ql-chandalar_bit)
+add_dependencies(all_eos_s3_tests_bit_v camif-ql-chandalar_bit_v)
+add_dependencies(all_eos_s3_tests_prog camif-ql-chandalar_jlink)
+add_dependencies(all_eos_s3_tests_prog camif-ql-chandalar_openocd)
 add_dependencies(camif-ql-chandalar_analysis camif-ql-chandalar_bit_v)
 
 add_fpga_target(
@@ -48,10 +47,7 @@ add_openocd_output(
   PARENT camif-ql-pd64
 )
 
-add_dependencies(all_ql_tests_bit  camif-ql-pd64_bit)
-add_dependencies(all_ql_tests_bit_v camif-ql-pd64_bit_v)
-add_dependencies(all_ql_tests_prog camif-ql-pd64_jlink)
-add_dependencies(all_ql_tests_prog camif-ql-pd64_openocd)
-add_dependencies(all_quick_tests camif-ql-pd64_analysis)
+add_dependencies(all_pp3_tests_bit  camif-ql-pd64_bit)
+add_dependencies(all_pp3_tests_bit_v camif-ql-pd64_bit_v)
 add_dependencies(camif-ql-pd64_analysis camif-ql-pd64_bit_v)
 

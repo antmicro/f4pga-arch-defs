@@ -10,8 +10,7 @@ add_fpga_target(
   EXPLICIT_ADD_FILE_TARGET
   )
 
-add_dependencies(all_ql_tests consts-ql-chandalar_route)
-add_dependencies(all_quick_tests consts-ql-chandalar_bit)
+add_dependencies(all_eos_s3_tests consts-ql-chandalar_route)
 
 add_fpga_target(
   NAME consts-ql-jimbob4
@@ -29,7 +28,7 @@ add_jlink_output(
   PARENT consts-ql-jimbob4
 )
 
- add_dependencies(all_ql_tests consts-ql-jimbob4_route)
+ add_dependencies(all_pp3e_tests consts-ql-jimbob4_route)
 
  add_fpga_target(
   NAME consts-ql-jimbob4-pp3
@@ -47,5 +46,5 @@ add_jlink_output(
   PARENT consts-ql-jimbob4-pp3
 )
 
- add_dependencies(all_ql_tests consts-ql-jimbob4-pp3_route)
+ add_dependencies(all_pp3_tests consts-ql-jimbob4-pp3_route)
 
