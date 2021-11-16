@@ -1107,9 +1107,9 @@ if __name__ == '__main__':
             assembler = QL725AAssembler(
                 qlfasmdb,
                 spi_master=True,
-                osc_freq=True,
+                osc_freq=False,
                 ram_en=False,
-                cfg_write_chcksum_post=True,
+                cfg_write_chcksum_post=False,
                 cfg_read_chcksum_post=False,
                 cfg_done_out_mask=False,
                 add_header=True,
