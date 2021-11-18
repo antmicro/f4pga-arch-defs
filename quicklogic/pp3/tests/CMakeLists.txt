@@ -53,6 +53,9 @@ add_subdirectory(counter)
 add_subdirectory(ext_counter)
 add_subdirectory(ext_mult)
 
+# Test design using RAM
+add_subdirectory(bram)
+
 # QuickLogic test suite
 add_subdirectory(design_flow)
 # Feature / regression tests
