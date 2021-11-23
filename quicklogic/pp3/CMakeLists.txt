@@ -85,7 +85,7 @@ define_arch(
     ${QLFASM}
   FASM_TO_BIT_CMD "\${PYTHON3} \
     \${QLFASM} \
-    --no-default-bitstream --dev-type \${DEVICE}
+     --dev-type \${DEVICE}
         \${OUT_FASM}
         \${OUT_BITSTREAM}
         \${FASM_TO_BIT_EXTRA_ARGS}"
