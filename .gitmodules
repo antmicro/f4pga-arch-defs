@@ -79,3 +79,6 @@
 [submodule "third_party/ql-pp3"]
 	path = third_party/ql-pp3
 	url = https://github.com/QuickLogic-Corp/PolarPro3.git
+[submodule "third_party/quicklogic-fasm"]
+	path = third_party/quicklogic-fasm
+	url = git@github.com:antmicro/quicklogic-fasm.git
