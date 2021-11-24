@@ -24,6 +24,7 @@ function(ADD_JLINK_OUTPUT)
   get_target_property_required(EBLIF ${PARENT} EBLIF)
   get_target_property_required(PCF ${PARENT} INPUT_IO_FILE)
   get_target_property_required(BITSTREAM ${PARENT} BIT)
+  get_target_property_required(TOP ${PARENT} TOP)
 
   # Get the output directory
   get_file_location(BITSTREAM_LOC ${BITSTREAM})
@@ -40,7 +41,7 @@ function(ADD_JLINK_OUTPUT)
 
   # Generate a JLINK script that sets IOMUX configuration.
   set(IOMUX_CONFIG_GEN ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/pp3/utils/eos_s3_iomux_config.py)
-  set(IOMUX_CONFIG "top_iomux.jlink")
+  set(IOMUX_CONFIG "${TOP}_iomux.jlink")
 
   set(IOMUX_CONFIG_DEPS)
   set(IOMUX_CONFIG_ARGS "")
@@ -68,7 +69,7 @@ function(ADD_JLINK_OUTPUT)
   add_file_target(FILE ${WORK_DIR_REL}/${IOMUX_CONFIG} GENERATED)
 
   # Convert the binary bitstream to a JLINK script
-  set(OUT_JLINK "top.jlink")
+  set(OUT_JLINK "${TOP}.jlink")
   add_custom_command(
     OUTPUT ${WORK_DIR}/${OUT_JLINK}
     COMMAND ${PYTHON3} -m quicklogic_fasm.bitstream_to_jlink ${BITSTREAM_LOC} ${WORK_DIR}/${OUT_JLINK}
@@ -91,13 +92,13 @@ function(ADD_JLINK_OUTPUT)
 
   add_custom_target(${PARENT}_jlink_copy DEPENDS ${WORK_DIR}/${OUT_JLINK_COPY} )
 
-  set(OUT_JLINK_HARDWARE "top.jlink_hardware")
+  set(OUT_JLINK_HARDWARE "${TOP}.jlink_hardware")
   set(JLINK_EXE "/usr/bin/JLinkExe")
   add_custom_command(
     OUTPUT ${WORK_DIR}/${OUT_JLINK_HARDWARE}
     COMMAND cp ${WORK_DIR}/${OUT_JLINK} ${WORK_DIR}/../../${OUT_JLINK}
     COMMAND bash ${WORK_DIR}/../../${JLINK_SCRIPT}
-    COMMAND ${JLINK_EXE} -Device Cortex-M4 -If SWD -Speed 4000 -commandFile "top.jlink"
+    COMMAND ${JLINK_EXE} -Device Cortex-M4 -If SWD -Speed 4000 -commandFile "${TOP}.jlink"
     COMMAND ${JLINK_EXE} -Device Cortex-M4 -If SWD -Speed 4000 -commandFile "jlink_cmds.txt" >jlink_out
     COMMAND sed -i '/VTref/d' jlink_out
     COMMAND diff jlink_out jlink_out_gold > top.jlink_hardware 2>&1

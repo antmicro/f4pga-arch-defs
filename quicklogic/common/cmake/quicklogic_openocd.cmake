@@ -24,6 +24,7 @@ function(ADD_OPENOCD_OUTPUT)
   get_target_property_required(EBLIF ${PARENT} EBLIF)
   get_target_property_required(PCF ${PARENT} INPUT_IO_FILE)
   get_target_property_required(BITSTREAM ${PARENT} BIT)
+  get_target_property_required(TOP ${PARENT} TOP)
 
   # Get the output directory
   get_file_location(BITSTREAM_LOC ${BITSTREAM})
@@ -40,7 +41,7 @@ function(ADD_OPENOCD_OUTPUT)
 
   # Generate a OpenOCD script that sets IOMUX configuration.
   set(IOMUX_CONFIG_GEN ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/pp3/utils/eos_s3_iomux_config.py)
-  set(IOMUX_CONFIG "top_iomux.openocd")
+  set(IOMUX_CONFIG "${TOP}_iomux.openocd")
 
   set(IOMUX_CONFIG_DEPS)
   set(IOMUX_CONFIG_ARGS "")
@@ -68,7 +69,7 @@ function(ADD_OPENOCD_OUTPUT)
   add_file_target(FILE ${WORK_DIR_REL}/${IOMUX_CONFIG} GENERATED)
 
   # Convert the binary bitstream to a OpenOCD script
-  set(OUT_OPENOCD "top.openocd")
+  set(OUT_OPENOCD "${TOP}.openocd")
 
   add_custom_command(
     OUTPUT ${WORK_DIR}/${OUT_OPENOCD}
