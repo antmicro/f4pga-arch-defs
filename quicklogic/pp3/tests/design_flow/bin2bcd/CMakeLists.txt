@@ -1,19 +1,50 @@
 set(DESIGN_DIR ${QL_DESIGNS_DIR}/bin2bcd)
 
 add_fpga_target(
-  NAME bin2bcd-ql-jimbob4-pp3
+  NAME bin2bcd-ql-pd64
   TOP bin2bcd
-  BOARD jimbob4-pp3
+  BOARD pd64
   SOURCES
     ${DESIGN_DIR}/bin2bcd.v
+  INPUT_IO_FILE pd64.pcf
   AUTO_ADD_FILE_TARGET
 
   ASSERT_USAGE PB-BIDIR=20,PB-LOGIC<=17
-  ASSERT_TIMING fmax>=13.0
+  ASSERT_TIMING fmax>=12.0
 )
 
-add_dependencies(all_pp3_tests_bit   bin2bcd-ql-jimbob4-pp3_bit)
-#add_dependencies(all_pp3_tests_bit_v bin2bcd-ql-jimbob4-pp3_bit_v) # FIXME: PCF file is required by the BIT_TO_V_CMD
+add_dependencies(all_pp3_tests_bit   bin2bcd-ql-pd64_bit)
+add_dependencies(all_pp3_tests_bit_v bin2bcd-ql-pd64_bit_v)
 
-add_dependencies(all_pp3_tests_regression bin2bcd-ql-jimbob4-pp3_assert_usage)
-add_dependencies(all_pp3_tests_regression bin2bcd-ql-jimbob4-pp3_assert_timing)
+add_dependencies(all_pp3_tests_regression bin2bcd-ql-pd64_assert_usage)
+add_dependencies(all_pp3_tests_regression bin2bcd-ql-pd64_assert_timing)
+
+add_fpga_target(
+  NAME bin2bcd-ql-chandalar
+  TOP bin2bcd
+  BOARD chandalar
+  SOURCES
+    ${DESIGN_DIR}/bin2bcd.v
+  INPUT_IO_FILE chandalar.pcf
+  AUTO_ADD_FILE_TARGET
+
+  ASSERT_USAGE PB-BIDIR=20,PB-LOGIC<=17
+  ASSERT_TIMING fmax>=12.0
+)
+
+add_jlink_output(
+  PARENT bin2bcd-ql-chandalar
+)
+
+add_openocd_output(
+  PARENT bin2bcd-ql-chandalar
+)
+
+add_dependencies(all_eos_s3_tests_bit   bin2bcd-ql-chandalar_bit)
+add_dependencies(all_eos_s3_tests_bit_v bin2bcd-ql-chandalar_bit_v)
+add_dependencies(all_eos_s3_tests_prog  bin2bcd-ql-chandalar_jlink)
+add_dependencies(all_eos_s3_tests_prog  bin2bcd-ql-chandalar_openocd)
+
+add_dependencies(all_eos_s3_tests_regression bin2bcd-ql-chandalar_assert_usage)
+add_dependencies(all_eos_s3_tests_regression bin2bcd-ql-chandalar_assert_timing)
+

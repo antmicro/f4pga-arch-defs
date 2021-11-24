@@ -1,0 +1,8 @@
+set_io GPIO_PIN[0] H5
+set_io GPIO_PIN[1] D3
+set_io GPIO_PIN[2] F1
+set_io GPIO_PIN[3] D1
+set_io GPIO_PIN[4] H6
+set_io GPIO_PIN[5] D7
+set_io GPIO_PIN[6] G2
+set_io GPIO_PIN[7] A4

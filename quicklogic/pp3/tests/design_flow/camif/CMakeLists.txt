@@ -37,14 +37,6 @@ add_fpga_target(
     ${DESIGN_DIR}/af512x16_512x16.v
   INPUT_IO_FILE pd64.pcf
   EXPLICIT_ADD_FILE_TARGET
-  )
-
-add_jlink_output(
-  PARENT camif-ql-pd64
-)
-
-add_openocd_output(
-  PARENT camif-ql-pd64
 )
 
 add_dependencies(all_pp3_tests_bit  camif-ql-pd64_bit)
