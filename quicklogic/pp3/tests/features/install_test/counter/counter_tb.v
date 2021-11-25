@@ -1,5 +1,8 @@
 `timescale 1 ns / 1 ps
-`default_nettype none
+
+`ifndef F2B
+	`default_nettype none
+`endif
 
 `define STRINGIFY(x) `"x`"
 
@@ -22,17 +25,27 @@ module tb;
 	wire [3:0] out;
 	integer i;
 
-	top dut (
-		.\clk (clk),
-		.\led[0] (out[0]),
-		.\led[1] (out[1]),
-		.\led[2] (out[2]),
-		.\led[3] (out[3])
-	);
+
+	`ifdef F2B
+		top dut (
+			.clk (clk),
+			.led (out)
+		);
+	`else
+		top dut (
+			.\clk (clk),
+			.\led[0] (out[0]),
+			.\led[1] (out[1]),
+			.\led[2] (out[2]),
+			.\led[3] (out[3])
+		);
+	`endif
 
 	initial begin
 		clk = 1'b0;
-		$sdf_annotate(`STRINGIFY(`SDF), dut);
+		`ifndef F2B
+			$sdf_annotate(`STRINGIFY(`SDF), dut);
+		`endif
 		$dumpfile(`STRINGIFY(`VCD));
 		$dumpvars;
 		for (i=1; i<64; i=i+1) begin

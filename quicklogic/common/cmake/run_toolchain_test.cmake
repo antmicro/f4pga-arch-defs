@@ -88,11 +88,21 @@ endif()
 
 set(POST_VERILOG ${BUILD_DIR}/top_post_synthesis.v)
 set(POST_SDF ${BUILD_DIR}/top_post_synthesis.sdf)
-set(OUT_VVP ${BUILD_DIR}/simulation.vvp)
-set(OUT_VCD ${BUILD_DIR}/simulation.vcd)
+set(POST_OUT_VVP ${BUILD_DIR}/post_simulation.vvp)
+set(POST_OUT_VCD ${BUILD_DIR}/post_simulation.vcd)
+
+set(F2B_VERILOG ${BUILD_DIR}/top.bit.v)
+set(F2B_OUT_VVP ${BUILD_DIR}/f2b_simulation.vvp)
+set(F2B_OUT_VCD ${BUILD_DIR}/f2b_simulation.vcd)
+
 set(CELLS_SIM_FILE ${INSTALLATION_DIR}/share/symbiflow/techmaps/${ARCH}/cells_sim.v)
+set(YOSYS_CELLS_SIM_FILE ${INSTALLATION_DIR}/share/symbiflow/techmaps/${ARCH}/yosys_cells_sim.v)
 
 if (NOT "${SIMULATION_TEST}" STREQUAL "")
-  run("iverilog -v -gspecify -DVCD=\"${OUT_VCD}\" -DSDF=${POST_SDF} -DCLK_MHZ=0.001 -o ${OUT_VVP} ${CELLS_SIM_FILE} ${POST_VERILOG} ${BUILD_DIR}/../${SIMULATION_TEST}")
-  run("vvp -v -N ${OUT_VVP} -sdf-verbose")
+  # post synthesis simulation
+  run("iverilog -v -gspecify -DVCD=\"${POST_OUT_VCD}\" -DSDF=${POST_SDF} -DCLK_MHZ=0.001 -o ${POST_OUT_VVP} ${CELLS_SIM_FILE} ${POST_VERILOG} ${BUILD_DIR}/../${SIMULATION_TEST}")
+  run("vvp -v -N ${POST_OUT_VVP} -sdf-verbose")
+  # fasm2bels verilog simulation
+  run("iverilog -v -gspecify -DF2B -DVCD=\"${F2B_OUT_VCD}\" -o ${F2B_OUT_VVP} ${YOSYS_CELLS_SIM_FILE} ${F2B_VERILOG} ${BUILD_DIR}/../${SIMULATION_TEST}")
+  run("vvp -v -N ${F2B_OUT_VVP} -sdf-verbose")
 endif()
