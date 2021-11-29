@@ -69,7 +69,7 @@ function(ADD_BINARY_TOOLCHAIN_TEST)
     set(TOOLCHAIN_COMMAND "${TOOLCHAIN_COMMAND} -s \"${SDC}\"")
   endif()
 
-  set(BUILD_DIR_REL "build.${DEVICE}.${TEST_NAME}")
+  set(BUILD_DIR_REL "build.${DEVICE}.${PINMAP}.${TEST_NAME}")
   set(TOOLCHAIN_COMMAND "${TOOLCHAIN_COMMAND} -build_dir \"${BUILD_DIR_REL}\"")
 
   set(BUILD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${BUILD_DIR_REL})
@@ -107,7 +107,7 @@ function(ADD_BINARY_TOOLCHAIN_TEST)
 
   # Add the test
   set(TOOLCHAIN_COMMAND "${TOOLCHAIN_COMMAND} ${EXTRA_ARGS}")
-  add_test(NAME quicklogic_toolchain_test_${TEST_NAME}_${DEVICE}
+  add_test(NAME quicklogic_toolchain_test_${TEST_NAME}_${PINMAP}_${DEVICE}
     COMMAND
       ${CMAKE_COMMAND}
         -DTOOLCHAIN_COMMAND=${TOOLCHAIN_COMMAND}

@@ -21,7 +21,7 @@ add_binary_toolchain_test(
 )
 
 add_binary_toolchain_test(
-    TEST_NAME counter_wd30
+    TEST_NAME counter
     ARCH      pp3
     SOURCES   counter.v
     DEVICE    ql-pp3
@@ -44,7 +44,7 @@ add_binary_toolchain_test(
 )
 
 add_binary_toolchain_test(
-    TEST_NAME counter_pd64
+    TEST_NAME counter
     ARCH      pp3
     SOURCES   counter.v
     DEVICE    ql-pp3
