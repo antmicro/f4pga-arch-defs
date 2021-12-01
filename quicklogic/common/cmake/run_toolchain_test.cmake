@@ -66,3 +66,21 @@ set(OUT_PCF  ${BUILD_DIR}/top.bit.v.pcf)
 if (NOT "${REF_PCF}" STREQUAL "")
     run("PYTHONPATH=${PYTHONPATH} python3 ${PCF_UTIL} ${REF_PCF} ${OUT_PCF}")
 endif()
+
+# Check if post synthesis verilog has correct format
+# We look for verilog escaped identifiers ending with array indexing, e.g. [0]
+# POST_SYNTH_NO_SPLIT shouldn't contain such identifiers
+set(POST_SYNTH_NO_SPLIT	${BUILD_DIR}/top_post_synthesis.no_split.v)
+
+if (EXISTS "${POST_SYNTH_NO_SPLIT}")
+    SET(GREP_ARGS \\\S*\[[0-9]*\]\s ${POST_SYNTH_NO_SPLIT})
+    EXECUTE_PROCESS(
+        COMMAND
+        grep ${GREP_ARGS}
+        OUTPUT_VARIABLE NO_SPLIT_VAL_OUT
+        RESULT_VARIABLE NO_SPLIT_VAL_RES)
+
+    if (${NO_SPLIT_VAL_RES} EQUAL 0 AND NOT "${NO_SPLIT_VAL_OUT}" STREQUAL "")
+        MESSAGE(FATAL_ERROR "Found illegal escaped identifiers in ${POST_SYNTH_NO_SPLIT}: ${NO_SPLIT_VAL_OUT}")
+    endif()
+endif()

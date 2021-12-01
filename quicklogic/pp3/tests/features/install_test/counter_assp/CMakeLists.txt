@@ -10,6 +10,7 @@ add_binary_toolchain_test(
 
     ASSERT_EXISTS
         "top_post_synthesis.v"
+        "top_post_synthesis.no_split.v"
         "top_post_synthesis.sdf"
         "top.bit.v"
         "top.bit.v.pcf"

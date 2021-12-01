@@ -113,6 +113,9 @@ define_arch(
 
   ROUTE_CHAN_WIDTH 100
   USE_FASM
+
+  FIXUP_POST_SYNTHESIS_EXTRA_ARGS
+    --split-ports
 )
 
 add_subdirectory(devices)
