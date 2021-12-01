@@ -1,8 +1,6 @@
 `timescale 1 ns / 1 ps
 
-`ifndef F2B
-	`default_nettype none
-`endif
+`default_nettype none
 
 `define STRINGIFY(x) `"x`"
 
@@ -26,7 +24,7 @@ module tb;
 	integer i;
 
 
-	`ifdef F2B
+	`ifdef NO_SPLIT
 		top dut (
 			.clk (clk),
 			.led (out)

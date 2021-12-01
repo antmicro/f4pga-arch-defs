@@ -69,8 +69,8 @@ endif()
 
 # Check if post synthesis verilog has correct format
 # We look for verilog escaped identifiers ending with array indexing, e.g. [0]
-# POST_SYNTH_NO_SPLIT shouldn't contain such identifiers
-set(POST_SYNTH_NO_SPLIT	${BUILD_DIR}/top_post_synthesis.no_split.v)
+# POST_VERILOG_NO_SPLIT shouldn't contain such identifiers
+set(POST_VERILOG_NO_SPLIT ${BUILD_DIR}/top_post_synthesis.no_split.v)
 
 if (EXISTS "${POST_SYNTH_NO_SPLIT}")
     SET(GREP_ARGS "\\\\\\S*\\[[0-9]*\\]\\s" "${POST_SYNTH_NO_SPLIT}")
@@ -82,8 +82,10 @@ if (EXISTS "${POST_SYNTH_NO_SPLIT}")
         RESULT_VARIABLE NO_SPLIT_VAL_RES)
 
     if (${NO_SPLIT_VAL_RES} EQUAL 0 AND NOT "${NO_SPLIT_VAL_OUT}" STREQUAL "")
-        MESSAGE(FATAL_ERROR "Found illegal escaped identifiers in ${POST_SYNTH_NO_SPLIT}: ${NO_SPLIT_VAL_OUT}")
+        MESSAGE(FATAL_ERROR "Found illegal escaped identifiers in ${POST_VERILOG_NO_SPLIT}: ${NO_SPLIT_VAL_OUT}")
     endif()
+    set(POST_OUT_VVP_NO_SPLIT ${BUILD_DIR}/post_simulation_no_split.vvp)
+    set(POST_OUT_VCD_NO_SPLIT ${BUILD_DIR}/post_simulation_no_split.vcd)
 endif()
 
 set(POST_VERILOG ${BUILD_DIR}/top_post_synthesis.v)
@@ -102,7 +104,12 @@ if (NOT "${SIMULATION_TEST}" STREQUAL "")
   # post synthesis simulation
   run("iverilog -v -gspecify -DVCD=\"${POST_OUT_VCD}\" -DSDF=${POST_SDF} -DCLK_MHZ=0.001 -o ${POST_OUT_VVP} ${CELLS_SIM_FILE} ${POST_VERILOG} ${BUILD_DIR}/../${SIMULATION_TEST}")
   run("vvp -v -N ${POST_OUT_VVP} -sdf-verbose")
+  # optional post synthesis simulation of verilog without split ports
+  if (EXISTS "${POST_VERILOG_NO_SPLIT}")
+    run("iverilog -v -gspecify -DNO_SPLIT -DVCD=\"${POST_OUT_VCD_NO_SPLIT}\" -DSDF=${POST_SDF} -DCLK_MHZ=0.001 -o ${POST_OUT_VVP_NO_SPLIT} ${CELLS_SIM_FILE} ${POST_VERILOG_NO_SPLIT} ${BUILD_DIR}/../${SIMULATION_TEST}")
+    run("vvp -v -N ${POST_OUT_VVP_NO_SPLIT} -sdf-verbose")
+  endif()
   # fasm2bels verilog simulation
-  run("iverilog -v -gspecify -DF2B -DVCD=\"${F2B_OUT_VCD}\" -o ${F2B_OUT_VVP} ${YOSYS_CELLS_SIM_FILE} ${F2B_VERILOG} ${BUILD_DIR}/../${SIMULATION_TEST}")
+  run("iverilog -v -gspecify -DNO_SPLIT -DF2B -DVCD=\"${F2B_OUT_VCD}\" -o ${F2B_OUT_VVP} ${YOSYS_CELLS_SIM_FILE} ${F2B_VERILOG} ${BUILD_DIR}/../${SIMULATION_TEST}")
   run("vvp -v -N ${F2B_OUT_VVP} -sdf-verbose")
 endif()
