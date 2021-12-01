@@ -40,27 +40,51 @@ INV.DS=DS</meta>
       </pb_type>
       <interconnect>
         <direct>
-          <port name="INEN" type="input"/>
-          <port name="I_EN" type="output" from="bidir"/>
-        </direct>
-        <direct>
           <port name="inpad" type="input" from="inpad"/>
-          <port name="I_PAD_$inp" type="output" from="bidir"/>
+          <port name="PAD_$inp" type="output" from="bidir"/>
           <pack_pattern name="IPAD_TO_BIDIR" type="pack">
             <port name="inpad" type="input" from="inpad"/>
-            <port name="I_PAD_$inp" type="output" from="bidir"/>
+            <port name="PAD_$inp" type="output" from="bidir"/>
           </pack_pattern>
         </direct>
         <direct>
-          <port name="OQI" type="input"/>
-          <port name="O_DAT" type="output" from="bidir"/>
+          <port name="IQC" type="input"/>
+          <port name="IQC" type="output" from="bidir"/>
         </direct>
         <direct>
           <port name="IE" type="input"/>
-          <port name="O_EN" type="output" from="bidir"/>
+          <port name="IE" type="output" from="bidir"/>
         </direct>
         <direct>
-          <port name="I_DAT" type="input" from="bidir"/>
+          <port name="INEN" type="input"/>
+          <port name="INEN" type="output" from="bidir"/>
+        </direct>
+        <direct>
+          <port name="IQE" type="input"/>
+          <port name="IQE" type="output" from="bidir"/>
+        </direct>
+        <direct>
+          <port name="IQIN" type="input"/>
+          <port name="IQIN" type="output" from="bidir"/>
+        </direct>
+        <direct>
+          <port name="IQR" type="input"/>
+          <port name="IQR" type="output" from="bidir"/>
+        </direct>
+        <direct>
+          <port name="OQE" type="input"/>
+          <port name="OQE" type="output" from="bidir"/>
+        </direct>
+        <direct>
+          <port name="OQI" type="input"/>
+          <port name="OQI" type="output" from="bidir"/>
+        </direct>
+        <direct>
+          <port name="IQZ" type="input" from="bidir"/>
+          <port name="IQZ" type="output"/>
+        </direct>
+        <direct>
+          <port name="IZ" type="input" from="bidir"/>
           <port name="IZ" type="output"/>
         </direct>
       </interconnect>
@@ -138,28 +162,52 @@ INV.DS=DS</meta>
       </pb_type>
       <interconnect>
         <direct>
-          <port name="INEN" type="input"/>
-          <port name="I_EN" type="output" from="bidir"/>
+          <port name="PAD_$out" type="input" from="bidir"/>
+          <port name="outpad" type="output" from="outpad"/>
+          <pack_pattern name="BIDIR_TO_OPAD" type="pack">
+            <port name="PAD_$out" type="input" from="bidir"/>
+            <port name="outpad" type="output" from="outpad"/>
+          </pack_pattern>
         </direct>
         <direct>
-          <port name="OQI" type="input"/>
-          <port name="O_DAT" type="output" from="bidir"/>
+          <port name="IQC" type="input"/>
+          <port name="IQC" type="output" from="bidir"/>
         </direct>
         <direct>
           <port name="IE" type="input"/>
-          <port name="O_EN" type="output" from="bidir"/>
+          <port name="IE" type="output" from="bidir"/>
         </direct>
         <direct>
-          <port name="I_DAT" type="input" from="bidir"/>
+          <port name="INEN" type="input"/>
+          <port name="INEN" type="output" from="bidir"/>
+        </direct>
+        <direct>
+          <port name="IQE" type="input"/>
+          <port name="IQE" type="output" from="bidir"/>
+        </direct>
+        <direct>
+          <port name="IQIN" type="input"/>
+          <port name="IQIN" type="output" from="bidir"/>
+        </direct>
+        <direct>
+          <port name="IQR" type="input"/>
+          <port name="IQR" type="output" from="bidir"/>
+        </direct>
+        <direct>
+          <port name="OQE" type="input"/>
+          <port name="OQE" type="output" from="bidir"/>
+        </direct>
+        <direct>
+          <port name="OQI" type="input"/>
+          <port name="OQI" type="output" from="bidir"/>
+        </direct>
+        <direct>
+          <port name="IQZ" type="input" from="bidir"/>
+          <port name="IQZ" type="output"/>
+        </direct>
+        <direct>
+          <port name="IZ" type="input" from="bidir"/>
           <port name="IZ" type="output"/>
-        </direct>
-        <direct>
-          <port name="O_PAD_$out" type="input" from="bidir"/>
-          <port name="outpad" type="output" from="outpad"/>
-          <pack_pattern name="BIDIR_TO_OPAD" type="pack">
-            <port name="O_PAD_$out" type="input" from="bidir"/>
-            <port name="outpad" type="output" from="outpad"/>
-          </pack_pattern>
         </direct>
       </interconnect>
     </pb_type>
@@ -240,36 +288,60 @@ INV.DS=DS</meta>
       </pb_type>
       <interconnect>
         <direct>
-          <port name="INEN" type="input"/>
-          <port name="I_EN" type="output" from="bidir"/>
-        </direct>
-        <direct>
           <port name="inpad" type="input" from="inpad"/>
-          <port name="I_PAD_$inp" type="output" from="bidir"/>
+          <port name="PAD_$inp" type="output" from="bidir"/>
           <pack_pattern name="IOPAD_TO_BIDIR" type="pack">
             <port name="inpad" type="input" from="inpad"/>
-            <port name="I_PAD_$inp" type="output" from="bidir"/>
+            <port name="PAD_$inp" type="output" from="bidir"/>
           </pack_pattern>
         </direct>
         <direct>
-          <port name="OQI" type="input"/>
-          <port name="O_DAT" type="output" from="bidir"/>
+          <port name="PAD_$out" type="input" from="bidir"/>
+          <port name="outpad" type="output" from="outpad"/>
+          <pack_pattern name="IOPAD_TO_BIDIR" type="pack">
+            <port name="PAD_$out" type="input" from="bidir"/>
+            <port name="outpad" type="output" from="outpad"/>
+          </pack_pattern>
+        </direct>
+        <direct>
+          <port name="IQC" type="input"/>
+          <port name="IQC" type="output" from="bidir"/>
         </direct>
         <direct>
           <port name="IE" type="input"/>
-          <port name="O_EN" type="output" from="bidir"/>
+          <port name="IE" type="output" from="bidir"/>
         </direct>
         <direct>
-          <port name="I_DAT" type="input" from="bidir"/>
+          <port name="INEN" type="input"/>
+          <port name="INEN" type="output" from="bidir"/>
+        </direct>
+        <direct>
+          <port name="IQE" type="input"/>
+          <port name="IQE" type="output" from="bidir"/>
+        </direct>
+        <direct>
+          <port name="IQIN" type="input"/>
+          <port name="IQIN" type="output" from="bidir"/>
+        </direct>
+        <direct>
+          <port name="IQR" type="input"/>
+          <port name="IQR" type="output" from="bidir"/>
+        </direct>
+        <direct>
+          <port name="OQE" type="input"/>
+          <port name="OQE" type="output" from="bidir"/>
+        </direct>
+        <direct>
+          <port name="OQI" type="input"/>
+          <port name="OQI" type="output" from="bidir"/>
+        </direct>
+        <direct>
+          <port name="IQZ" type="input" from="bidir"/>
+          <port name="IQZ" type="output"/>
+        </direct>
+        <direct>
+          <port name="IZ" type="input" from="bidir"/>
           <port name="IZ" type="output"/>
-        </direct>
-        <direct>
-          <port name="O_PAD_$out" type="input" from="bidir"/>
-          <port name="outpad" type="output" from="outpad"/>
-          <pack_pattern name="IOPAD_TO_BIDIR" type="pack">
-            <port name="O_PAD_$out" type="input" from="bidir"/>
-            <port name="outpad" type="output" from="outpad"/>
-          </pack_pattern>
         </direct>
       </interconnect>
     </pb_type>

@@ -35,18 +35,24 @@ module inpad(output Q, input P);
   end else begin
 
       BIDIR_CELL # (
-      .ESEL     (1'b1),
+      .ESEL     (1'b0),
       .OSEL     (1'b1),
       .FIXHOLD  (1'b0),
       .WPD      (1'b0),
       .DS       (1'b0)
       ) _TECHMAP_REPLACE_ (
-      .I_PAD_$inp(P),
-      .I_DAT(Q),
-      .I_EN (1'b1),
-      .O_PAD_$out(),
-      .O_DAT(),
-      .O_EN (1'b0)
+      .PAD_$out (),
+      .PAD_$inp (P),
+      .IE       (1'b0),
+      .OQI      (1'b0),
+      .OQE      (1'b0),
+      .IZ       (Q),
+      .IQZ      (),
+      .IQE      (1'b0),
+      .INEN     (1'b1),
+      .IQIN     (1'b0),
+      .IQR      (1'b0),
+      .IQC      (1'b0)
       );
 
   end endgenerate
@@ -79,12 +85,18 @@ module outpad(output P, input A);
       .WPD      (1'b0),
       .DS       (1'b0)
       ) _TECHMAP_REPLACE_ (
-      .I_PAD_$inp(),
-      .I_DAT(),
-      .I_EN (1'b0),
-      .O_PAD_$out(P),
-      .O_DAT(A),
-      .O_EN (1'b1)
+      .PAD_$out (P),
+      .PAD_$inp (),
+      .IE       (1'b1),
+      .OQI      (A),
+      .OQE      (1'b0),
+      .IZ       (Q),
+      .IQZ      (),
+      .IQE      (1'b0),
+      .INEN     (1'b0),
+      .IQIN     (1'b0),
+      .IQR      (1'b0),
+      .IQC      (1'b1)
       );
 
   end endgenerate
@@ -124,12 +136,18 @@ module bipad(input A, input EN, output Q, inout P);
       .WPD      (1'b0),
       .DS       (1'b0)
       ) _TECHMAP_REPLACE_ (
-      .I_PAD_$inp(P),
-      .I_DAT(Q),
-      .I_EN (1'b1),
-      .O_PAD_$out(P),
-      .O_DAT(A),
-      .O_EN (EN)
+      .PAD_$out (P),
+      .PAD_$inp (P),
+      .IE       (EN),
+      .OQI      (A),
+      .OQE      (1'b0),
+      .IZ       (Q),
+      .IQZ      (),
+      .IQE      (1'b0),
+      .INEN     (1'b1),
+      .IQIN     (1'b0),
+      .IQR      (1'b0),
+      .IQC      (1'b1)
       );
 
   end endgenerate
@@ -146,7 +164,7 @@ module ckpad(output Q, input P);
   // cell.
   generate if (IO_TYPE == "" || IO_TYPE == "CLOCK") begin
 
-      // In VPR GMUX has to be explicityl present in the netlist. Add it here.
+      // In VPR GMUX has to be explicitly present in the netlist. Add it here.
 
       wire C;
 
