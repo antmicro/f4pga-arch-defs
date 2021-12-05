@@ -227,7 +227,7 @@ else
 if [ -f $SOURCE/v_list_tmp ];then
 rm -f $SOURCE/v_list_tmp
 fi
-if [ $VERILOG_FILES == "*.v" ];then
+if [ "$VERILOG_FILES" == "*.v" ];then
         VERILOG_FILES=`cd ${SOURCE};ls *.v`
 fi
 echo "$VERILOG_FILES" >${SOURCE}/v_list
