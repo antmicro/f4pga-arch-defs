@@ -527,43 +527,43 @@ rm -f $SOURCE/f_list_temp $SOURCE/v_list_tmp $SOURCE/v_list
 ##### Make file Targets #####
 if [ $1 == "-synth" ]; then
   echo -e "Performing Synthesis "
-  cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.eblif || (cat $LOG_FILE && exit)
+  cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.eblif || (cat $LOG_FILE && exit 1)
 elif [[ ! -z "$OUT" && $1 == "-compile" ]];then
 	if [[ " ${OUT_ARR[@]} " =~ " post_verilog " ]];then
-		cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.post_v || (cat $LOG_FILE && exit)
+		cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.post_v || (cat $LOG_FILE && exit 1)
 	fi
 
     if [ "$DEVICE" == "ql-eos-s3" ]; then
       if [[ " ${OUT_ARR[@]} " =~ " jlink " ]]; then
-       cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.jlink || (cat $LOG_FILE && exit)
+       cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.jlink || (cat $LOG_FILE && exit 1)
       fi
       if [[ " ${OUT_ARR[@]} " =~ " openocd " ]]; then
-       cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.openocd || (cat $LOG_FILE && exit)
+       cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.openocd || (cat $LOG_FILE && exit 1)
       fi
       if [[ " ${OUT_ARR[@]} " =~ " post_verilog " ]]; then
-       cd $SOURCE;make -f Makefile.symbiflow  ${BUILDDIR}/${TOP}.bit.v || (cat $LOG_FILE && exit)
+       cd $SOURCE;make -f Makefile.symbiflow  ${BUILDDIR}/${TOP}.bit.v || (cat $LOG_FILE && exit 1)
       fi
       if [[ " ${OUT_ARR[@]} " =~ " header " ]]; then
-       cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}_bit.h || (cat $LOG_FILE && exit)
+       cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}_bit.h || (cat $LOG_FILE && exit 1)
       fi
       if [[ " ${OUT_ARR[@]} " =~ " binary " ]]; then
-       cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.bin || (cat $LOG_FILE && exit)
+       cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.bin || (cat $LOG_FILE && exit 1)
       fi
     fi
 
     if [ "$DEVICE" == "ql-pp3" ]; then
       if [[ " ${OUT_ARR[@]} " =~ " post_verilog " ]]; then
-       cd $SOURCE;make -f Makefile.symbiflow  ${BUILDDIR}/${TOP}.bit.v || (cat $LOG_FILE && exit)
+       cd $SOURCE;make -f Makefile.symbiflow  ${BUILDDIR}/${TOP}.bit.v || (cat $LOG_FILE && exit 1)
       fi
       if [[ " ${OUT_ARR[@]} " =~ " binary " ]]; then
-       cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.bit || (cat $LOG_FILE && exit)
+       cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.bit || (cat $LOG_FILE && exit 1)
       fi
     fi
 
 else
   if [ $1 == "-compile" ]; then
   echo -e "Running Synth->Pack->Place->Route->FASM->bitstream"
-    cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.${RUN_TILL} || (cat $LOG_FILE && exit)
+    cd $SOURCE;make -f Makefile.symbiflow ${BUILDDIR}/${TOP}.${RUN_TILL} || (cat $LOG_FILE && exit 1)
   fi
 fi
 
