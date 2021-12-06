@@ -11,7 +11,7 @@ VERSION="v2.0.1"
 
 if [ ! -n $1 ]; then
 echo "Please enter a valid command: Refer help ql_symbiflow --help"
-exit 0
+exit 1
 elif [[ $1 == "-synth" || $1 == "-compile" ]]; then
 echo -e "----------------- \n"
 elif [[ $1 == "-h"  ||  $1 == "--help" ]];then
@@ -25,10 +25,10 @@ Support temporarily disabled for: qlf_k6n10" || exit
 
 elif [[ $1 == "-v" || $1 == "--version" ]];then
         echo "Symbiflow Tool Version : ${VERSION}"
-        exit
+        exit 0
 else
 echo -e "Please provide a valid command : Refer -h/--help\n"
-exit
+exit 1
 fi
 
 
