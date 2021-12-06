@@ -73,7 +73,8 @@ endif()
 set(POST_SYNTH_NO_SPLIT	${BUILD_DIR}/top_post_synthesis.no_split.v)
 
 if (EXISTS "${POST_SYNTH_NO_SPLIT}")
-    SET(GREP_ARGS \\\S*\[[0-9]*\]\s ${POST_SYNTH_NO_SPLIT})
+    SET(GREP_ARGS "\\\\\\S*\\[[0-9]*\\]\\s" "${POST_SYNTH_NO_SPLIT}")
+    message(STATUS "${GREP_ARGS}")
     EXECUTE_PROCESS(
         COMMAND
         grep ${GREP_ARGS}
