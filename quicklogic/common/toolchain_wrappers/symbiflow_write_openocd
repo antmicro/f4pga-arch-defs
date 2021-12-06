@@ -1,12 +1,13 @@
 #!/bin/bash
 set -e
 
-MYPATH=$(dirname "$(readlink -f "$BASH_SOURCE")")
+PYTHON3=`which python3`
 
+MYPATH=$(dirname "$(readlink -f "$BASH_SOURCE")")
 
 source ${MYPATH}/env
 
-BIT2OPENOCD=`readlink -f ${MYPATH}/../bin/python/bitstream_to_openocd.py`
+BIT2OPENOCD="${PYTHON3} -m quicklogic_fasm.bitstream_to_openocd"
 
-echo "Generating bit.openocd"
-python3 ${BIT2OPENOCD} $@
+echo "Converting bitstream to OpenOCD script"
+${BIT2OPENOCD} $@
