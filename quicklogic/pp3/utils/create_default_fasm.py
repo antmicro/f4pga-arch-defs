@@ -4,23 +4,74 @@ This utility generates a FASM file with a default bitstream configuration for
 the given device.
 """
 import argparse
+import pickle
+import re
 import colorsys
 from enum import Enum
 
-import lxml.etree as ET
-
 from data_structs import PinDirection, SwitchboxPinType
-from data_import import import_data
+from data_structs import ConnectionType
 
 from utils import yield_muxes
 
 from switchbox_model import SwitchboxModel
 
 # =============================================================================
-duplicate = {}
+
+# FIXME: Move to eg. a JSON file
+DEFAULT_CONNECTIONS = {
+
+    "LOGIC": {
+        "TBS": "GND",
+        "TAB": "GND",
+        "TSL": "GND",
+        "TA1": "GND",
+        "TA2": "GND",
+        "TB1": "GND",
+        "TB2": "GND",
+        "BAB": "GND",
+        "BA1": "GND",
+        "BA2": "GND",
+        "BB1": "GND",
+        "BB2": "GND",
+        "QCK": "GND",
+        "QRT": "GND",
+        "QST": "GND",
+        "QEN": "GND",
+        "QDS": "GND",
+        "QDI": "GND",
+        "F1": "GND",
+        "F2": "GND",
+        "FS": "GND",
+    },
+
+    "BIDIR": {
+        "IE": "GND",
+        "OQI": "GND",
+        "OQE": "GND",
+        "IQE": "GND",
+        "INEN": "GND",
+        "IQIN": "GND",
+        "IQR": "GND",
+        "IQC": "GND",
+    },
+
+    "QMUX": {
+        "IS0": "GND",
+        "IS1": "GND",
+        "HSCKIN": "GND",
+    },
+
+    "GMUX": {
+        "IS0": "GND",
+        "IC": "GND",
+    },
+}
+
+# =============================================================================
 
 
-class SwitchboxConfigBuilder:
+class SwitchboxRouter:
     """
     This class is responsible for routing a switchbox according to the
     requested parameters and writing FASM features that configure it.
@@ -130,21 +181,17 @@ class SwitchboxConfigBuilder:
                         self.switchbox.type, pin_loc.stage_id,
                         pin_loc.switch_id, pin_loc.mux_id
                     )
-                    if (key in duplicate  # Mux has multiple inputs selected
-                            and (pin_loc.pin_id in duplicate[key]
-                                 )  # Current selection is duplicate
-                            and not (key[0].startswith("SB_TOP_IFC"))
-                        ):  # Ignore TOP switchboxes
-                        print(
-                            "Warning: duplicate: {} - {}".format(
-                                key, pin_loc.pin_id
-                            )
-                        )
-                        continue
 
                     # Append reference to the input pin to the node
                     key = pin.name
-                    assert key == "GND" or key not in node.inp, key
+
+                    # Some muxes can select the same input via multiple
+                    # different paths. Allow that but only for primary inputs
+                    # which keys are strings.
+                    if key in node.inp:
+                        assert isinstance(key, str), key
+                        continue
+
                     node.inp[key] = pin_loc.pin_id
 
                     # Get the SOURCE node
@@ -224,6 +271,92 @@ class SwitchboxConfigBuilder:
             if node.type == self.NodeType.SINK:
                 yield node.key
 
+    def route_output_to_input(self, stage, out, inp):
+        """
+        Routes from an output pin to an input pin of the given stage. Returns
+        whether the routing was successful. For a successful route sets nets
+        and selections on all nodes of the route.
+        """
+
+        assert stage in self.nodes, stage
+        nodes = self.nodes[stage]
+
+        # Input pin is the net name
+        net = inp
+
+        # BFS walker
+        def walk(node, route=None):
+
+            # Initialize route
+            if route is None:
+                route = []
+
+            # We have hit the input or any node which is assigned the same
+            # net
+            if node.net == net:
+                return [node.key] + route
+
+            # We have hit a different net
+            if node.net is not None:
+                return None
+
+            # Free node, expand upstream. First check other nodes that do not
+            # have any net assigned.
+            uphill = list(node.inp.keys())
+            uphill.sort(key=lambda k: nodes[k].net != None)
+
+            for key in uphill:
+                r = walk(nodes[key], [node.key] + route)
+                if r is not None:
+                    return r
+
+            # No more expansion possible
+            return None
+
+        # Walk
+        route = walk(nodes[out])
+        if not route:
+            return False
+
+        # Assign nets and mux selections. This needs to be done by iterating
+        # the route in reversed order.
+        for i in reversed(range(1, len(route))):
+            node = nodes[route[i]]
+            node.net = net
+            node.sel = node.inp[route[i-1]]
+
+        return True
+
+    def route_all(self, stage=None):
+        """
+        Routes all muxes randomly
+        """
+        if not stage:
+            stages = ["STREET", "HIGHWAY"]
+        else:
+            stages = [stage]
+
+        # Route stage
+        for stage in stages:
+            nodes = self.nodes[stage]
+
+            while True:
+
+                all_routed = True
+                for node in nodes.values():
+                    if not node.net:
+
+                        for key, sel in node.inp.items():
+                            if nodes[key].net is not None:
+                                node.net = nodes[key].net
+                                node.sel = sel
+                                break
+                            else:
+                                all_routed = False
+
+                if all_routed:
+                    break
+
     def propagate_input(self, stage_type, input_name):
         """
         Recursively propagates a net from an input pin to all reachable
@@ -281,7 +414,7 @@ class SwitchboxConfigBuilder:
 
                 if node.type == self.NodeType.MUX and node.sel is None:
                     result = False
-                    print("WARNING: mux unconfigured", key)
+                    print("WARNING: mux unconfigured", stage_type, key)
 
         return result
 
@@ -543,6 +676,130 @@ class SwitchboxConfigBuilder:
         dot.append("}")
         return "\n".join(dot)
 
+# =============================================================================
+
+
+class SwitchboxConfigBuilder:
+    """
+    A class responsible for building configuration of an unused switchbox
+    """
+
+    def __init__(self, db, default_connections):
+
+        self.dot = None
+
+        self.switchbox_types = db["switchbox_types"]
+        self.switchbox_grid = db["switchbox_grid"]
+
+        self.default_connections = default_connections
+
+        # Sort connections by their source locations
+        connections = db["connections"]
+        self.connections_by_src = {}
+
+        for conn in connections:
+            loc = conn.src.loc
+            if loc not in self.connections_by_src:
+                self.connections_by_src[loc] = []
+            self.connections_by_src[loc].append(conn)
+
+    def build(self, loc, dump_dot=False, verbose=0):
+        """
+        Builds default configuration for a switchbox at the given locatio.
+        Returns a list of FASM features
+        """
+
+        # Get the switchbox type
+        switchbox_loc = loc
+        switchbox_type = self.switchbox_grid[loc]
+        switchbox = self.switchbox_types[switchbox_type]
+
+        if verbose >= 1:
+            print("Switchbox '{}' at {}".format(switchbox_type, switchbox_loc))
+
+        # Initialize router
+        router = SwitchboxRouter(switchbox)
+        routing_failed = False
+
+        # Determine how to route specific outputs
+        pin_connections = {}
+        if loc in self.connections_by_src:
+
+            # Find all connections that go from this switchbox to a tile
+            conns = [c for c in self.connections_by_src[switchbox_loc] if \
+                     c.src.type == ConnectionType.SWITCHBOX and \
+                     c.dst.type != ConnectionType.SWITCHBOX]
+
+            # Identify required tile pin connections
+            for c in conns:
+                cell_conns = self.default_connections.get(c.dst.pin.cell, None)
+                if cell_conns:
+                    net = str(cell_conns.get(c.dst.pin.pin, ""))
+                    if net:
+                        pin_connections[c.src.pin] = net
+
+        # Determine which inputs to propagate (HIGHWAY)
+        pin_propagations = set()
+        for c in conns:
+
+            # Find all connections that go from this switchbox to a tile
+            conns = [c for c in self.connections_by_src[switchbox_loc] if \
+                     c.src.type != ConnectionType.SWITCHBOX and \
+                     c.dst.type == ConnectionType.SWITCHBOX]
+
+            for c in conns:
+                pin = c.dst.pin
+                if pin in router.nodes["HIGHWAY"]:
+                    pin_propagations.add(pin)
+
+        # Route required tile pins first
+        for pin, net in pin_connections.items():
+
+            if verbose >= 1:
+                print(" routing '{}' to '{}'".format(pin, net))
+
+            res = router.route_output_to_input("STREET", pin, net)
+            if not res:
+                routing_failed = True
+
+                if verbose >= 1:
+                    print("  failed!")
+
+        # Propagate pins
+        for pin in pin_propagations:
+
+            if verbose >= 1:
+                print(" propagating '{}'".format(pin))
+
+            router.propagate_input("HIGHWAY", pin)
+
+        # Next route all unrouted mux outputs
+        if verbose >= 2:
+            print(" finalizing...");
+
+        router.route_all("HIGHWAY")
+        router.route_all("STREET")
+
+        # Check if all nodes are configured
+        if not router.check_nodes():
+            routing_failed = True
+
+        if verbose >= 1 and not routing_failed:
+            print(" fully routed.")
+
+        # Store graphviz visualization
+        if dump_dot:
+            self.dot = router.dump_dot()
+        else:
+            self.dot = None
+
+        if routing_failed:
+            print("Routing for switchbox '{}' at {} failed!".format(
+                switchbox.type, switchbox_loc
+            ))
+            
+        # Return FASM features
+        return router.fasm_features(loc)
 
 # =============================================================================
 
@@ -556,10 +813,10 @@ def main():
     )
 
     parser.add_argument(
-        "--techfile",
+        "--phy-db",
         type=str,
         required=True,
-        help="Quicklogic 'TechFile' XML file"
+        help="Input physical device database file"
     )
     parser.add_argument(
         "--fasm",
@@ -570,7 +827,7 @@ def main():
     parser.add_argument(
         "--device",
         type=str,
-        choices=["eos-s3"],
+        choices=["eos-s3", "pp3"],
         default="eos-s3",
         help="Device name to generate the FASM file for"
     )
@@ -584,115 +841,43 @@ def main():
         action="store_true",
         help="Skip switchboxes that fail routing"
     )
+    parser.add_argument(
+        "--verbose",
+        type=int,
+        default=0,
+        help="Verbosity level"
+    )
 
     args = parser.parse_args()
 
-    # Read and parse the XML file
-    xml_tree = ET.parse(args.techfile)
-    xml_root = xml_tree.getroot()
+    # Load data from the database
+    print("Loading device database...")
+    with open(args.phy_db, "rb") as fp:
+        db = pickle.load(fp)
+        print(db.keys())
+        tile_types = db["tile_types"]
+        tile_grid = db["phy_tile_grid"]
+        switchbox_grid = db["switchbox_grid"]
 
-    # Load data
-    print("Loading data from the techfile...")
-    data = import_data(xml_root)
-    switchbox_types = data["switchbox_types"]
-    switchbox_grid = data["switchbox_grid"]
-    tile_types = data["tile_types"]
-    tile_grid = data["tile_grid"]
-
-    # Route switchboxes
+    # Configure switchboxes
     print("Making switchbox routes...")
+    builder = SwitchboxConfigBuilder(db, DEFAULT_CONNECTIONS)
 
     fasm = []
-    fully_routed = 0
-    partially_routed = 0
+    for sbox_loc, sbox_type in switchbox_grid.items():
 
-    def input_rank(pin):
-        """
-        Returns a rank of a switchbox input. Pins with the lowest rank should
-        be expanded first.
-        """
-        if pin.name == "GND":
-            return 0
-        elif pin.name == "VCC":
-            return 1
-        elif pin.type not in [SwitchboxPinType.HOP, SwitchboxPinType.GCLK]:
-            return 2
-        elif pin.type == SwitchboxPinType.HOP:
-            return 3
-        elif pin.type == SwitchboxPinType.GCLK:
-            return 4
+        # Build config
+        sbox_fasm = builder.build(sbox_loc, args.dump_dot, args.verbose)
+        fasm.extend(sbox_fasm)
 
-        return 99
-
-    # Scan for duplicates
-    for switchbox in switchbox_types.values():
-        for pin in switchbox.pins:
-            pinmap = {}
-            for pin_loc in pin.locs:
-                key = (
-                    switchbox.type, pin_loc.stage_id, pin_loc.switch_id,
-                    pin_loc.mux_id
-                )
-                if (key not in pinmap):
-                    pinmap[key] = pin_loc.pin_id
-                else:
-                    if key in duplicate:
-                        duplicate[key].append(pin_loc.pin_id)
-                    else:
-                        duplicate[key] = [pin_loc.pin_id]
-
-    # Process each switchbox type
-    for switchbox in switchbox_types.values():
-        print("", switchbox.type)
-
-        # Identify all locations of the switchbox
-        locs = [
-            loc for loc, type in switchbox_grid.items()
-            if type == switchbox.type
-        ]
-
-        # Initialize the builder
-        builder = SwitchboxConfigBuilder(switchbox)
-
-        # Sort the inputs according to their ranks.
-        inputs = sorted(switchbox.inputs.values(), key=input_rank)
-
-        # Propagate them
-        for stage in ["STREET", "HIGHWAY"]:
-            for pin in inputs:
-                if pin.name in builder.stage_inputs(stage):
-                    builder.propagate_input(stage, pin.name)
-
-        # Check if all nodes are configured
-        routing_failed = not builder.check_nodes()
-
-        # Dump dot
-        if args.dump_dot:
-            dot = builder.dump_dot()
-            fname = "defconfig_{}.dot".format(switchbox.type)
-            with open(fname, "w") as fp:
-                fp.write(dot)
-
-        # Routing failed
-        if routing_failed:
-            if not args.allow_routing_failures:
-                exit(-1)
-
-        # Stats
-        if routing_failed:
-            partially_routed += len(locs)
-        else:
-            fully_routed += len(locs)
-
-        # Emit FASM features for each of them
-        for loc in locs:
-            fasm.extend(builder.fasm_features(loc))
-
-    print(" Total switchboxes: {}".format(len(switchbox_grid)))
-    print(" Fully routed     : {}".format(fully_routed))
-    print(" Partially routed : {}".format(partially_routed))
+        # Write graphviz for debugging
+        if builder.dot:
+            fn = "{}_at_X{}Y{}.dot".format(sbox_type, sbox_loc.x, sbox_loc.y)
+            with open(fn, "w") as fp:
+                fp.write(builder.dot)
 
     # Power on all LOGIC cells
+    print("Configuring cells...")
     for loc, tile in tile_grid.items():
 
         # Get the tile type object
@@ -709,10 +894,11 @@ def main():
     # Write FASM
     print("Writing FASM file...")
     with open(args.fasm, "w") as fp:
-        fp.write("\n".join(fasm))
+        fp.write("\n".join(fasm) + "\n")
 
 
 # =============================================================================
+
 
 if __name__ == "__main__":
     main()
