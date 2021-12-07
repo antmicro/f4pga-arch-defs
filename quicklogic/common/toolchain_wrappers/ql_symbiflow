@@ -11,7 +11,7 @@ VERSION="v2.0.1"
 
 if [ ! -n $1 ]; then
 echo "Please enter a valid command: Refer help ql_symbiflow --help"
-exit 0
+exit 1
 elif [[ $1 == "-synth" || $1 == "-compile" ]]; then
 echo -e "----------------- \n"
 elif [[ $1 == "-h"  ||  $1 == "--help" ]];then
@@ -25,10 +25,10 @@ Support temporarily disabled for: qlf_k6n10" || exit
 
 elif [[ $1 == "-v" || $1 == "--version" ]];then
         echo "Symbiflow Tool Version : ${VERSION}"
-        exit
+        exit 0
 else
 echo -e "Please provide a valid command : Refer -h/--help\n"
-exit
+exit 1
 fi
 
 
@@ -227,7 +227,7 @@ else
 if [ -f $SOURCE/v_list_tmp ];then
 rm -f $SOURCE/v_list_tmp
 fi
-if [ $VERILOG_FILES == "*.v" ];then
+if [ "$VERILOG_FILES" == "*.v" ];then
         VERILOG_FILES=`cd ${SOURCE};ls *.v`
 fi
 echo "$VERILOG_FILES" >${SOURCE}/v_list
@@ -263,7 +263,7 @@ if [[ $1 == "-compile" || $1 == "-post_verilog" ]]; then
   fi
   if [[  "$DEVICE_CHECK" =~ ^(VALID)$ ]]; then
     if [ -z "$PART" ]; then
-	   if [ -n "$PCF" && $USE_PINMAP -ne 0 ]; then
+	   if [[ -n "$PCF" && $USE_PINMAP -ne 0 ]]; then
 	     echo "Error: pcf file cannot be used without declaring PINMAP CSV file"
          exit 1
        fi
@@ -440,6 +440,7 @@ all: \${BUILDDIR}/\${TOP}.${RUN_TILL}\n\
 \n\
 \${BUILDDIR}/\${TOP}.sdc: \${BUILDDIR}/\${TOP}.eblif\n\
 	python3 ${PROCESS_SDC} --sdc-in \${SDC_IN} --sdc-out \$@ --pcf \${PCF} --eblif \${BUILDDIR}/\${TOP}.eblif --pin-map \${PINMAP_CSV}\n\
+\n\
 \${BUILDDIR}/\${TOP}.net: \${BUILDDIR}/\${TOP}.eblif \${BUILDDIR}/\${TOP}.sdc\n\
 	cd \${BUILDDIR} && symbiflow_pack -e \${TOP}.eblif -f \${FAMILY} -d \${DEVICE} -s \${SDC} -c \${PNR_CORNER} >> $LOG_FILE 2>&1\n\
 \n\
