@@ -1,4 +1,4 @@
-`timescale 1 ns / 1 ps
+`timescale 1 ps / 1 ps
 
 `default_nettype none
 
@@ -47,9 +47,9 @@ module tb;
 		$dumpfile(`STRINGIFY(`VCD));
 		$dumpvars;
 		for (i=1; i<64; i=i+1) begin
-			#100 clk = 1;
-			#50 assert(out === (i % 16));
-			#50 clk = 0;
+			#1000000 clk = 1;
+			#500000 assert(out === (i % 16));
+			#500000 clk = 0;
 		end
 		#25 $finish();
 	end
