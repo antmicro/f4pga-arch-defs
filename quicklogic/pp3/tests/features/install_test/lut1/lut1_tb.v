@@ -19,15 +19,25 @@ endtask
 
 reg I;
 wire O;
-top dut (
-    .\I[0] (I),
-    .\O (O)
-);
+
+`ifdef NO_SPLIT
+    top dut (
+        .I (I),
+        .O (O)
+    );
+`else
+    top dut (
+        .\I[0] (I),
+        .\O (O)
+    );
+`endif
 
 initial begin
     I = 1'b0;
 
+`ifndef F2B
     $sdf_annotate(`STRINGIFY(`SDF), dut);
+`endif
     $dumpfile(`STRINGIFY(`VCD));
     $dumpvars;
 
