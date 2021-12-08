@@ -104,9 +104,7 @@ class VModule(object):
         vectors = dict()
         new_signals = dict()
 
-        array = re.compile(
-            r'(?P<varname>[a-zA-Z_][a-zA-Z_0-9$]+)\[(?P<arrindex>[0-9]+)\]'
-        )
+        array = re.compile(r'(?P<varname>\S+)\[(?P<arrindex>[0-9]+)\]')
 
         # first find the vectors
         for signalid in signals:
