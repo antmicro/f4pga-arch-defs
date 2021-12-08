@@ -84,8 +84,6 @@ if (EXISTS "${POST_SYNTH_NO_SPLIT}")
     if (${NO_SPLIT_VAL_RES} EQUAL 0 AND NOT "${NO_SPLIT_VAL_OUT}" STREQUAL "")
         MESSAGE(FATAL_ERROR "Found illegal escaped identifiers in ${POST_VERILOG_NO_SPLIT}: ${NO_SPLIT_VAL_OUT}")
     endif()
-    set(POST_OUT_VVP_NO_SPLIT ${BUILD_DIR}/post_simulation_no_split.vvp)
-    set(POST_OUT_VCD_NO_SPLIT ${BUILD_DIR}/post_simulation_no_split.vcd)
 endif()
 
 set(POST_VERILOG ${BUILD_DIR}/top_post_synthesis.v)
@@ -102,6 +100,8 @@ set(YOSYS_CELLS_SIM_FILE ${INSTALLATION_DIR}/share/symbiflow/techmaps/${ARCH}/yo
 
 if (NOT "${SIMULATION_TEST}" STREQUAL "")
   # post synthesis simulation
+  set(POST_OUT_VVP_NO_SPLIT ${BUILD_DIR}/post_simulation_no_split.vvp)
+  set(POST_OUT_VCD_NO_SPLIT ${BUILD_DIR}/post_simulation_no_split.vcd)
   run("iverilog -v -gspecify -DVCD=\"${POST_OUT_VCD}\" -DSDF=${POST_SDF} -DCLK_MHZ=0.001 -o ${POST_OUT_VVP} ${CELLS_SIM_FILE} ${POST_VERILOG} ${BUILD_DIR}/../${SIMULATION_TEST}")
   run("vvp -v -N ${POST_OUT_VVP} -sdf-verbose")
   # optional post synthesis simulation of verilog without split ports
