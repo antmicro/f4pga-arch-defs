@@ -1094,6 +1094,96 @@ def specialize_switchboxes_with_wire_maps(
         switchbox_grid[loc] = new_switchbox.type
 
 
+def specialize_switchboxes_with_gnd_sources(switchbox_types, switchbox_grid):
+    """
+    Identify HOP wires originating from outside the fabric and make them
+    GND sources.
+    """
+
+    # Determine the switchbox grid limits
+    xs = set([loc.x for loc in switchbox_grid.keys()])
+    ys = set([loc.y for loc in switchbox_grid.keys()])
+    loc_min = Loc(min(xs), min(ys), 0)
+    loc_max = Loc(max(xs), max(ys), 0)
+
+    for loc, switchbox_type in switchbox_grid.items():
+        switchbox = switchbox_types[switchbox_type]
+
+        # Get all inputs
+        pins = [
+            pin for pin in switchbox.inputs.values()
+            if pin.type == SwitchboxPinType.HOP
+        ]
+
+        # Identify HOP input locations connected to ground
+        gnd_locs = set()
+        for pin in pins:
+
+            # Parse the name, determine hop offset. Skip non-hop wires.
+            hop_name, hop_ofs = get_name_and_hop(pin.name)
+            if hop_ofs is None:
+                continue
+
+            # Check if the hop wire originates from outside the fabric
+            src_loc = Loc(loc.x + hop_ofs[0], loc.y + hop_ofs[1], 0)
+            if src_loc.x < loc_min.x or src_loc.x > loc_max.x or \
+               src_loc.y < loc_min.y or src_loc.y > loc_max.y:
+
+                gnd_locs |= set(pin.locs)
+                continue
+
+            # Handle fabric corners. Do not blindly assume that the corners
+            # are empty, check if there is no switchbox at that location too.
+            if (src_loc.x == loc_min.x and src_loc.y == loc_min.y) or \
+               (src_loc.x == loc_min.x and src_loc.y == loc_max.y) or \
+               (src_loc.x == loc_max.x and src_loc.y == loc_min.y) or \
+               (src_loc.x == loc_max.x and src_loc.y == loc_max.y):
+
+                if src_loc not in switchbox_grid or \
+                   switchbox_grid[src_loc] is None:
+
+                    gnd_locs |= set(pin.locs)
+                    continue
+
+        # No GND sources found, do nothing
+        if not gnd_locs:
+            continue
+
+        # Make a copy of the switchbox
+        suffix = "X{}Y{}".format(loc.x, loc.y)
+        if not switchbox.type.endswith(suffix):
+            new_type = "{}_{}".format(switchbox.type, suffix)
+        else:
+            new_type = switchbox_type
+
+        new_switchbox = Switchbox(new_type)
+        new_switchbox.stages = deepcopy(switchbox.stages)
+        new_switchbox.connections = deepcopy(switchbox.connections)
+
+        for pin_loc in gnd_locs:
+
+            # Rename pin
+            stage = new_switchbox.stages[pin_loc.stage_id]
+            switch = stage.switches[pin_loc.switch_id]
+            mux = switch.muxes[pin_loc.mux_id]
+            pin = mux.inputs[pin_loc.pin_id]
+
+            new_pin = SwitchPin(
+                id=pin.id,
+                direction=PinDirection.INPUT,
+                name="GND",
+            )
+
+            mux.inputs[new_pin.id] = new_pin
+
+        # Update top-level pins
+        update_switchbox_pins(new_switchbox)
+
+        # Add to the switchbox types and the grid
+        switchbox_types[new_switchbox.type] = new_switchbox
+        switchbox_grid[loc] = new_switchbox.type
+
+
 # =============================================================================
 
 
@@ -1308,6 +1398,12 @@ def import_data(xml_root):
     # Specialize switchboxes with local port maps
     specialize_switchboxes_with_port_maps(
         switchbox_types, switchbox_grid, port_maps
+    )
+
+    # Specialize switchboxes with HIGHWAY gnd sources
+    specialize_switchboxes_with_gnd_sources(
+        switchbox_types,
+        switchbox_grid,
     )
 
     # Remove switchbox types not present in the grid anymore due to their
