@@ -39,7 +39,8 @@ add_openocd_output(
   PARENT btn_xor-ql-jimbob4
 )
 
-add_dependencies(all_pp3e_tests_bit btn_xor-ql-jimbob4_bit)
+add_dependencies(all_pp3e_tests_bit btn_xor-ql-jimbob4_route)
+#add_dependencies(all_pp3e_tests_bit btn_xor-ql-jimbob4_bit)
 #add_dependencies(all_pp3e_tests_bit_v btn_xor-ql-jimbob4_bit_v)	# Failure in mux expanding
 
 add_fpga_target(
