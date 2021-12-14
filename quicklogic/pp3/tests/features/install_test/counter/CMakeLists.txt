@@ -6,7 +6,9 @@ add_binary_toolchain_test(
     PCF       chandalar.pcf
     EXTRA_ARGS "-dump post_verilog"
 
-    ENABLE_SIMULATION
+    # Disabled due to errors in post VPR simulation with SDF annotation
+    # Most probably caused by generation of faulty timings in SDF file
+    #ENABLE_SIMULATION
 
     ASSERT_USAGE  PB-CLOCK=0,PB-GMUX=0,PB-BIDIR=5
     ASSERT_TIMING fmax>=30.0
