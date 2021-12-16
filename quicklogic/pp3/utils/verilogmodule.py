@@ -283,6 +283,10 @@ class VModule(object):
             pin_map = self.qlal4s3_pinmap.get(moduletype, dict())
 
             params.append(".{}({})".format(pin_map.get("IP", "IP"), ioname))
+            # Add clock wire
+            for inpname, inp in fixedparameters.items():
+                if inpname not in input_pins:
+                    dummy_wires.append(f'    wire {inp};')
 
         result += f',\n{" " * len(result)}'.join(sorted(params)) + ');\n'
         wires = ''
