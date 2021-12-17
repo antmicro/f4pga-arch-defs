@@ -1324,6 +1324,9 @@ def main():
     # Parse arguments
     parser = argparse.ArgumentParser()
     parser.add_argument(
+        "--device", type=str, choices=["ql-eos-s3", "ql-pp3e"], required=True
+    )
+    parser.add_argument(
         "--mode-defs",
         type=str,
         default="ram_modes.json",
