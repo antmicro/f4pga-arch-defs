@@ -188,6 +188,20 @@ function(DEFINE_QL_TOOLCHAIN_TARGET)
           DESTINATION share/symbiflow/techmaps/${FAMILY}
           FILES_MATCHING PATTERN *.v)
 
+  # install cells_sim.v from yosys plugins
+  if ("${FAMILY}" STREQUAL "pp3")
+    set(YOSYS_CELLS_SIM_LOCAL "techmap/yosys_cells_sim.v")
+    get_file_target(YOSYS_CELLS_SIM_TARGET ${YOSYS_CELLS_SIM_LOCAL})
+    get_file_location(YOSYS_CELLS_SIM_LOCAL ${YOSYS_CELLS_SIM_LOCAL})
+    add_custom_target(
+            "CELLS_INSTALL_${FAMILY}_CELLS_SIM"
+      ALL
+      DEPENDS ${YOSYS_CELLS_SIM_TARGET} ${YOSYS_CELLS_SIM_LOCAL}
+      )
+    install(FILES ${YOSYS_CELLS_SIM_LOCAL}
+      DESTINATION share/symbiflow/techmaps/${FAMILY})
+  endif()
+
   install(FILES ${DEFINE_QL_TOOLCHAIN_TARGET_CELLS_SIM}
           DESTINATION share/symbiflow/techmaps/${FAMILY})
 
