@@ -51,13 +51,13 @@ DEFAULT_CONNECTIONS = {
     },
 
     "QMUX": {
-        "IS0": "GND",
-        "IS1": "GND",
+        "IS0": "VCC",
+        "IS1": "VCC",
         "HSCKIN": "GND",
     },
 
     "GMUX": {
-        "IS0": "GND",
+        "IS0": "VCC",
         "IC": "GND",
     },
 }
@@ -89,7 +89,7 @@ class SwitchboxConfigBuilder:
                 self.connections_by_src[loc] = []
             self.connections_by_src[loc].append(conn)
 
-    def build(self, loc, dump_dot=False, verbose=0):
+    def build(self, loc, dump_dot=False, allow_routing_failures=False, verbose=0):
         """
         Builds default configuration for a switchbox at the given locatio.
         Returns a list of FASM features
@@ -183,7 +183,9 @@ class SwitchboxConfigBuilder:
             print("Routing for switchbox '{}' at {} failed!".format(
                 switchbox.type, switchbox_loc
             ))
-            
+            if not allow_routing_failures:
+                exit(-1)
+
         # Return FASM features
         return router.fasm_features(loc)
 
@@ -252,7 +254,7 @@ def main():
     for sbox_loc, sbox_type in switchbox_grid.items():
 
         # Build config
-        sbox_fasm = builder.build(sbox_loc, args.dump_dot, args.verbose)
+        sbox_fasm = builder.build(sbox_loc, args.dump_dot, args.allow_routing_failures, args.verbose)
         fasm.extend(sbox_fasm)
 
         # Write graphviz for debugging
@@ -261,7 +263,9 @@ def main():
             with open(fn, "w") as fp:
                 fp.write(builder.dot)
 
-    # Power on all LOGIC cells
+    # Power on all LOGIC cells. Since there is no way to route any of the
+    # HIGHWAY output to GND/VCC they are routed to tile outpus. For tile
+    # outputs to generate a stable logic level the power must be on.
     print("Configuring cells...")
     for loc, tile in tile_grid.items():
 
