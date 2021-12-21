@@ -1,16 +1,22 @@
 <?xml version='1.0' encoding='utf-8'?>
 <pb_type xmlns:xi="http://www.w3.org/2001/XInclude" num_pb="1" name="BIDIR_CELL">
   <blif_model>.subckt BIDIR_CELL</blif_model>
-  <input name="I_EN" num_pins="1"/>
-  <input name="I_PAD_$inp" num_pins="1"/>
-  <input name="O_DAT" num_pins="1"/>
-  <input name="O_EN" num_pins="1"/>
-  <output name="I_DAT" num_pins="1"/>
-  <output name="O_PAD_$out" num_pins="1"/>
-  <delay_constant in_port="I_EN" out_port="I_DAT" max="1e-10"/>
-  <delay_constant in_port="I_PAD_$inp" out_port="I_DAT" max="{iopath_IP_IZ}"/>
-  <delay_constant in_port="O_DAT" out_port="O_PAD_$out" max="{iopath_OQI_IP}"/>
-  <delay_constant in_port="O_EN" out_port="O_PAD_$out" max="{iopath_IE_IP}"/>
+  <input name="PAD_$inp" num_pins="1"/>
+  <input name="IE" num_pins="1"/>
+  <input name="OQI" num_pins="1"/>
+  <input name="OQE" num_pins="1"/>
+  <input name="IQE" num_pins="1"/>
+  <input name="IQC" num_pins="1"/>
+  <input name="IQR" num_pins="1"/>
+  <input name="INEN" num_pins="1"/>
+  <input name="IQIN" num_pins="1"/>
+  <output name="IZ" num_pins="1"/>
+  <output name="PAD_$out" num_pins="1"/>
+  <output name="IQZ" num_pins="1"/>
+  <delay_constant in_port="INEN" out_port="IZ" max="1e-10"/>
+  <delay_constant in_port="PAD_$inp" out_port="IZ" max="{iopath_IP_IZ}"/>
+  <delay_constant in_port="OQI" out_port="PAD_$out" max="{iopath_OQI_IP}"/>
+  <delay_constant in_port="IE" out_port="PAD_$out" max="{iopath_IE_IP}"/>
   <metadata>
     <meta name="fasm_params">INV.ESEL=ESEL
 INV.OSEL=OSEL

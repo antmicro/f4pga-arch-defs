@@ -1,14 +1,20 @@
 <models xmlns:xi="http://www.w3.org/2001/XInclude">
   <model name="BIDIR_CELL">
     <input_ports>
-      <port name="I_EN" combinational_sink_ports="I_DAT"/>
-      <port name="I_PAD_$inp" combinational_sink_ports="I_DAT"/>
-      <port name="O_DAT" combinational_sink_ports="O_PAD_$out"/>
-      <port name="O_EN" combinational_sink_ports="O_PAD_$out"/>
+      <port name="PAD_$inp" combinational_sink_ports="IZ"/>
+      <port name="IE" combinational_sink_ports="PAD_$out"/>
+      <port name="OQI" combinational_sink_ports="PAD_$out"/>
+      <port name="OQE"/>
+      <port name="IQE"/>
+      <port name="IQC"/>
+      <port name="IQR"/>
+      <port name="INEN" combinational_sink_ports="IZ"/>
+      <port name="IQIN"/>
     </input_ports>
     <output_ports>
-      <port name="I_DAT"/>
-      <port name="O_PAD_$out"/>
+      <port name="IZ"/>
+      <port name="IQZ"/>
+      <port name="PAD_$out"/>
     </output_ports>
   </model>
 </models>
