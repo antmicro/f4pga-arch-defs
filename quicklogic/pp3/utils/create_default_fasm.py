@@ -280,6 +280,16 @@ def main():
             )
             fasm.append(feature)
 
+        # Emit BIDIR cell features.
+        # FIXME: Having those features in the default bitstream will prevent
+        # a design from turning them off due to the lack of on/off feature
+        # pairs for their bits.
+        if "BIDIR" in tile_type.cells:
+            feature = "X{}Y{}.INTERFACE.BIDIR.INV.ESEL".format(loc.x, loc.y)
+            fasm.append(feature)
+            feature = "X{}Y{}.INTERFACE.BIDIR.INV.OSEL".format(loc.x, loc.y)
+            fasm.append(feature)
+
     # Write FASM
     print("Writing FASM file...")
     with open(args.fasm, "w") as fp:

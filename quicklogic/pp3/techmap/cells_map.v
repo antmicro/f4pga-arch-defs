@@ -35,7 +35,7 @@ module inpad(output Q, input P);
   end else begin
 
       BIDIR_CELL # (
-      .ESEL     (1'b0),
+      .ESEL     (1'b1),
       .OSEL     (1'b1),
       .FIXHOLD  (1'b0),
       .WPD      (1'b0),
@@ -52,7 +52,7 @@ module inpad(output Q, input P);
       .INEN     (1'b1),
       .IQIN     (1'b0),
       .IQR      (1'b0),
-      .IQC      (1'b0)
+      .IQC      (1'b1)
       );
 
   end endgenerate
@@ -90,7 +90,7 @@ module outpad(output P, input A);
       .IE       (1'b1),
       .OQI      (A),
       .OQE      (1'b0),
-      .IZ       (Q),
+      .IZ       (),
       .IQZ      (),
       .IQE      (1'b0),
       .INEN     (1'b0),
