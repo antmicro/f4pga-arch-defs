@@ -1347,8 +1347,14 @@ function(ADD_FPGA_TARGET)
   # ADD_FPGA_TARGET defines a FPGA build targetting a specific board.  By
   # default input files (SOURCES, TESTBENCH_SOURCES, INPUT_IO_FILE) will be
   # implicitly passed to ADD_FILE_TARGET. If EXPLICIT_ADD_FILE_TARGET is
-  # supplied, this behavior is supressed. When AUTO_ADD_FILE_TARGETS is specified
-  # file targets will be created only if they do not exist already.
+  # supplied, this behavior is supressed.
+  # When AUTO_ADD_FILE_TARGETS is specified file targets will be created only if
+  # they do not exist already. AUTO_ADD_FILE_TARGETS is useful when multiple
+  # test designs share the same source files and there is no immediate possibility
+  # for putting CMakeLists.txt files along with them to define targets for
+  # EXPLICIT_ADD_FILE_TARGET. This is used for example in QuickLogic tests,
+  # there is a separate submodule with test designs that are used by
+  # multiple architectures (pp3, qlf_k4n8).
   #
   # TOP is the name of the top-level module in the design.  If no supplied,
   # TOP is set to "top".
