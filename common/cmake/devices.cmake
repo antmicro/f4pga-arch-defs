@@ -1371,6 +1371,12 @@ function(ADD_FPGA_TARGET)
   # 	ASSERT_BLOCK_TYPES_ARE_USED	PB-CLOCK=1,PB-GMUX=1,PB-BIDIR=4
   # supported operators: =, <, <=, >, >=
   #
+  # ASSERT_TIMING enables tests that verify the timings of routed design
+  # against <timing_spec> which is a comma-separated list of
+  # relational expressions regarding design timing parameters, e.g:
+  # 	ASSERT_TIMING	fmax>=20.5
+  # supported operators: =, <, <=, >, >=
+  #
   # DEFINES is a list of environment variables to be defined during Yosys
   # invocation.
   #
