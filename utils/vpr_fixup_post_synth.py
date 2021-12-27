@@ -1,4 +1,13 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2021 The SymbiFlow Authors.
+#
+# Use of this source code is governed by a ISC-style
+# license that can be found in the LICENSE file or at
+# https://opensource.org/licenses/ISC
+#
+# SPDX-License-Identifier: ISC
 """
 A simple script that fixes up post-pnr verilog and SDF files from VPR:
 
@@ -16,6 +25,7 @@ One shortcoming of the script is that it may treat a decimal value of 10, 100
 etc. as binary. Fortunately decimal literals haven't been observed to appear
 in Verilog files written by VPR.
 """
+
 import argparse
 import os
 import re
