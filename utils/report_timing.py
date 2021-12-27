@@ -8,7 +8,13 @@
 # https://opensource.org/licenses/ISC
 #
 # SPDX-License-Identifier: ISC
-
+"""
+Uses parse_timing to extract timing information from VPR route log and
+reports it or verifies the information against expressions passed in
+--assert argument.
+It is used in ASSERT_TIMING test cases to catch any regressions to design
+implementation that would affect timing.
+"""
 import argparse
 import json
 import re

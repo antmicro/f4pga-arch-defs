@@ -19,7 +19,8 @@ A simple script that fixes up post-pnr verilog and SDF files from VPR:
    brackets. For example "(010101)" is converted into "(6'b010101)".
 
 When the option "--split-ports" is given the script also breaks all references
-to wide cell ports into references to individual pins.
+to wide cell ports into references to individual pins. Then it writes two
+verilog files: one with single-bit ports and second with merged ports.
 
 One shortcoming of the script is that it may treat a decimal value of 10, 100
 etc. as binary. Fortunately decimal literals haven't been observed to appear
