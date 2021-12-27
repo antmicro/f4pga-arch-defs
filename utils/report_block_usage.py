@@ -1,3 +1,21 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2021 The SymbiFlow Authors.
+#
+# Use of this source code is governed by a ISC-style
+# license that can be found in the LICENSE file or at
+# https://opensource.org/licenses/ISC
+#
+# SPDX-License-Identifier: ISC
+"""
+Uses parse_usage to extract block usage information from VPR pack log and
+reports it or verifies the information against expressions passed in
+--assert-usage argument.
+It is used in ASSERT_USAGE test cases to catch any regressions to design
+implementation that would affect block usage.
+"""
+
 import argparse
 import json
 import re
