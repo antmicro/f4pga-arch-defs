@@ -11,7 +11,11 @@
 """
 This script parses and then compares contents of two PCF files. If the
 constraints are identical exits with code 0. Otherwise prints parsed content
-of both files and exits with -1
+of both files and exits with -1. It is used to verify whether
+design constraints were correctly applied during the toolchain flow.
+fasm2bels for QuickLogic PP3 architecture can write PCF with actual
+IO locations as encoded in the bitstream. This is verified against
+the original PCF from the design.
 """
 import argparse
 
