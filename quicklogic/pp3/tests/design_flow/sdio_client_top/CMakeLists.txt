@@ -26,7 +26,7 @@ add_fpga_target(
   INPUT_IO_FILE jimbob4.pcf
   AUTO_ADD_FILE_TARGET
 
-  ASSERT_USAGE PB-CLOCK=1,PB-GMUX=1,PB-LOGIC<=600
+  ASSERT_BLOCK_TYPES_ARE_USED PB-CLOCK=1,PB-GMUX=1,PB-LOGIC<=600
 )
 
 add_dependencies(all_pp3_tests_bit   sdio_client_top-ql-jimbob4-pp3_bit)
@@ -59,7 +59,7 @@ add_fpga_target(
   INPUT_IO_FILE chandalar.pcf
   AUTO_ADD_FILE_TARGET
 
-  ASSERT_USAGE PB-CLOCK=1,PB-GMUX=1,PB-LOGIC<=600
+  ASSERT_BLOCK_TYPES_ARE_USED PB-CLOCK=1,PB-GMUX=1,PB-LOGIC<=600
 )
 
 

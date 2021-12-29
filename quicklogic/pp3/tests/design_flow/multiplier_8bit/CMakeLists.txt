@@ -9,7 +9,7 @@ add_fpga_target(
   INPUT_IO_FILE pd64.pcf
   AUTO_ADD_FILE_TARGET
 
-  ASSERT_USAGE PB-LOGIC<=105
+  ASSERT_BLOCK_TYPES_ARE_USED PB-LOGIC<=105
 )
 
 add_dependencies(all_pp3_tests_bit   multiplier_8bit-ql-pd64_bit)
@@ -26,7 +26,7 @@ add_fpga_target(
   INPUT_IO_FILE chandalar.pcf
   AUTO_ADD_FILE_TARGET
 
-  ASSERT_USAGE PB-LOGIC<=105
+  ASSERT_BLOCK_TYPES_ARE_USED PB-LOGIC<=105
 )
 
 

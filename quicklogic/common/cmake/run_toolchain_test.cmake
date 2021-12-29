@@ -48,8 +48,8 @@ set(TIMING_UTIL ${PYTHONPATH}/report_timing.py)
 set(PACK_LOG  ${BUILD_DIR}/pack.log)
 set(ROUTE_LOG ${BUILD_DIR}/route.log)
 
-if (NOT "${ASSERT_USAGE}" STREQUAL "")
-    run("PYTHONPATH=${PYTHONPATH} python3 ${USAGE_UTIL} ${PACK_LOG} --assert_usage ${ASSERT_USAGE}")
+if (NOT "${ASSERT_BLOCK_TYPES_ARE_USED}" STREQUAL "")
+    run("PYTHONPATH=${PYTHONPATH} python3 ${USAGE_UTIL} ${PACK_LOG} --assert_usage ${ASSERT_BLOCK_TYPES_ARE_USED}")
 endif ()
 
 if (NOT "${ASSERT_TIMING}" STREQUAL "")

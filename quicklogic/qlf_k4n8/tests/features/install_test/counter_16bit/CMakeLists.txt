@@ -7,6 +7,6 @@ add_binary_toolchain_test(
 
     ENABLE_SIMULATION
 
-    ASSERT_USAGE  io=19,clb=6
+    ASSERT_BLOCK_TYPES_ARE_USED  io=19,clb=6
     ASSERT_TIMING fmax>=156.0
 )
