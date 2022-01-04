@@ -2169,8 +2169,13 @@ function(ADD_FPGA_TARGET)
   # -------------------------------------------------------------------------
   set(ROUTE_LOG ${OUT_LOCAL}/route.log)
 
+  if(NOT "${ADD_FPGA_TARGET_ASSERT_TIMING}" STREQUAL "")
+      set(TIMING_SUMMARY ${OUT_LOCAL}/timing_summary.json)
+      list(APPEND VPR_ARGS --write_timing_summary ${TIMING_SUMMARY})
+  endif()
+
   add_custom_command(
-    OUTPUT ${OUT_ROUTE} ${ROUTE_LOG}
+    OUTPUT ${OUT_ROUTE} ${ROUTE_LOG} ${TIMING_SUMMARY}
     DEPENDS ${OUT_NET} ${OUT_PLACE} ${VPR_DEPS}
     COMMAND ${VPR_CMD} ${OUT_EBLIF} ${VPR_ARGS} --route
     COMMAND
@@ -2200,8 +2205,8 @@ function(ADD_FPGA_TARGET)
           ${NAME}_assert_timing
           COMMAND ${PYTHON3} ${TIMING_UTIL}
             --assert \"${ADD_FPGA_TARGET_ASSERT_TIMING}\"
-            ${ROUTE_LOG}
-          DEPENDS ${PYTHON3} ${TIMING_UTIL} ${ROUTE_LOG}
+            ${TIMING_SUMMARY}
+          DEPENDS ${PYTHON3} ${TIMING_UTIL} ${TIMING_SUMMARY}
           )
   endif()
 
