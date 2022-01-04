@@ -9,7 +9,7 @@
 #
 # SPDX-License-Identifier: ISC
 """
-Uses parse_timing to extract timing information from VPR route log and
+Extracts timing information from VPR timing_summary.json and
 reports it or verifies the information against expressions passed in
 --assert argument.
 It is used in ASSERT_TIMING test cases to catch any regressions to design
@@ -19,8 +19,6 @@ import argparse
 import json
 import re
 
-from lib.parse_timing import parse_timing
-
 ASSERT_SPEC = re.compile(
     r"(?P<param>[A-Za-z0-9_-]+)(?P<op>=|<|<=|>=|>)(?P<val>[0-9.-]+)"
 )
@@ -28,9 +26,9 @@ ASSERT_SPEC = re.compile(
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Converts VPR route.log into timing report data"
+        description="Converts VPR timing_summary.json into timing report data"
     )
-    parser.add_argument('route_log')
+    parser.add_argument('timing_summary')
     parser.add_argument(
         '--assert',
         dest='assert_timing',
@@ -45,7 +43,8 @@ def main():
 
     args = parser.parse_args()
 
-    timing = parse_timing(args.route_log)
+    with open(args.timing_summary) as f:
+        timing = json.load(f)
 
     if args.do_print:
         print(json.dumps(timing, indent=2))
