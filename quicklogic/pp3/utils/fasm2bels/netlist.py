@@ -45,6 +45,10 @@ class Netlist:
             self.connections[new_name] = self.connections[name]
             del self.connections[name]
 
+            if name in self.ports:
+                self.ports[new_name] = self.ports[name]
+                del self.ports[name]
+
         def is_leaf(self):
             """
             Returns true if the cell is a leaf (does not drive anything)
@@ -133,6 +137,8 @@ class Netlist:
 
         # Prune nets
         for net, count in counts.items():
+            if net in (None, "", "1'b0", "1'b1", "1'bx"):
+                continue
             if count == 1:
                 self.remove_net(net)
 
@@ -245,6 +251,10 @@ class Netlist:
 
             inp = cell.connections["i"]
             out = cell.connections["o"]
+            assert out is not None, cell_name
+
+            if not inp:
+                inp = "1'bx"
 
             code += "assign {} = {};\n".format(out, inp);
 

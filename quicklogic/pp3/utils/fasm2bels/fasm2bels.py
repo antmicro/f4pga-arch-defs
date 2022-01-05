@@ -128,29 +128,21 @@ class Fasm2Bels:
             if not dst_cell_name.startswith("QMUX") or dst_pin != "QCLKIN0":
                 continue
 
-            src_cell_name = "{}{}".format(
-                connection.src.pin.cell, connection.src.pin.index
-            )
-            if not src_cell_name.startswith("GMUX"):
+            if connection.src.pin.cell != "GMUX":
                 continue
 
             # Add two new connections for QCLKIN1 and QCLKIN2.
-            # GMUX connections are already spread along the Z axis so the Z
-            # coordinate indicates the GMUX cell index.
-            gmux_base = connection.src.loc.z
+            gmux_base = connection.src.pin.index
             for i in [1, 2]:
                 gmux_idx = (gmux_base + i) % 5
-
-                gmux_pin = TilePin(cell="GMUX", index=gmux_idx, pin="IZ") #0
-                if connection.src.type != ConnectionType.TILE:
-                    gmux_pin = str(gmux_pin)
+                gmux_pin = TilePin(cell="GMUX", index=gmux_idx, pin="IZ")
 
                 c = Connection(
                     src=ConnectionLoc(
                         loc=Loc(
                             x=connection.src.loc.x,
                             y=connection.src.loc.y,
-                            z=0 #gmux_idx
+                            z=0
                         ),
                         pin=gmux_pin,
                         type=connection.src.type
@@ -268,6 +260,10 @@ class Fasm2Bels:
 
             loc = Loc(x=int(match.group("x")), y=int(match.group("y")), z=0)
             typ = match.group("type").upper()
+            name = match.group("feature")
+
+            if typ.startswith("CAND"):
+                name = "{}.{}".format(typ, name)
 
             if typ != "ROUTING":
                 typ = "CONFIG"
@@ -280,12 +276,12 @@ class Fasm2Bels:
 
             if typ == "CONFIG":
                 self.features[loc][typ].append(self.ConfigFeature(
-                    name=match.group("feature"),
+                    name=name,
                     value=line.set_feature.value,
                 ))
             elif typ == "ROUTING":
                 self.features[loc][typ].append(
-                    self.parse_routing_feature(match.group("feature"))
+                    self.parse_routing_feature(name)
                 )
 
     def get_features_at_locs(self, locs, typ="CONFIG"):
@@ -748,7 +744,8 @@ class Fasm2Bels:
             # Examine the IS0 connection
             is0 = cell.connections.get("IS0", "")
             if not is0:
-                print("", "WARNING: Cell '{}' has the 'IS0' input unconnected, prunning...".format(cell.name))
+                print("", "ERROR: '{}' has the 'IS0' input unconnected".format(cell.name))
+                print("", "       The cell will be removed making the clock route discontinuous!")
 
                 self.netlist.remove_cell(cell_name, True)
                 continue
@@ -773,7 +770,11 @@ class Fasm2Bels:
 
             # Dynamic
             else:
-                raise Exception("{} uses dynamic selection which is not supported yet".format(cell.name))
+                print("", "ERROR: '{}' uses dynamic selection which is not supported yet".format(cell.name))
+                print("", "       The cell will be removed making the clock route discontinuous!")
+
+                self.netlist.remove_cell(cell_name, True)
+                continue
 
     def handle_qmux_cells(self):
 
@@ -783,8 +784,60 @@ class Fasm2Bels:
             if cell.type != "QMUX":
                 continue
 
-            # FIXME:
-            #del self.netlist.cells[cell_name]
+            # The QMUX is unused, remove it completely
+            if not cell.connections.get("IZ", "") and \
+               not cell.connections.get("QCLKIN0", "") and \
+               not cell.connections.get("QCLKIN1", "") and \
+               not cell.connections.get("QCLKIN2", ""):
+                self.netlist.remove_cell(cell_name, True)
+                continue
+
+            # Get location(s)
+            locs = self.placement[cell_name]
+            assert len(locs) == 1, (cell_name, locs)
+            loc = next(iter(locs))
+
+            # Get features
+            features = {f.name: f.value for f in self.get_features_at_locs([loc])}
+
+            # Examine the IS0 and IS1 connection
+            is0 = cell.connections.get("IS0", "")
+            is1 = cell.connections.get("IS1", "")
+
+            if not is0:
+                print("", "ERROR: '{}' has the 'IS0' input unconnected".format(cell.name))
+            elif is0 not in ["1'b0", "1'b1"]:
+                print("", "ERROR: '{}' uses dynamic selection which is not supported yet".format(cell.name))
+
+            if not is1:
+                print("", "ERROR: '{}' has the 'IS1' input unconnected".format(cell.name))
+            elif is1 not in ["1'b0", "1'b1"]:
+                print("", "ERROR: '{}' uses dynamic selection which is not supported yet".format(cell.name))
+
+            if is0 not in ["1'b0", "1'b1"] or is1 not in ["1'b0", "1'b1"]:
+                print("", "       The cell will be removed making the clock route discontinuous!")
+
+                self.netlist.remove_cell(cell_name, True)
+                continue
+
+            # Decode selection, get the active input port
+            sel = int(is1 == "1'b1") + 2 * int(is0 == "1'b1")
+            inp = {
+                0: "QCLKIN0",
+                1: "QCLKIN1",
+                2: "QCLKIN2",
+                3: "HSCKIN",
+            }[sel]
+
+            print(cell_name, sel, cell.connections)
+
+            # Convert to a buffer
+            inet = cell.connections[inp]
+            onet = cell.connections["IZ"]
+
+            cell.ports = {"i": PinDirection.INPUT, "o": PinDirection.OUTPUT}
+            cell.connections = {"i": inet, "o": onet}
+            cell.type = "$buf"
 
     def handle_cand_cells(self):
 
@@ -807,8 +860,7 @@ class Fasm2Bels:
                 loc = Loc(loc.x, loc.y + 1, 0)
 
             # Get features
-            features = {f.name: f.value for f in self.get_features_at_locs(loc)}
-            print(cand_name, loc, features)
+            features = {f.name: f.value for f in self.get_features_at_locs([loc])}
 
             # Filter features
             features = {k: v for k, v in features.items() \
@@ -818,7 +870,8 @@ class Fasm2Bels:
             enjoint = "{}.I_enjoint".format(cand_name) in features
 
             # TODO: Do not support dynamically enabled CANDs for now.
-            assert enjoint is False, "Dynamically enabled CANDs are not supported yet"
+            if enjoint != False:
+                raise self.Exception("Dynamically enabled CANDs are not supported yet")
 
             # Statically disabled, remove
             if hilojoint is False:
