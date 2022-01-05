@@ -45,15 +45,15 @@ set(PYTHONPATH ${SYMBIFLOW_DIR}/utils)
 set(USAGE_UTIL  ${PYTHONPATH}/report_block_usage.py)
 set(TIMING_UTIL ${PYTHONPATH}/report_timing.py)
 
-set(PACK_LOG  ${BUILD_DIR}/pack.log)
-set(ROUTE_LOG ${BUILD_DIR}/route.log)
+set(BLOCK_USAGE  ${BUILD_DIR}/block_usage.json)
+set(TIMING_SUMMARY ${BUILD_DIR}/timing_summary.json)
 
 if (NOT "${ASSERT_BLOCK_TYPES_ARE_USED}" STREQUAL "")
-    run("PYTHONPATH=${PYTHONPATH} python3 ${USAGE_UTIL} ${PACK_LOG} --assert_usage ${ASSERT_BLOCK_TYPES_ARE_USED}")
+    run("PYTHONPATH=${PYTHONPATH} python3 ${USAGE_UTIL} ${BLOCK_USAGE} --assert_usage ${ASSERT_BLOCK_TYPES_ARE_USED}")
 endif ()
 
 if (NOT "${ASSERT_TIMING}" STREQUAL "")
-    run("PYTHONPATH=${PYTHONPATH} python3 ${TIMING_UTIL} ${ROUTE_LOG} --assert ${ASSERT_TIMING}")
+    run("PYTHONPATH=${PYTHONPATH} python3 ${TIMING_UTIL} ${TIMING_SUMMARY} --assert ${ASSERT_TIMING}")
 endif ()
 
 # Check if IO constraints has been correctly applied. This is done by verifying
