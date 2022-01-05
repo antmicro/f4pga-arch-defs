@@ -5,7 +5,7 @@ add_binary_toolchain_test(
     PCF       chandalar.pcf
     EXTRA_ARGS "-dump post_verilog"
 
-    ASSERT_USAGE PB-ASSP=1,PB-GMUX=1
+    ASSERT_BLOCK_TYPES_ARE_USED PB-ASSP=1,PB-GMUX=1
     CHECK_CONSTRAINTS
 
     ASSERT_EXISTS

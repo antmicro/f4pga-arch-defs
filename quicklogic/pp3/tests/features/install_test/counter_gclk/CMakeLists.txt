@@ -6,7 +6,7 @@ add_binary_toolchain_test(
     EXTRA_ARGS "-dump post_verilog"
 
     CHECK_CONSTRAINTS
-    ASSERT_USAGE  PB-CLOCK=1,PB-GMUX=1,PB-BIDIR=4
+    ASSERT_BLOCK_TYPES_ARE_USED  PB-CLOCK=1,PB-GMUX=1,PB-BIDIR=4
     ASSERT_TIMING fmax>56.0
 
     ASSERT_EXISTS
