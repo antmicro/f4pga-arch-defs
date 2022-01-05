@@ -24,7 +24,7 @@ foreach(FIELDS ${CONFIGURATIONS})
       SOURCES ${SOURCES}
       INPUT_IO_FILE chandalar.pcf
       EXPLICIT_ADD_FILE_TARGET
-      ASSERT_USAGE PB-CLOCK=2,PB-GMUX=2,PB-RAM=${RAM_COUNT}
+      ASSERT_BLOCK_TYPES_ARE_USED PB-CLOCK=2,PB-GMUX=2,PB-RAM=${RAM_COUNT}
     )
 
     add_dependencies(all_eos_s3_tests_regression regression-ram_${NAME}-ql-chandalar_assert_usage)

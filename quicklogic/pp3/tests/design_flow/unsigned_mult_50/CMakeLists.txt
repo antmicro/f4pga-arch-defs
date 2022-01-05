@@ -8,7 +8,7 @@ add_fpga_target(
     ${DESIGN_DIR}/unsigned_mult_50.v
   AUTO_ADD_FILE_TARGET
 
-  ASSERT_USAGE PB-LOGIC<=908
+  ASSERT_BLOCK_TYPES_ARE_USED PB-LOGIC<=908
 )
 
 # FIXME: The EOS-S3 fabric does not provide sufficient IO count

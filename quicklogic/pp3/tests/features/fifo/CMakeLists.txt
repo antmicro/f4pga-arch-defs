@@ -32,7 +32,7 @@ foreach(FIELDS ${CONFIGURATIONS})
       SOURCES ${SOURCES}
       INPUT_IO_FILE chandalar${PCF_SUFFIX}.pcf
       EXPLICIT_ADD_FILE_TARGET
-      ASSERT_USAGE PB-CLOCK=${NUM_CLK},PB-GMUX=${NUM_CLK},PB-RAM=${RAM_COUNT}
+      ASSERT_BLOCK_TYPES_ARE_USED PB-CLOCK=${NUM_CLK},PB-GMUX=${NUM_CLK},PB-RAM=${RAM_COUNT}
     )
 
     add_dependencies(all_eos_s3_tests_regression regression-fifo_${TYPE}${NAME}-ql-chandalar_assert_usage)
