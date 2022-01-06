@@ -83,16 +83,28 @@ module scff (D, DI, clk, reset, Q); // QL_IOFF
     input  [0:0] DI;
     input  [0:0] clk;
     input  [0:0] reset;
-    output [0:0] Q;
+    output reg [0:0] Q;
 
-    scff_1 #(.MODE(MODE)) scff_1 (
-        .D      (D),
-        .DI     (DI),
-        .clk    (clk),
-        .preset (1'b1),
-        .reset  (reset),
-        .Q      (Q)
-    );
+    initial Q <= 1'b0;
+
+    // Clock inverter
+    wire ck = (MODE == 1'b1) ? clk : !clk;
+
+    // FLip-flop behavioral model
+    always @(posedge ck or negedge reset) begin
+        if      (!reset)  Q <= 1'b0;
+        else              Q <= D;
+    end
+
+    // Timing paths. The values are dummy and are intended to be replaced by
+    // ones from a SDF file during simulation.
+    specify
+      (posedge clk => (Q +: D)) = 0;
+      $setuphold(posedge clk, D, 0, 0);
+      $setuphold(posedge clk, DI, 0, 0);
+      $setuphold(posedge clk, reset, 0, 0);
+      $recrem(posedge reset, posedge clk, 0, 0);
+    endspecify
 
 endmodule
 
@@ -125,6 +137,9 @@ module scff_1 (D, DI, clk, preset, reset, Q); // QL_FF
     specify
       (posedge clk => (Q +: D)) = 0;
       $setuphold(posedge clk, D, 0, 0);
+      $setuphold(posedge clk, DI, 0, 0);
+      $setuphold(posedge clk, preset, 0, 0);
+      $setuphold(posedge clk, reset, 0, 0);
       $recrem(posedge reset, posedge clk, 0, 0);
       $recrem(posedge preset, posedge clk, 0, 0);
     endspecify
