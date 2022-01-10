@@ -2,6 +2,7 @@
 import argparse
 import re
 import pickle
+import json
 
 from collections import namedtuple, defaultdict
 from pathlib import Path
@@ -524,7 +525,7 @@ class Fasm2Bels:
             return (cell, name, pin)
 
         # Identify all cell instances, their placement and port connections
-        self.placement = defaultdict(set)
+        placement = defaultdict(set)
         connections = defaultdict(dict) 
         for eps in self.global_routes:
 
@@ -546,7 +547,7 @@ class Fasm2Bels:
                 typ, name, pin = get_type_name_pin(ep)
 
                 # Add the instance placement and connection
-                self.placement[name].add(ep.loc)
+                placement[name].add(ep.loc)
                 connections[(typ, name)][pin] = net
 
         # Add instances
@@ -565,6 +566,10 @@ class Fasm2Bels:
 
                 cell.connections[port] = net
 
+            # Set metadata
+            cell.metadata["locs"] = list(placement[instance])
+            cell.metadata["phy_type"] = typ
+
     def handle_logic_cells(self):
         """
         Converts LOGIC cells to logic_cell_macro. Prunes powered-down cells.
@@ -576,7 +581,7 @@ class Fasm2Bels:
             if cell.type != "LOGIC":
                 continue
 
-            locs = self.placement[cell_name]
+            locs = cell.metadata["locs"]
             assert len(locs) == 1, (cell_name, locs)
             features = {f.name: f.value for f in self.get_features_at_locs(locs)}
 
@@ -620,7 +625,7 @@ class Fasm2Bels:
             if cell.type != "BIDIR":
                 continue
 
-            locs = self.placement[cell_name]
+            locs = cell.metadata["locs"]
             assert len(locs) == 1, (cell_name, locs)
             features = {f.name: f.value for f in self.get_features_at_locs(locs)}
 
@@ -674,10 +679,11 @@ class Fasm2Bels:
                 cell.ports["IP"] = PinDirection.OUTPUT
 
             # Add ports controlling inverters
+            # FIXME: What is the correct polarity?
             cell.connections["ESEL"] = \
-                "1'b0" if "BIDIR.INV.ESEL" in features else "1'b1"
+                "1'b1" if "BIDIR.INV.ESEL" in features else "1'b0"
             cell.connections["OSEL"] = \
-                "1'b0" if "BIDIR.INV.OSEL" in features else "1'b1"
+                "1'b1" if "BIDIR.INV.OSEL" in features else "1'b0"
 
             cell.connections["FIXHOLD"] = \
                 "1'b1" if "BIDIR.INV.FIXHOLD" in features else "1'b0"
@@ -699,7 +705,7 @@ class Fasm2Bels:
             if cell.type != "CLOCK":
                 continue
 
-            locs = self.placement[cell_name]
+            locs = cell.metadata["locs"]
             assert len(locs) == 1, (cell_name, locs)
             features = {f.name: f.value for f in self.get_features_at_locs(locs)}
 
@@ -793,7 +799,7 @@ class Fasm2Bels:
                 continue
 
             # Get location(s)
-            locs = self.placement[cell_name]
+            locs = cell.metadata["locs"]
             assert len(locs) == 1, (cell_name, locs)
             loc = next(iter(locs))
 
@@ -829,8 +835,6 @@ class Fasm2Bels:
                 3: "HSCKIN",
             }[sel]
 
-            print(cell_name, sel, cell.connections)
-
             # Convert to a buffer
             inet = cell.connections[inp]
             onet = cell.connections["IZ"]
@@ -848,7 +852,7 @@ class Fasm2Bels:
                 continue
 
             # Get location(s)
-            locs = self.placement[cell_name]
+            locs = cell.metadata["locs"]
             assert len(locs) == 1, (cell_name, locs)
             loc = next(iter(locs))
 
@@ -903,6 +907,9 @@ class Fasm2Bels:
             if not self.netlist.prune_leaf_cells():
                 break
 
+        # Remove buffer cells
+        #self.netlist.collapse_buffers()
+
     def run(self, fasm_lines, pcf_data=None):
         """
         Main fasm2bels flow entry procedure
@@ -945,6 +952,23 @@ class Fasm2Bels:
             code += "place {} {}\n".format(key, constraints["loc"])
 
         return code
+
+    def dump_placement(self):
+        """
+        Generates a JSON dict structure with placement information
+        """
+
+        cells = {c.name : {
+            "type": c.metadata["phy_type"],
+            "locs": c.metadata["locs"],
+            } for c in self.netlist.cells.values()
+        }
+
+        root = {
+            "cells": cells,
+        }
+
+        return root
 
 # =============================================================================
 
@@ -1028,10 +1052,17 @@ def main():
         required=False,
         help="Output PCF file"
     )
-    parser.add_argument("--output-qcf",
+    parser.add_argument(
+        "--output-qcf",
         type=Path,
         required=False,
         help="Output QCF file"
+    )
+    parser.add_argument(
+        "--output-placement",
+        type=Path,
+        required=False,
+        help="Write decoded placement data to a JSON file"
     )
 
     args = parser.parse_args()
@@ -1113,6 +1144,10 @@ def main():
     if args.output_qcf:
         with open(args.output_qcf, 'w') as fp:
             fp.write(f2b.dump_qcf())
+
+    if args.output_placement:
+        with open(args.output_placement, 'w') as fp:
+            json.dump(f2b.dump_placement(), fp, sort_keys=True, indent=2)
 
 if __name__ == "__main__":
     main()
