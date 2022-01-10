@@ -142,12 +142,12 @@ function(DEFINE_QL_TOOLCHAIN_TARGET)
 
   if("${FAMILY}" STREQUAL "pp3")
 
-    install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/pp3/utils/fasm2bels.py
-      DESTINATION bin/python
+    install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/pp3/utils/fasm2bels/fasm2bels.py
+      DESTINATION bin/python/fasm2bels
       PERMISSIONS WORLD_EXECUTE WORLD_READ OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ)
 
-    install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/pp3/utils/verilogmodule.py
-      DESTINATION bin/python
+    install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/pp3/utils/fasm2bels/netlist.py
+      DESTINATION bin/python/fasm2bels
       PERMISSIONS WORLD_READ OWNER_WRITE OWNER_READ GROUP_READ)
 
     install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/pp3/utils/connections.py
