@@ -24,6 +24,25 @@ set(VPR_ARCH_ARGS "\
     --absorb_buffer_luts off "
 )
 
+# copy yosys cells_sim.v to techmap directory and comment out includes
+set(YOSYS_CELLS_SIM ${YOSYS_DATADIR}/quicklogic/${FAMILY_NAME}/cells_sim.v)
+set(YOSYS_CELLS_SIM_LOCAL techmap/yosys_cells_sim.v)
+get_file_target(YOSYS_CELLS_SIM_TARGET ${YOSYS_CELLS_SIM})
+if (NOT TARGET ${YOSYS_CELLS_SIM_TARGET})
+  add_file_target(FILE ${YOSYS_CELLS_SIM} ABSOLUTE)
+endif ()
+
+SET(SED_ARGS -i \"s\/\^\\\`include\/\\\/\\\/\\\`include\/\" ${YOSYS_CELLS_SIM_LOCAL})
+add_custom_command(
+  OUTPUT ${YOSYS_CELLS_SIM_LOCAL}
+  COMMAND ${CMAKE_COMMAND} -E copy
+	  ${YOSYS_CELLS_SIM}
+	  ${YOSYS_CELLS_SIM_LOCAL}
+  COMMAND sed ${SED_ARGS}
+  DEPENDS ${YOSYS_CELLS_SIM_TARGET}
+)
+add_file_target(FILE ${YOSYS_CELLS_SIM_LOCAL} GENERATED)
+
 # Define the architecture
 quicklogic_define_qlf_arch(
   FAMILY   ${FAMILY}

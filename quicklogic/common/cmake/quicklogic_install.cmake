@@ -189,7 +189,7 @@ function(DEFINE_QL_TOOLCHAIN_TARGET)
           FILES_MATCHING PATTERN *.v)
 
   # install cells_sim.v from yosys plugins
-  if ("${FAMILY}" STREQUAL "pp3")
+  if ("${FAMILY}" STREQUAL "pp3" OR "${FAMILY}" STREQUAL "qlf_k4n8")
     set(YOSYS_CELLS_SIM_LOCAL "techmap/yosys_cells_sim.v")
     get_file_target(YOSYS_CELLS_SIM_TARGET ${YOSYS_CELLS_SIM_LOCAL})
     get_file_location(YOSYS_CELLS_SIM_LOCAL ${YOSYS_CELLS_SIM_LOCAL})
