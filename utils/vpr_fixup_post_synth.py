@@ -159,6 +159,9 @@ def merge_verilog_ports(code):
         Creates single multi-bit port definition
         """
         base = match.group("base")
+        # Do not merge wires that are not top module ports
+        if base not in to_merge.keys():
+            return match.group(0)
         index = match.group("index")
         trailing_ws = match.group(0)[-1]
         port_usage = "{}[{}]{}".format(base, index, trailing_ws)
