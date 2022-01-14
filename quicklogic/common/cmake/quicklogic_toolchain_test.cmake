@@ -82,15 +82,15 @@ function(ADD_BINARY_TOOLCHAIN_TEST)
   if("${DIRECTIVE}" STREQUAL "compile")
     list(APPEND ASSERT_EXISTS "${BUILD_DIR}/top.net")
     list(APPEND ASSERT_EXISTS "${BUILD_DIR}/top.place")
-    list(APPEND ASSERT_EXISTS "${BUILD_DIR}/top.fasm")
-    list(APPEND ASSERT_EXISTS "${BUILD_DIR}/top.bit")
   endif()
 
-  # qlf* architectures use repacker hence the "top.route" name is
-  # different.
+  # qlf* architectures use repacker hence the "top.route" name is different.
+  # It also don't support fasm and bitstream generation yet
   if("${DEVICE}" MATCHES "qlf_.*")
     list(APPEND ASSERT_EXISTS "${BUILD_DIR}/top.repacked.route")
   else()
+    list(APPEND ASSERT_EXISTS "${BUILD_DIR}/top.fasm")
+    list(APPEND ASSERT_EXISTS "${BUILD_DIR}/top.bit")
     list(APPEND ASSERT_EXISTS "${BUILD_DIR}/top.route")
   endif()
 
