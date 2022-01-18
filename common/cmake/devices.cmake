@@ -161,9 +161,6 @@ function(DEFINE_ARCH)
   # * OUT_BITSTREAM - Input path to bitstream.
   # * OUT_BIT_VERILOG - Output path to verilog version of bitstream.
   #
-  # FIXUP_POST_SYNTHESIS_EXTRA_ARGS allows to provide extra arguments for
-  # the utils/vpr_fixup_post_synth.py script.
-  #
   set(options
     NO_PLACE_CONSTR
     NO_PINS
@@ -2284,34 +2281,17 @@ function(ADD_FPGA_TARGET)
 
   # Generate analysis.
   #-------------------------------------------------------------------------
-  set(FIXUP_POST_SYNTHESIS ${symbiflow-arch-defs_SOURCE_DIR}/utils/vpr_fixup_post_synth.py)
-
-  get_target_property(FIXUP_POST_SYNTHESIS_EXTRA_ARGS ${ARCH} FIXUP_POST_SYNTHESIS_EXTRA_ARGS)
-  if (NOT "${FIXUP_POST_SYNTHESIS_EXTRA_ARGS}" MATCHES ".*NOTFOUND" AND NOT "${FIXUP_POST_SYNTHESIS_EXTRA_ARGS}" STREQUAL "")
-    string(CONFIGURE ${FIXUP_POST_SYNTHESIS_EXTRA_ARGS} FIXUP_POST_SYNTHESIS_EXTRA_ARGS_FOR_TARGET)
-    separate_arguments(
-      FIXUP_POST_SYNTHESIS_EXTRA_ARGS_FOR_TARGET_LIST UNIX_COMMAND ${FIXUP_POST_SYNTHESIS_EXTRA_ARGS_FOR_TARGET}
-    )
-  else()
-    set(FIXUP_POST_SYNTHESIS_EXTRA_ARGS_FOR_TARGET_LIST)
-  endif()
 
   set(OUT_ANALYSIS ${OUT_LOCAL}/analysis.log)
   set(OUT_POST_SYNTHESIS_V ${OUT_LOCAL}/${TOP}_post_synthesis.v)
   set(OUT_POST_SYNTHESIS_BLIF ${OUT_LOCAL}/${TOP}_post_synthesis.blif)
   set(OUT_POST_SYNTHESIS_SDF ${OUT_LOCAL}/${TOP}_post_synthesis.sdf)
   add_custom_command(
-    OUTPUT ${OUT_ANALYSIS} ${OUT_POST_SYNTHESIS_V} ${OUT_POST_SYNTHESIS_BLIF} ${OUT_POST_SYNTHESIS_SDF}
-    DEPENDS ${OUT_ROUTE} ${VPR_DEPS} ${PYTHON3} ${FIXUP_POST_SYNTHESIS}
+    OUTPUT ${OUT_ANALYSIS}
+    DEPENDS ${OUT_ROUTE} ${VPR_DEPS} ${PYTHON3}
     COMMAND ${VPR_CMD} ${OUT_EBLIF} ${VPR_ARGS} --analysis --gen_post_synthesis_netlist on
     COMMAND ${CMAKE_COMMAND} -E copy ${OUT_LOCAL}/vpr_stdout.log
         ${OUT_LOCAL}/analysis.log
-    COMMAND ${PYTHON3} ${FIXUP_POST_SYNTHESIS}
-        --vlog-in ${OUT_POST_SYNTHESIS_V}
-        --vlog-out ${OUT_POST_SYNTHESIS_V}
-        --sdf-in ${OUT_POST_SYNTHESIS_SDF}
-        --sdf-out ${OUT_POST_SYNTHESIS_SDF}
-        ${FIXUP_POST_SYNTHESIS_EXTRA_ARGS_FOR_TARGET_LIST}
     WORKING_DIRECTORY ${OUT_LOCAL}
     )
   add_custom_target(${NAME}_analysis DEPENDS ${OUT_ANALYSIS})
