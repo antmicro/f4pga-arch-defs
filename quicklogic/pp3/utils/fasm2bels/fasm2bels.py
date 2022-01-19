@@ -1056,7 +1056,7 @@ class Fasm2Bels:
 
         cells = {c.name : {
             "type": c.metadata["phy_type"],
-            "locs": c.metadata["locs"],
+            "locs": sorted([(l.x, l.y) for l in c.metadata["locs"]]),
             } for c in self.netlist.cells.values()
         }
 
