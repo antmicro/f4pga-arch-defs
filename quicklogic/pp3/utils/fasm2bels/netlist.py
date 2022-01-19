@@ -27,6 +27,7 @@ class Netlist:
 
             self.attributes = {}
             self.parameters = {}
+            self.metadata = {}
 
             self.connections = {}
 
@@ -159,6 +160,36 @@ class Netlist:
             self.remove_cell(cell_name, True)
 
         return True
+
+    def collapse_buffers(self):
+        """
+        Removes all $buf cells and replaces their output nets with input nets
+        in other cells
+        """
+
+        # Loop until there is no more $buf cells
+        while True:
+
+            # Process buffers, replace their output nets with input nets
+            cells_to_prune = []
+            for name, cell in self.cells.items():
+
+                if cell.type != "$buf":
+                    continue
+
+                out = cell.connections["o"]
+                inp = cell.connections["i"]
+                self.rename_net(out, inp)
+
+                cells_to_prune.append(name)
+
+            # Terminate
+            if not cells_to_prune:
+                break
+
+            # Remove the buffer cells
+            for cell_name in cells_to_prune:
+                self.remove_cell(cell_name)
 
     def dump_verilog(self):
         """
