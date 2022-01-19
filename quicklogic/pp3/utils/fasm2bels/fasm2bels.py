@@ -833,14 +833,16 @@ class Fasm2Bels:
             is0_hi = "1'b1"
             is0_lo = "1'b0"
 
-            # Static clock from "clock", implicit pass-through
+            # Static clock from "clock", convert to a buffer
             if is0 == is0_lo:
 
-                inp_net = cell.connections["IP"]
-                out_net = cell.connections["IZ"]
-                self.netlist.remove_cell(cell_name)
+                inet = cell.connections["IP"]
+                onet = cell.connections["IZ"]
 
-                self.netlist.rename_net(out_net, inp_net)
+                cell.ports = {"i": PinDirection.INPUT, "o": PinDirection.OUTPUT}
+                cell.connections = {"i": inet, "o": onet}
+                cell.type = "$buf"
+                cell.metadata["comment"] = cell.name
 
             # Static clock from routing. Add an instance of gclkbuff
             elif is0 == is0_hi:
