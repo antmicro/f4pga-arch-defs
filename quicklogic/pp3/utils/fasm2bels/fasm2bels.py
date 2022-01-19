@@ -850,6 +850,7 @@ class Fasm2Bels:
             cell.ports = {"i": PinDirection.INPUT, "o": PinDirection.OUTPUT}
             cell.connections = {"i": inet, "o": onet}
             cell.type = "$buf"
+            cell.metadata["comment"] = cell.name
 
     def handle_cand_cells(self):
 
@@ -896,6 +897,7 @@ class Fasm2Bels:
             cell.rename_port("IC", "i")
             cell.rename_port("IZ", "o")
             cell.type = "$buf"
+            cell.metadata["comment"] = cell.name
 
     def process_netlist(self, pcf_data):
         """

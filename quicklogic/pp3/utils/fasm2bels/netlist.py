@@ -246,6 +246,11 @@ class Netlist:
             if cell.type == "$buf":
                 continue
 
+            # Comment
+            comment = cell.metadata.get("comment", "")
+            if comment:
+                code += "// {}\n".format(comment)
+
             # Attributes
             for attr in sorted(list(cell.attributes.keys())):
                 value = quote_value(cell.attributes[attr])
@@ -280,6 +285,11 @@ class Netlist:
             if cell.type != "$buf":
                 continue
 
+            # Comment
+            comment = cell.metadata.get("comment", "")
+            if comment:
+                comment = " // {}".format(comment)
+
             inp = cell.connections["i"]
             out = cell.connections["o"]
             assert out is not None, cell_name
@@ -287,7 +297,7 @@ class Netlist:
             if not inp:
                 inp = "1'bx"
 
-            code += "assign {} = {};\n".format(out, inp);
+            code += "assign {} = {};{}\n".format(out, inp, comment);
 
         code += "\n"
 
