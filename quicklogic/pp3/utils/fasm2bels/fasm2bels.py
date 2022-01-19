@@ -419,23 +419,31 @@ class Fasm2Bels:
         Decodes routing
         """
 
-        self.switchbox_routes = defaultdict(dict)
+        self.switchbox_routes = dict()
         self.global_routes = []
 
-        # Handle all routing features - decode switchboxes
-        for loc in self.features.keys():
+        # Report any locations that have routing features but do not have
+        # a switchbox
+        for loc in self.features:
+            sbox_type = self.switchbox_grid.get(loc, None)
             features = self.get_features_at_locs([loc], "ROUTING")
 
-            if loc in self.switchbox_grid:
-                typ = self.switchbox_grid[loc]
-                switchbox = self.switchbox_types[typ]
-
-                routes = self.decode_switchbox(switchbox, features)
-                self.switchbox_routes[loc] = routes
-
-            # FASM features for a non-existent switchbox
-            else:
+            if features and not sbox_type:
                 print("", "WARNING: No switchbox at {}".format(loc))
+
+        # Handle all routing features - decode switchboxes
+        for loc, sbox_type in self.switchbox_grid.items():
+            switchbox = self.switchbox_types[sbox_type]
+
+            # The switchbox is configured, decode
+            if loc in self.features:
+                features = self.get_features_at_locs([loc], "ROUTING")
+                routes = self.decode_switchbox(switchbox, features)
+            # The switchbox is not configured, store all its outputs
+            else:
+                routes = {pin: None for pin in switchbox.outputs.keys()}
+
+            self.switchbox_routes[loc] = routes
 
         def walk(ep):
             """
@@ -970,6 +978,25 @@ class Fasm2Bels:
 
         return root
 
+    def dump_switchboxes(self):
+        """
+        Generates a JSON dict structure containing switchbox configurations.
+        """
+
+        # Gather the data
+        root = []
+        for loc, routes in self.switchbox_routes.items():
+            root.append({
+                "loc": (loc.x, loc.y),
+                "type": self.switchbox_grid[loc],
+                "routes": routes
+            })
+
+        # Sort
+        root.sort(key=lambda v: v["loc"])
+
+        return root
+
 # =============================================================================
 
 # FIXME: Use more roboust PCF parser
@@ -1064,6 +1091,12 @@ def main():
         required=False,
         help="Write decoded placement data to a JSON file"
     )
+    parser.add_argument(
+        "--output-sbox",
+        type=Path,
+        required=False,
+        help="Write decoded switchbox routes to a JSON file"
+    )
 
     args = parser.parse_args()
 
@@ -1148,6 +1181,10 @@ def main():
     if args.output_placement:
         with open(args.output_placement, 'w') as fp:
             json.dump(f2b.dump_placement(), fp, sort_keys=True, indent=2)
+
+    if args.output_sbox:
+        with open(args.output_sbox, 'w') as fp:
+            json.dump(f2b.dump_switchboxes(), fp, sort_keys=True, indent=2)
 
 if __name__ == "__main__":
     main()
