@@ -69,19 +69,19 @@ endif()
 
 # Check if post synthesis verilog has correct format
 # We look for verilog escaped identifiers ending with array indexing, e.g. [0]
-# POST_SYNTH_NO_SPLIT shouldn't contain such identifiers
-set(POST_SYNTH_NO_SPLIT	${BUILD_DIR}/top_post_synthesis.no_split.v)
+# MERGED_POST_VERILOG shouldn't contain such identifiers
+set(MERGED_POST_VERILOG ${BUILD_DIR}/top_merged_post_synthesis.v)
 
-if (EXISTS "${POST_SYNTH_NO_SPLIT}")
-    SET(GREP_ARGS "\\\\\\S*\\[[0-9]*\\]\\s" "${POST_SYNTH_NO_SPLIT}")
+if (EXISTS "${MERGED_POST_VERILOG}")
+    SET(GREP_ARGS "\\\\\\S*\\[[0-9]*\\]\\s" "${MERGED_POST_VERILOG}")
     message(STATUS "${GREP_ARGS}")
     EXECUTE_PROCESS(
         COMMAND
         grep ${GREP_ARGS}
-        OUTPUT_VARIABLE NO_SPLIT_VAL_OUT
-        RESULT_VARIABLE NO_SPLIT_VAL_RES)
+        OUTPUT_VARIABLE MERGED_VAL_OUT
+        RESULT_VARIABLE MERGED_VAL_RES)
 
-    if (${NO_SPLIT_VAL_RES} EQUAL 0 AND NOT "${NO_SPLIT_VAL_OUT}" STREQUAL "")
-        MESSAGE(FATAL_ERROR "Found illegal escaped identifiers in ${POST_SYNTH_NO_SPLIT}: ${NO_SPLIT_VAL_OUT}")
+    if (${MERGED_VAL_RES} EQUAL 0 AND NOT "${MERGED_VAL_OUT}" STREQUAL "")
+        MESSAGE(FATAL_ERROR "Found illegal escaped identifiers in ${MERGED_POST_VERILOG}: ${MERGED_VAL_OUT}")
     endif()
 endif()
