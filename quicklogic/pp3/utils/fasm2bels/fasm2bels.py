@@ -19,8 +19,8 @@ from netlist import Netlist
 
 class Fasm2Bels:
 
-    ConfigFeature = namedtuple("ConfigFeature", "name value")
-    RoutingFeature = namedtuple('RoutingFeature', 'stage stage_id switch_id mux_id sel_id')
+    ConfigFeature = namedtuple("ConfigFeature", "line name value")
+    RoutingFeature = namedtuple('RoutingFeature', 'line stage stage_id switch_id mux_id sel_id')
 
     # ...........................................
 
@@ -106,6 +106,7 @@ class Fasm2Bels:
             self.connections_to[conn.dst] = conn
 
         self.features = dict()
+        self.used_lines = set()
         self.io_constraints = dict()
 
     def fixup_qmux_connections_and_cells(self):
@@ -201,7 +202,7 @@ class Fasm2Bels:
                     )
                     self.connections.append(conn)
 
-    def parse_routing_feature(self, feature):
+    def parse_routing_feature(self, feature, line_no=None):
         """
         Parses routing feature, returns a RoutingFeature object
         """
@@ -213,6 +214,7 @@ class Fasm2Bels:
         )
         if match:
             return self.RoutingFeature(
+                line=line_no,
                 stage="HIGHWAY",
                 stage_id=3, # FIXME: Get HIGHWAY stage id from the switchbox
                 switch_id=int(match.group('switch_id')),
@@ -227,6 +229,7 @@ class Fasm2Bels:
         )
         if match:
             return self.RoutingFeature(
+                line=line_no,
                 stage="STREET",
                 stage_id = int(match.group('stage_id')) - 1,
                 switch_id = int(match.group('switch_id')) - 1,
@@ -248,7 +251,7 @@ class Fasm2Bels:
         ) # noqa: E501
 
         self.features = dict()
-        for line in fasm_lines:
+        for line_no, line in enumerate(fasm_lines):
 
             if not line.set_feature:
                 continue
@@ -277,12 +280,13 @@ class Fasm2Bels:
 
             if typ == "CONFIG":
                 self.features[loc][typ].append(self.ConfigFeature(
+                    line=line_no,
                     name=name,
                     value=line.set_feature.value,
                 ))
             elif typ == "ROUTING":
                 self.features[loc][typ].append(
-                    self.parse_routing_feature(name)
+                    self.parse_routing_feature(name, line_no)
                 )
 
     def get_features_at_locs(self, locs, typ="CONFIG"):
@@ -300,6 +304,23 @@ class Fasm2Bels:
             features.extend(self.features[loc][typ])
 
         return features
+
+    def decode_features(self, features, names):
+        """
+        Decodes features with names matching to the given names set. Marks them
+        as used for the design decoding. Returns a dict of values indexed by
+        names
+        """
+
+        names = set(names)
+        decoded = dict()
+
+        for feature in features:
+            if feature.name in names:
+                self.used_lines.add(feature.line)
+                decoded[feature.name] = feature.value
+
+        return decoded
 
     def get_io_name(self, loc, constraints=None):
         """
@@ -353,6 +374,7 @@ class Fasm2Bels:
                 feature.mux_id] is None, feature  # noqa: E501
             mux_sel[feature.stage_id][feature.switch_id][
                 feature.mux_id] = feature.sel_id  # noqa: E501
+            self.used_lines.add(feature.line)
 
         def expand_mux(out_loc):
             """
@@ -591,7 +613,22 @@ class Fasm2Bels:
 
             locs = cell.metadata["locs"]
             assert len(locs) == 1, (cell_name, locs)
-            features = {f.name: f.value for f in self.get_features_at_locs(locs)}
+
+            names = (
+                "LOGIC.Ipwr_gates.J_pwr_st",
+                "LOGIC.INV.TA1",
+                "LOGIC.INV.TA2",
+                "LOGIC.INV.TB1",
+                "LOGIC.INV.TB2",
+                "LOGIC.INV.BA1",
+                "LOGIC.INV.BA2",
+                "LOGIC.INV.BB1",
+                "LOGIC.INV.BB2",
+                "LOGIC.ZINV.QCK",
+            )
+
+            features = self.decode_features(
+                self.get_features_at_locs(locs), names)
 
             # The LOGIC cell is not powered, remove it completely
             if "LOGIC.Ipwr_gates.J_pwr_st" not in features:
@@ -635,9 +672,18 @@ class Fasm2Bels:
 
             locs = cell.metadata["locs"]
             assert len(locs) == 1, (cell_name, locs)
-            features = {f.name: f.value for f in self.get_features_at_locs(locs)}
-
             loc = next(iter(locs))
+
+            names = (
+                "BIDIR.INV.ESEL",
+                "BIDIR.INV.OSEL",
+                "BIDIR.INV.FIXHOLD",
+                "BIDIR.INV.WPD",
+                "BIDIR.INV.DS",
+            )
+
+            features = self.decode_features(
+                self.get_features_at_locs(locs), names)
 
             # The BIDIR is unconnected, remove it completely
             if not cell.connections.get("IZ", "") and \
@@ -715,9 +761,14 @@ class Fasm2Bels:
 
             locs = cell.metadata["locs"]
             assert len(locs) == 1, (cell_name, locs)
-            features = {f.name: f.value for f in self.get_features_at_locs(locs)}
-
             loc = next(iter(locs))
+
+            names = (
+                "ASSP.INV.ASSPInvPortAlias",
+            )
+
+            features = self.decode_features(
+                self.get_features_at_locs(locs), names)
 
             # The clock input is disabled, remove it
             if "ASSP.INV.ASSPInvPortAlias" not in features:
@@ -749,6 +800,19 @@ class Fasm2Bels:
             if cell.type != "GMUX":
                 continue
 
+            # Get location(s)
+            locs = cell.metadata["locs"]
+            assert len(locs) == 1, (cell_name, locs)
+            loc = next(iter(locs))
+
+            # Get features
+            names = (
+                # TODO:
+            )
+
+            features = self.decode_features(
+                self.get_features_at_locs(locs), names)
+
             # The GMUX is unused, remove it completely
             if not cell.connections.get("IC", "") and \
                not cell.connections.get("IP", ""):
@@ -764,8 +828,13 @@ class Fasm2Bels:
                 self.netlist.remove_cell(cell_name, True)
                 continue
 
+            # Handle inverters
+            # TODO:
+            is0_hi = "1'b1"
+            is0_lo = "1'b0"
+
             # Static clock from "clock", implicit pass-through
-            if is0 == "1'b0":
+            if is0 == is0_lo:
 
                 inp_net = cell.connections["IP"]
                 out_net = cell.connections["IZ"]
@@ -774,7 +843,7 @@ class Fasm2Bels:
                 self.netlist.rename_net(out_net, inp_net)
 
             # Static clock from routing. Add an instance of gclkbuff
-            elif is0 == "1'b1":
+            elif is0 == is0_hi:
 
                 cell.rename_port("IC", "A")
                 cell.rename_port("IZ", "Q")
@@ -798,6 +867,19 @@ class Fasm2Bels:
             if cell.type != "QMUX":
                 continue
 
+            # Get location(s)
+            locs = cell.metadata["locs"]
+            assert len(locs) == 1, (cell_name, locs)
+            loc = next(iter(locs))
+
+            # Get features
+            names = (
+                # TODO:
+            )
+
+            features = self.decode_features(
+                self.get_features_at_locs(locs), names)
+
             # The QMUX is unused, remove it completely
             if not cell.connections.get("IZ", "") and \
                not cell.connections.get("QCLKIN0", "") and \
@@ -810,9 +892,6 @@ class Fasm2Bels:
             locs = cell.metadata["locs"]
             assert len(locs) == 1, (cell_name, locs)
             loc = next(iter(locs))
-
-            # Get features
-            features = {f.name: f.value for f in self.get_features_at_locs([loc])}
 
             # Examine the IS0 and IS1 connection
             is0 = cell.connections.get("IS0", "")
@@ -834,8 +913,13 @@ class Fasm2Bels:
                 self.netlist.remove_cell(cell_name, True)
                 continue
 
+            # Handle inverters
+            # TODO:
+            is0_hi = "1'b1"
+            is1_hi = "1'b1"
+
             # Decode selection, get the active input port
-            sel = int(is1 == "1'b1") + 2 * int(is0 == "1'b1")
+            sel = int(is1 == is1_hi) + 2 * int(is0 == is0_hi)
             inp = {
                 0: "QCLKIN0",
                 1: "QCLKIN1",
@@ -873,11 +957,13 @@ class Fasm2Bels:
                 loc = Loc(loc.x, loc.y + 1, 0)
 
             # Get features
-            features = {f.name: f.value for f in self.get_features_at_locs([loc])}
+            names = (
+                "{}.I_hilojoint".format(cand_name),
+                "{}.I_enjoint".format(cand_name),
+            )
 
-            # Filter features
-            features = {k: v for k, v in features.items() \
-                        if k.split(".", maxsplit=1)[0] == cand_name}
+            features = self.decode_features(
+                self.get_features_at_locs([loc]), names)
 
             hilojoint = "{}.I_hilojoint".format(cand_name) in features
             enjoint = "{}.I_enjoint".format(cand_name) in features
@@ -1165,6 +1251,20 @@ def main():
     except Fasm2Bels.Exception as ex:
         print(str(ex))
         exit(-1)
+
+    # Report FASM lines that did not take part in the design decoding if any
+    have_unused = False
+    for i, line in enumerate(fasm_lines):
+        if i not in f2b.used_lines:
+
+            if not line.set_feature:
+                continue
+
+            if not have_unused:
+                print("", "WARNING: Got unused FASM features:")
+                have_unused = True
+
+            print("  {}: {}".format(i, fasm.set_feature_to_str(line.set_feature)))
 
     # Write output file(s)
     print("Writing output file(s)...")
