@@ -273,6 +273,9 @@ class Netlist:
             lnt = max([len(p) for p in cell.connections])
             for port in sorted(list(cell.connections.keys())):
                 net = cell.connections[port]
+                if not net:
+                    if cell.ports.get(port, PinDirection.INPUT) == PinDirection.INPUT:
+                        net = "1'bx"
                 code += "  .{} ({}),\n".format(port.ljust(lnt), escape(net))
             code = code[:-2] + "\n"
 
