@@ -186,8 +186,7 @@ jobs:
 
       - uses: actions/download-artifact@v2
       - name: Upload achitectures to bucket
-        if: "github.event_name == 'push' && !startsWith(github.ref, 'dependabot/')"
-
+        if: ${{ github.event_name == 'push' && github.actor != 'dependabot[bot]' }}
         uses: weslenng/gcp-storage-sync@master
         env:
           GCP_SERVICE_ACCOUNT_KEY_FILE: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY_FILE }}
