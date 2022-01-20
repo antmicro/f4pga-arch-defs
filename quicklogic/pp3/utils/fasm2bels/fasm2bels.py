@@ -322,18 +322,18 @@ class Fasm2Bels:
 
         return decoded
 
-    def get_io_name(self, loc, constraints=None):
+    def get_io_name(self, loc, constraints=None, prefix="PAD"):
         """
         Formats IO port name. Returns the name and the associated pad.
         """
-        name = "PAD_X{}Y{}".format(loc.x, loc.y)
+        name = "{}_X{}Y{}".format(prefix, loc.x, loc.y)
 
         pad = self.io_names.get(loc, None)
         if pad is not None:
             if constraints and pad in constraints:
                 name = constraints[pad]
             else:
-                name = "PAD_" + pad
+                name = "{}_{}".format(prefix, pad)
 
         return name, pad
 
@@ -655,7 +655,7 @@ class Fasm2Bels:
 
             # Clock inversion
             cell.connections["QCKS"] = \
-                "1'b0" if "LOGIC.ZINV.QCK" in features else "1'b1"
+                "1'b1" if "LOGIC.ZINV.QCK" in features else "1'b0"
 
             # TODO: Possibly split the macro into individual blocks
 
@@ -776,7 +776,7 @@ class Fasm2Bels:
                 continue
 
             # Determine IO port name
-            net, pad = self.get_io_name(loc, pcf_data)
+            net, pad = self.get_io_name(loc, pcf_data, "CLK")
             self.io_constraints[net] = {
                 "loc": pad
             }
