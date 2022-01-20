@@ -69,27 +69,8 @@ class Fasm2Bels:
         for name, package in db['package_pinmaps'][self.package_name].items():
             self.io_names[package[0].loc] = name
 
-        # Build maps that bind cell locations and their instance names
-        self.cell_name_to_loc = defaultdict(list)
-        self.loc_to_cell_name = defaultdict(dict)
-
-        name_to_type = dict()
-        for loc, tile in self.tile_grid.items():
-            for cell in tile.cells:
-
-                if cell.type == "LOGIC":
-                    continue
-
-                name_to_type[cell.name] = cell.type
-
-                self.cell_name_to_loc[cell.name].append(loc)
-                self.loc_to_cell_name[loc][cell.type] = cell.name
-
-        # Identify cells that occupy multiple locations (RAMs etc.)
-        self.multiloc_cells = set()
-        for name, locs in self.cell_name_to_loc.items():
-            if len(locs) > 1:
-                self.multiloc_cells.add(name_to_type[name])
+        # Build cell name maps
+        self.build_cell_name_maps()
 
         # QMUX fixup
         self.fixup_qmux_connections_and_cells()
@@ -201,6 +182,68 @@ class Fasm2Bels:
                         is_direct = False
                     )
                     self.connections.append(conn)
+
+    def build_cell_name_maps(self):
+        """
+        Builds maps used to determine cell names from their location and
+        vice-versa
+        """
+
+        # Identify base location for LOGIC cells
+        logic_base = None
+        for loc, tile in self.tile_grid.items():
+            for cell in tile.cells:
+                if cell.type == "LOGIC":
+
+                    if logic_base is None:
+                        logic_base = [loc.x, loc.y]
+
+                    else:
+                        logic_base = [
+                            min(logic_base[0], loc.x),
+                            min(logic_base[1], loc.y),
+                        ]
+
+                    break
+
+        # A helper function for determining logic cell names
+        def logic_name(loc):
+            row = loc.y - logic_base[1] + 1
+            col = loc.x - logic_base[0] + 1
+
+            base = ord("Z") - ord("A") + 1
+            name = str(row )
+
+            while col > 0:
+                name = chr(ord("A") + (col % base) - 1) + name
+                col = col // base
+
+            return name
+
+        # Build maps that bind cell locations and their instance names
+        self.cell_name_to_loc = defaultdict(list)
+        self.loc_to_cell_name = defaultdict(dict)
+
+        name_to_type = dict()
+        for loc, tile in self.tile_grid.items():
+            for cell in tile.cells:
+
+                if cell.type == "LOGIC":
+                    name = logic_name(loc)
+                else:
+                    name = cell.name
+
+                name_to_type[name] = cell.type
+
+                self.cell_name_to_loc[name].append(loc)
+                self.loc_to_cell_name[loc][cell.type] = name
+
+        # Identify cells that occupy multiple locations (RAMs etc.)
+        self.multiloc_cells = set()
+        for name, locs in self.cell_name_to_loc.items():
+            if len(locs) > 1:
+                self.multiloc_cells.add(name_to_type[name])
+
 
     def parse_routing_feature(self, feature, line_no=None):
         """
@@ -596,9 +639,17 @@ class Fasm2Bels:
 
                 cell.connections[port] = net
 
+            locs = list(placement[instance])
+            name = self.loc_to_cell_name[locs[0]][typ]
+
+            # Set attributes
+            if len(locs) == 1:
+                cell.attributes["name"] = self.loc_to_cell_name[locs[0]][typ]
+
             # Set metadata
-            cell.metadata["locs"] = list(placement[instance])
-            cell.metadata["phy_type"] = typ
+            cell.metadata["locs"] = locs
+            cell.metadata["physical_name"] = name
+            cell.metadata["physical_type"] = typ
 
     def handle_logic_cells(self):
         """
@@ -1057,7 +1108,8 @@ class Fasm2Bels:
         """
 
         cells = {c.name : {
-            "type": c.metadata["phy_type"],
+            "name": c.metadata["physical_name"],
+            "type": c.metadata["physical_type"],
             "locs": sorted([(l.x, l.y) for l in c.metadata["locs"]]),
             } for c in self.netlist.cells.values()
         }
