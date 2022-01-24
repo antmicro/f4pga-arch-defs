@@ -68,12 +68,13 @@ if (NOT "${REF_PCF}" STREQUAL "")
 endif()
 
 # Check if post synthesis verilog has correct format
-# We look for verilog escaped identifiers ending with array indexing, e.g. [0]
+# We look for verilog escaped identifiers in ports definitions ending with
+# array indexing, e.g. [0]
 # MERGED_POST_VERILOG shouldn't contain such identifiers
 set(MERGED_POST_VERILOG ${BUILD_DIR}/top_merged_post_synthesis.v)
 
 if (EXISTS "${MERGED_POST_VERILOG}")
-    SET(GREP_ARGS "\\\\\\S*\\[[0-9]*\\]\\s" "${MERGED_POST_VERILOG}")
+    SET(GREP_ARGS "(input|output)\\s+\\\\\\S*\\[[0-9]*\\]\\s,?" "${MERGED_POST_VERILOG}")
     message(STATUS "${GREP_ARGS}")
     EXECUTE_PROCESS(
         COMMAND
