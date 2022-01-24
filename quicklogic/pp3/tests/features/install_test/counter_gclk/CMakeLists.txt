@@ -27,7 +27,7 @@ add_binary_toolchain_test(
 
     CHECK_CONSTRAINTS
     ASSERT_BLOCK_TYPES_ARE_USED  PB-CLOCK=1,PB-GMUX=1,PB-BIDIR=4
-    ASSERT_TIMING fmax>56.0
+    ASSERT_TIMING fmax>52.0
 
     ASSERT_EXISTS
         "top_post_synthesis.v"
