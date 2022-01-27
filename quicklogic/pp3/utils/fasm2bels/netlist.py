@@ -1,3 +1,5 @@
+import re
+
 from collections import defaultdict
 
 from data_structs import PinDirection
@@ -191,6 +193,64 @@ class Netlist:
             for cell_name in cells_to_prune:
                 self.remove_cell(cell_name)
 
+    def group_instance_ports(self, connections):
+        ports_dict = {}
+        indexed_identifier = r'(?P<port_name>[a-zA-Z0-9$_]+)(\[(?P<port_index>[0-9]+)\])?'
+
+        for port in sorted(list(connections.keys())):
+            match = re.search(indexed_identifier, port)
+            if match is None:
+                continue
+            port_name = match.group("port_name")
+            if (match.group("port_index") is not None):
+                port_index = int(match.group("port_index"))
+            else:
+                port_index = 0
+
+            # Record multi-bit port
+            if (port_name not in ports_dict.keys()):
+                ports_dict[port_name] = {}
+
+            assert port_index not in ports_dict[port_name].keys(), port_index
+            # Record port index and connected net
+            ports_dict[port_name][port_index] = connections[port]
+
+        grouped_ports = {}
+        for port_name in ports_dict.keys():
+            sorted_port = [ ports_dict[port_name][port_index] for port_index in sorted(ports_dict[port_name]) ]
+            grouped_ports[port_name] = sorted_port
+
+        return grouped_ports
+
+    def group_module_nets(self, ports):
+        ports_dict = {}
+        indexed_identifier = r'(?P<port_name>[a-zA-Z0-9$_]+)(\[(?P<port_index>[0-9]+)\])?'
+
+        for port in sorted(ports):
+            match = re.search(indexed_identifier, port)
+            if match is None:
+                continue
+            port_name = match.group("port_name")
+            if (match.group("port_index") is not None):
+                port_index = int(match.group("port_index"))
+            else:
+                port_index = 0
+
+            # Record multi-bit port
+            if (port_name not in ports_dict.keys()):
+                ports_dict[port_name] = []
+
+            assert port_index not in ports_dict[port_name], port_index
+            # Record port index and connected net
+            ports_dict[port_name].append(port_index)
+
+        grouped_ports = {}
+        for port_name in ports_dict.keys():
+            sorted_port = sorted(ports_dict[port_name])
+            grouped_ports[port_name] = sorted_port
+
+        return grouped_ports
+
     def dump_verilog(self):
         """
         Dumps the netlist as Verilog code.
@@ -223,20 +283,51 @@ class Netlist:
         # Remove special net names
         nets -= {None, "", "1'b0", "1'b1", "1'bx"}
 
+        # Group multi-bit ports from module definition
+        module_ports = {}
+        for direction in ["input", "output", "inout"]:
+            module_ports[direction] = self.group_module_nets(self.ports[direction])
+
         # Module definition
         code += "module {} (\n".format(escape(self.name))
-        for direction in ["input", "output", "inout"]:
-            for port in sorted(self.ports[direction]):
-                code += "  {:6s} wire {},\n".format(direction, escape(port))
+
+        for direction, ports in module_ports.items():
+            for port, sigs in ports.items():
+                code += "  {:6s} wire {}".format(direction, escape(port))
+                if (len(sigs) > 1):
+                    code += "[{}:{}]".format(sigs[-1], sigs[0])
+                code += ",\n"
         code = code[:-2] + "\n"
         code += ");\n\n"
 
+        # Group multi-bit wires
+        grouped_wires = self.group_module_nets(list(nets))
+
         # Wire declarations
-        for net in sorted(list(nets)):
-            if net in ports:
+        for net, sigs in grouped_wires.items():
+            # Don't write explicit wires for module ports
+            if (net in module_ports["input"].keys() or
+                net in module_ports["output"].keys() or
+                net in module_ports["inout"].keys()):
                 continue
-            code += "wire {};\n".format(escape(net))
+            if (len(sigs) > 1):
+                code += "wire [{}:{}] {};\n".format(sigs[-1], sigs[0], escape(net))
+            else:
+                code += "wire {};\n".format(escape(net))
         code += "\n"
+
+        # Group multi-bit ports in cell instances
+        grouped_cell_ports = {}
+        for key in sorted(list(self.cells.keys())):
+            cell = self.cells[key]
+
+            # Skip buffers
+            if cell.type == "$buf":
+                continue
+
+            assert cell.name not in grouped_cell_ports.keys(), cell.name
+            # Record new cell instance
+            grouped_cell_ports[cell.name] = self.group_instance_ports(cell.connections)
 
         # Cell instances
         for key in sorted(list(self.cells.keys())):
@@ -271,14 +362,28 @@ class Netlist:
 
             # Connections
             lnt = max([len(p) for p in cell.connections])
-            for port in sorted(list(cell.connections.keys())):
-                net = cell.connections[port]
-                if not net:
-                    if cell.ports.get(port, PinDirection.INPUT) == PinDirection.INPUT:
-                        net = "1'bx"
-                code += "  .{} ({}),\n".format(port.ljust(lnt), escape(net))
+            for port, nets in grouped_cell_ports[cell.name].items():
+                # Multi-bit port - concatenate parts of the port
+                if (len(nets) > 1):
+                    port_header = "  .{} ({{".format(port)
+                    net_spacer = len(port_header) * " "
+                    code += port_header
+                    i = 0
+                    for net in reversed(nets):
+                        if ((net == '') and (cell.ports.get(port, PinDirection.INPUT) == PinDirection.INPUT)):
+                            net = "1'bx"
+                        if (i == 0):
+                            code += "{},\n".format(escape(net))
+                        else:
+                            code += net_spacer + "{},\n".format(escape(net))
+                        i += 1
+                    code = code[:-2] + "}),\n"
+                # Single-bit port
+                else:
+                    if ((nets[0] == '') and (cell.ports.get(port, PinDirection.INPUT) == PinDirection.INPUT)):
+                        nets[0] = "1'bx"
+                    code += "  .{} ({}),\n".format(port, nets[0])
             code = code[:-2] + "\n"
-
             code += ");\n\n"
 
         # Buffers (assigns)
