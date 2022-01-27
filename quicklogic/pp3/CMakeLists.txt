@@ -117,7 +117,7 @@ define_arch(
   BIT_TO_V
     ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/pp3/utils/fasm2bels/fasm2bels.py
   BIT_TO_V_CMD
-    "${CMAKE_COMMAND} -E env PYTHONPATH=${symbiflow-arch-defs_SOURCE_DIR}/utils:$PYTHONPATH \
+    "${CMAKE_COMMAND} -E env PYTHONPATH=${symbiflow-arch-defs_SOURCE_DIR}/utils:${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/${FAMILY_NAME}/utils:${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/${FAMILY_NAME}/utils/fasm2bels:$PYTHONPATH \
     \${PYTHON3} \${BIT_TO_V} \${OUT_BITSTREAM}
       --phy-db ${CMAKE_CURRENT_BINARY_DIR}/devices/\${DEVICE_TYPE}/db_phy.pickle
       --input-type bitstream
