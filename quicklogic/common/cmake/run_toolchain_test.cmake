@@ -97,6 +97,9 @@ set(F2B_OUT_VCD ${BUILD_DIR}/f2b_simulation.vcd)
 
 set(CELLS_SIM_FILE ${INSTALLATION_DIR}/share/symbiflow/techmaps/${ARCH}/cells_sim.v)
 set(YOSYS_CELLS_SIM_FILE ${INSTALLATION_DIR}/share/symbiflow/techmaps/${ARCH}/yosys_cells_sim.v)
+if ("${ARCH}" STREQUAL "pp3")
+  set(YOSYS_QL_SIM_FILE ${INSTALLATION_DIR}/share/symbiflow/techmaps/${ARCH}/qlal4s3b_sim.v)
+endif()
 
 if (NOT "${SIMULATION_TEST}" STREQUAL "")
   # post synthesis simulation
@@ -110,6 +113,6 @@ if (NOT "${SIMULATION_TEST}" STREQUAL "")
     run("vvp -v -N ${POST_OUT_VVP_NO_SPLIT} -sdf-verbose")
   endif()
   # fasm2bels verilog simulation
-  run("iverilog -v -gspecify -DNO_SPLIT -DF2B -DVCD=\"${F2B_OUT_VCD}\" -o ${F2B_OUT_VVP} ${YOSYS_CELLS_SIM_FILE} ${F2B_VERILOG} ${BUILD_DIR}/../${SIMULATION_TEST}")
+  run("iverilog -v -gspecify -DNO_SPLIT -DF2B -DVCD=\"${F2B_OUT_VCD}\" -o ${F2B_OUT_VVP} ${YOSYS_CELLS_SIM_FILE} ${YOSYS_QL_SIM_FILE} ${F2B_VERILOG} ${BUILD_DIR}/../${SIMULATION_TEST}")
   run("vvp -v -N ${F2B_OUT_VVP} -sdf-verbose")
 endif()

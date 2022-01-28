@@ -200,6 +200,18 @@ function(DEFINE_QL_TOOLCHAIN_TARGET)
       )
     install(FILES ${YOSYS_CELLS_SIM_LOCAL}
       DESTINATION share/symbiflow/techmaps/${FAMILY})
+    if ("${FAMILY}" STREQUAL "pp3")
+      set(YOSYS_QL_SIM_LOCAL "techmap/qlal4s3b_sim.v")
+      get_file_target(YOSYS_QL_SIM_TARGET ${YOSYS_QL_SIM_LOCAL})
+      get_file_location(YOSYS_QL_SIM_LOCAL ${YOSYS_QL_SIM_LOCAL})
+      add_custom_target(
+              "CELLS_INSTALL_${FAMILY}_QL_SIM"
+        ALL
+        DEPENDS ${YOSYS_QL_SIM_TARGET} ${YOSYS_QL_SIM_LOCAL}
+        )
+      install(FILES ${YOSYS_QL_SIM_LOCAL}
+        DESTINATION share/symbiflow/techmaps/${FAMILY})
+    endif()
   endif()
 
   install(FILES ${DEFINE_QL_TOOLCHAIN_TARGET_CELLS_SIM}
