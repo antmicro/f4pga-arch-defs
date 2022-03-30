@@ -2,6 +2,7 @@ set(ADDER_64 ${QL_DESIGNS_DIR}/adder_64/adder_64.v)
 
 add_fpga_target(
   NAME adder_64-gf12-no-adder
+  TOP adder_64
   BOARD qlf_k6n10-qlf_k6n10_gf12_board
   SOURCES ${ADDER_64}
   EXPLICIT_ADD_FILE_TARGET
@@ -10,6 +11,7 @@ add_fpga_target(
 
 add_fpga_target(
   NAME adder_64-gf12-adder
+  TOP adder_64
   BOARD qlf_k6n10-qlf_k6n10_gf12_board
   SOURCES ${ADDER_64}
   EXPLICIT_ADD_FILE_TARGET

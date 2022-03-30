@@ -2,6 +2,7 @@ set(ADDER_128 ${QL_DESIGNS_DIR}/adder_128/adder_128.v)
 
 add_fpga_target(
   NAME adder_128-gf12-no-adder
+  TOP adder_128
   BOARD qlf_k6n10-qlf_k6n10_gf12_board
   SOURCES ${ADDER_128}
   EXPLICIT_ADD_FILE_TARGET
@@ -10,6 +11,7 @@ add_fpga_target(
 
 add_fpga_target(
   NAME adder_128-gf12-adder
+  TOP adder_128
   BOARD qlf_k6n10-qlf_k6n10_gf12_board
   SOURCES ${ADDER_128}
   EXPLICIT_ADD_FILE_TARGET

@@ -2,6 +2,7 @@ set(AND2 ${QL_DESIGNS_DIR}/and2/and2.v)
 
 add_fpga_target(
   NAME and2-gf12-no-adder
+  TOP and2
   BOARD qlf_k6n10-qlf_k6n10_gf12_board
   SOURCES ${AND2}
   EXPLICIT_ADD_FILE_TARGET
@@ -10,6 +11,7 @@ add_fpga_target(
 
 add_fpga_target(
   NAME and2-gf12-adder
+  TOP and2
   BOARD qlf_k6n10-qlf_k6n10_gf12_board
   SOURCES ${AND2}
   EXPLICIT_ADD_FILE_TARGET

@@ -4,6 +4,7 @@ set(UNSIGNED_MULT_80 ${QL_DESIGNS_DIR}/unsigned_mult_80/unsigned_mult_80.v)
 
 add_fpga_target(
   NAME unsigned_mult_80-gf12-no-adder
+  TOP unsigned_mult_80
   BOARD qlf_k6n10-qlf_k6n10_gf12_board
   SOURCES ${UNSIGNED_MULT_80}
   EXPLICIT_ADD_FILE_TARGET
@@ -12,6 +13,7 @@ add_fpga_target(
 
 add_fpga_target(
   NAME unsigned_mult_80-gf12-adder
+  TOP unsigned_mult_80
   BOARD qlf_k6n10-qlf_k6n10_gf12_board
   SOURCES ${UNSIGNED_MULT_80}
   EXPLICIT_ADD_FILE_TARGET

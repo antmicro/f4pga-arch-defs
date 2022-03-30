@@ -3,6 +3,7 @@ add_file_target(FILE ${COUNTER} SCANNER_TYPE verilog)
 
 add_fpga_target(
   NAME counter-gf12-no-adder
+  TOP top
   BOARD qlf_k6n10-qlf_k6n10_gf12_board
   SOURCES ${COUNTER}
   EXPLICIT_ADD_FILE_TARGET
@@ -11,6 +12,7 @@ add_fpga_target(
 
 add_fpga_target(
   NAME counter-gf12-adder
+  TOP top
   BOARD qlf_k6n10-qlf_k6n10_gf12_board
   SOURCES ${COUNTER}
   EXPLICIT_ADD_FILE_TARGET

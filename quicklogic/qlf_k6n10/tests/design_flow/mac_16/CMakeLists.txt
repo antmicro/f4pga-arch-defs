@@ -4,6 +4,7 @@ add_file_target(FILE ${MAC_16} SCANNER_TYPE verilog)
 
 add_fpga_target(
   NAME mac_16-gf12-dsp
+  TOP mac_16
   BOARD qlf_k6n10-qlf_k6n10_gf12_board
   SOURCES  ${MAC_16}
   EXPLICIT_ADD_FILE_TARGET
@@ -11,6 +12,7 @@ add_fpga_target(
 
 add_fpga_target(
   NAME mac_16-gf12-adder
+  TOP mac_16
   BOARD qlf_k6n10-qlf_k6n10_gf12_board
   SOURCES  ${MAC_16}
   EXPLICIT_ADD_FILE_TARGET

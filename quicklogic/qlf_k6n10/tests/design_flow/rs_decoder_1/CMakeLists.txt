@@ -2,6 +2,7 @@ set(RS_DECODER_1 ${QL_DESIGNS_DIR}/rs_decoder_1/rs_decoder_1.v)
 
 add_fpga_target(
   NAME rs_decoder-gf12-no-adder
+  TOP rs_decoder_1
   BOARD qlf_k6n10-qlf_k6n10_gf12_board
   SOURCES ${RS_DECODER_1}
   EXPLICIT_ADD_FILE_TARGET
@@ -10,6 +11,7 @@ add_fpga_target(
 
 add_fpga_target(
   NAME rs_decoder-gf12-adder
+  TOP rs_decoder_1
   BOARD qlf_k6n10-qlf_k6n10_gf12_board
   SOURCES ${RS_DECODER_1}
   EXPLICIT_ADD_FILE_TARGET

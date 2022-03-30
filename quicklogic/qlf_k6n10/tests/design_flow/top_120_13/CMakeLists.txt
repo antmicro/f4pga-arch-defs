@@ -2,6 +2,7 @@ set(TOP_120_13 ${QL_DESIGNS_DIR}/top_120_13/top_120_13.v)
 
 add_fpga_target(
   NAME top_120_13-gf12-no-adder
+  TOP top_120_13
   BOARD qlf_k6n10-qlf_k6n10_gf12_board
   SOURCES ${TOP_120_13}
   EXPLICIT_ADD_FILE_TARGET
@@ -10,6 +11,7 @@ add_fpga_target(
 
 add_fpga_target(
   NAME top_120_13-gf12-adder
+  TOP top_120_13
   BOARD qlf_k6n10-qlf_k6n10_gf12_board
   SOURCES ${TOP_120_13}
   EXPLICIT_ADD_FILE_TARGET

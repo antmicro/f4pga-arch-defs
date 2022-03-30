@@ -6,6 +6,7 @@ add_file_target(FILE ${BRAM} SCANNER_TYPE verilog)
 
 add_fpga_target(
   NAME bram-gf12-mode0
+  TOP BRAM_32x512
   BOARD qlf_k6n10-qlf_k6n10_gf12_board
   SOURCES ${BRAM}
   EXPLICIT_ADD_FILE_TARGET
@@ -14,6 +15,7 @@ add_fpga_target(
 
 add_fpga_target(
   NAME bram-gf12-mode1
+  TOP BRAM_16x1024
   BOARD qlf_k6n10-qlf_k6n10_gf12_board
   SOURCES ${BRAM}
   EXPLICIT_ADD_FILE_TARGET
@@ -24,6 +26,7 @@ add_fpga_target(
 
 add_fpga_target(
   NAME bram-gf12-mode2
+  TOP BRAM_8x2048
   BOARD qlf_k6n10-qlf_k6n10_gf12_board
   SOURCES ${BRAM}
   EXPLICIT_ADD_FILE_TARGET
@@ -32,6 +35,7 @@ add_fpga_target(
 
 add_fpga_target(
   NAME bram-gf12-mode3
+  TOP BRAM_4x4096
   BOARD qlf_k6n10-qlf_k6n10_gf12_board
   SOURCES ${BRAM}
   EXPLICIT_ADD_FILE_TARGET
