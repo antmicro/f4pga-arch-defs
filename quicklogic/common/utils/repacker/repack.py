@@ -229,7 +229,11 @@ def insert_buffers(nets, eblif, clb_block):
                         pin_net = block.find_net_for_port(port.name, pin)
 
                         if pin_net == net:
-                            collected_blocks.append(block)
+                            collected_blocks.append((
+                                block,
+                                port.name,
+                                pin,
+                            ))
                             return
 
         # Recurse for all children
@@ -254,17 +258,29 @@ def insert_buffers(nets, eblif, clb_block):
         walk(clb_block, net_out, blocks)
 
         # Remap block cell connections
-        for block in blocks:
+        for block, port, pin in blocks:
+            logging.debug("BLEBLE {} {} {}".format(block.name, port, pin))
 
             # Find cell for the block
             cell = eblif.find_cell(block.name)
             assert cell is not None, block
 
-            # Find a port referencing the input net. Change it to the output
-            # net
-            for port in cell.ports:
-                if cell.ports[port] == net_inp:
+            # Find the port using the pin index
+            port_name = "{}[{}]".format(port, pin)
+            if port_name in cell.ports:
+                cell.ports[port_name] = net_out
+                continue
+
+            # Try again with no pin index but only if its 0
+            if not pin:
+                if port in cell.ports:
                     cell.ports[port] = net_out
+                    continue
+
+            # Port not found, error
+            assert False, (
+                block.name, (net_inp, net_out), cell.name, (port, pin)
+            )
 
 
 # =============================================================================
