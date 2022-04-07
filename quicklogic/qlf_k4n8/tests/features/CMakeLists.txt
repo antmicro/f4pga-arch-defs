@@ -11,9 +11,9 @@ add_subdirectory(adder_max)
 add_subdirectory(shift_reg_4607)
 add_subdirectory(install_test)
 add_subdirectory(io_max)
-add_subdirectory(io_reg_max)
+#add_subdirectory(io_reg_max) # Disabled, to use IO regs one must manually instantiate them
 add_subdirectory(clk_verify)
 add_subdirectory(clk_pcf_verify)
-add_subdirectory(pcf_io_reg)
+#add_subdirectory(pcf_io_reg) # Disabled, to use IO regs one must manually instantiate them
 add_subdirectory(slow_corner)
 add_subdirectory(fast_corner)
