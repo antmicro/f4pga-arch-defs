@@ -198,14 +198,13 @@ class Router:
                             )
                         )
 
+                # Log endpoints
+                for node in [self.graph.nodes[node_id] for node_id in net.sources]:
+                    logging.critical("     from {}".format(str(node)))
+                logging.critical("     to   {}".format(str(self.graph.nodes[sink])))
+
                 # Raise an exception
-                raise RuntimeError(
-                    "Unroutable net '{}' from {} to {}".format(
-                        net.name,
-                        [self.graph.nodes[node_id] for node_id in net.sources],
-                        self.graph.nodes[sink]
-                    )
-                )
+                raise RuntimeError("Unroutable net '{}'".format(net.name))
 
             # Annotate all nodes of the route
             for node_id in route:

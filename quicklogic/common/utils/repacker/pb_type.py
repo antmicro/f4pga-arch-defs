@@ -312,11 +312,12 @@ class PbType:
         port = match.group("port")
         bits = match.group("bits")
 
-        # Find the port
-        assert port in self.ports, (self.name, port)
-        port = self.ports[port]
+        # Port not present
+        if port not in self.ports:
+            return
 
         # Yield the bits
+        port = self.ports[port]
         yield from port.yield_pins(bits)
 
     def find(self, path):
