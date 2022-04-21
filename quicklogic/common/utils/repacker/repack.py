@@ -59,8 +59,36 @@ class RepackingRule:
         """
         Remaps the given source pb_type index to the destination pb_type index
         """
-        return index * self.index_map[0] + self.index_map[1]
+        index = index * self.index_map[0] + self.index_map[1]
 
+        # Ensure that even in case of floating point index_map coeffs the
+        # calculated index is integer.
+        if isinstance(index, float):
+            assert index.is_integer(), index
+            index = int(index)
+
+        return index
+
+    def get_port_map(self, index=0):
+        """
+        Given the source pb_type index adjusts indices of mapped physical port
+        pins.
+        """
+        port_map = {}
+        for src_port, mapping in self.port_map.items():
+            dst_port = mapping["port"]
+
+            pin_base = int(mapping.get("pin_initial_offset", "0"))
+            pin_offs = int(mapping.get("pin_rotate_offset", "0"))
+            # TODO: Handle "port_rotate_offset"
+
+            if isinstance(dst_port, str):
+                port_map[src_port] = dst_port
+            else:
+                port, pin = dst_port
+                port_map[src_port] = (port, pin + pin_base + index * pin_offs)
+
+        return port_map
 
 class RepackingConstraint:
     """
@@ -706,6 +734,14 @@ def repack_netlist_cell(
     re-packing.
     """
 
+    # Get source block index
+    blk_path = block.get_path()
+    blk_path = [PathNode.from_string(p) for p in blk_path.split(".")]
+    blk_index = blk_path[-1].index
+
+    # Get port map
+    port_map = rule.get_port_map(blk_index)
+
     # Build a mini-port map for ports of build-in cells (.names, .latch)
     # this is needed to correlate pb_type ports with model ports.
     class_map = {}
@@ -748,10 +784,10 @@ def repack_netlist_cell(
             port.index = inv_rotation_map[port.index]
 
         # Remap the port
-        if rule.port_map is not None:
+        if port_map is not None:
             key = (port.name, port.index)
-            if key in rule.port_map:
-                name, index = rule.port_map[key]
+            if key in port_map:
+                name, index = port_map[key]
                 port = PathNode(name, index)
 
         # Remove port index for 1-bit ports
@@ -961,12 +997,29 @@ def load_repacking_rules(json_root):
     for entry in json_rules:
         assert isinstance(entry, dict), type(entry)
 
+        # Compatibility mode. "port_map" can be either a dict with direct
+        # src to dst port mapping or a dict of dicts which stores additional
+        # attribures.
+        port_map = entry["port_map"]
+        assert isinstance(port_map, dict), type(port_map)
+
+        if port_map:
+            types = set([type(v).__name__ for v in port_map.values()])
+            assert len(types) == 1, types
+
+            typ = next(iter(types))
+            if typ == "str":
+                port_map = {k: {"port": v} for k, v in port_map.items()}
+            else:
+                assert typ == "dict", typ
+
+        # Build a repacking rule
         rule = RepackingRule(
             src=entry["src_pbtype"],
             dst=entry["dst_pbtype"],
             index_map=entry["index_map"],
-            port_map=entry["port_map"],
             mode_bits=entry["mode_bits"],
+            port_map=port_map,
         )
         rules.append(rule)
 
@@ -996,7 +1049,10 @@ def expand_port_maps(rules, clb_pbtypes):
 
         # Expand port map
         port_map = {}
-        for src_port, dst_port in rule.port_map.items():
+        for src_port, mapping in rule.port_map.items():
+
+            attrib = {k: v for k, v in mapping.items() if k != "port"}
+            dst_port = mapping["port"]
 
             # Get pin lists
             src_pins = list(src_pbtype.yield_port_pins(src_port))
@@ -1006,7 +1062,10 @@ def expand_port_maps(rules, clb_pbtypes):
 
             # Update port map
             for src_pin, dst_pin in zip(src_pins, dst_pins):
-                port_map[src_pin] = dst_pin
+                port_map[src_pin] = {
+                    "port": dst_pin,
+                    **attrib
+                }
 
         rule.port_map = port_map
 
@@ -1626,12 +1685,20 @@ def main():
             assert dst_pbtype.blif_model is not None, dst_pbtype.name
             dst_blif_model = dst_pbtype.blif_model.split(maxsplit=1)[-1]
 
+            # Get source block index
+            blk_path = block.get_path()
+            blk_path = [PathNode.from_string(p) for p in blk_path.split(".")]
+            blk_index = blk_path[-1].index
+
+            # Get port map
+            port_map = rule.get_port_map(blk_index)
+
             # Annotate
             annotate_net_endpoints(
                 clb_graph=graph,
                 block=block,
                 block_path=path,
-                port_map=rule.port_map
+                port_map=port_map
             )
 
         # Initialize router
