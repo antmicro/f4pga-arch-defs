@@ -771,16 +771,17 @@ def repack_netlist_cell(eblif, cell, existing_cell_name, block, src_pbtype, dst_
     if existing_cell_name is None:
         repacked_cell = Cell(model.name)
         repacked_cell.name = cell.name
+        repacked_cell.cname = cell.cname
 
     else:
         repacked_cell = eblif.cells[existing_cell_name]
         repacked_cell.name += "_" + cell.name
+        repacked_cell.cname = repacked_cell.name
         del eblif.cells[existing_cell_name]
 
     logging.debug("    " + str(repacked_cell.name))
 
-    # Copy cell data
-    repacked_cell.cname = cell.cname
+    # Merge attributes and parameters
     update_dict(repacked_cell.attributes, cell.attributes, "Cell '{}' ({}) attribute ".format(repacked_cell.name, model.name))
     update_dict(repacked_cell.parameters, cell.parameters, "Cell '{}' ({}) parameter ".format(repacked_cell.name, model.name))
 
