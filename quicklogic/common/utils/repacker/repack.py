@@ -762,8 +762,7 @@ def repack_netlist_cell(eblif, cell, existing_cell_name, block, src_pbtype, dst_
         if port.cls is not None:
             class_map[port.cls] = port.name
 
-    # Track port nodes
-    port_node_map = dict()
+    flat_port_map = dict()
 
     # Get LUT in port if the cell is a LUT
     lut_in = class_map.get("lut_in", None)
@@ -808,16 +807,13 @@ def repack_netlist_cell(eblif, cell, existing_cell_name, block, src_pbtype, dst_
         # Add port index for 1-bit ports
         if port.index is None:
             port.index = 0
+        org_port = port
 
         # Undo VPR port rotation
-        org_index = port.index
         blk_port = block.ports[port.name]
         if blk_port.rotation_map:
             inv_rotation_map = {v: k for k, v in blk_port.rotation_map.items()}
             port.index = inv_rotation_map[port.index]
-
-        # Source node path
-        src_node_path = block.get_path() + "." + str(port)
 
         # Remap the port
         if port_map is not None:
@@ -830,9 +826,8 @@ def repack_netlist_cell(eblif, cell, existing_cell_name, block, src_pbtype, dst_
                 port_use_count[(name, index,)] += 1
                 port_map = rule.get_port_map(port_use_count)
 
-        # Destination node path, update node map
-        dst_node_path = dst_path + "." + str(port)
-        port_node_map[dst_node_path] = src_node_path
+        # Update the flattened port map
+        flat_port_map[(org_port.name, org_port.index,)] = (port.name, port.index,)
 
         # Remove port index for 1-bit ports
         width = model.ports[port.name].width
@@ -845,24 +840,25 @@ def repack_netlist_cell(eblif, cell, existing_cell_name, block, src_pbtype, dst_
         # Update LUT rotation if applicable
         if port.name == lut_in:
             assert port.index not in lut_rotation
-            lut_rotation[port.index] = org_index
+            lut_rotation[port.index] = org_port.index
             lut_width = width
 
     # If the cell is a LUT then rotate its truth table. Append the rotated
     # truth table as a parameter to the repacked cell.
     if cell.type == "$lut":
 
-        # Build the init parameter
-        init = rotate_truth_table(cell.init, lut_rotation)
-        init = "".join(["1" if x else "0" for x in init][::-1])
-
-        # Expand the truth table to match the physical LUT width. Do that by
-        # repeating the lower part of it until the desired length is attained.
-        while (len(init).bit_length() - 1) < lut_width:
-            init = init + init
-
-        # Reverse LUT bit order
-        init = init[::-1]
+#        # Build the init parameter
+#        init = rotate_truth_table(cell.init, lut_rotation)
+#        init = "".join(["1" if x else "0" for x in init][::-1])
+#
+#        # Expand the truth table to match the physical LUT width. Do that by
+#        # repeating the lower part of it until the desired length is attained.
+#        while (len(init).bit_length() - 1) < lut_width:
+#            init = init + init
+#
+#        # Reverse LUT bit order
+#        init = init[::-1]
+        init = "0"
 
         repacked_cell.parameters["LUT"] = init
 
@@ -909,7 +905,7 @@ def repack_netlist_cell(eblif, cell, existing_cell_name, block, src_pbtype, dst_
     del eblif.cells[cell.name]
     eblif.cells[repacked_cell.name] = repacked_cell
 
-    return repacked_cell, port_node_map
+    return repacked_cell, flat_port_map
 
 
 def syncrhonize_attributes_and_parameters(eblif, packed_netlist):
@@ -1647,7 +1643,7 @@ def main():
         for block, rule, (path, pbtype) in blocks_to_repack:
             port_use_counts[path] = defaultdict(lambda: 0)
 
-        port_node_map = dict()
+        flat_port_map = dict()
 
         # Stats
         repacked_clb_count += 1
@@ -1684,7 +1680,7 @@ def main():
             existing_cell_name = leaf_block_names.get(dst_path, None)
 
             # Repack it
-            repacked_cell, node_map = repack_netlist_cell(
+            repacked_cell, cell_port_map = repack_netlist_cell(
                 eblif,
                 cell,
                 existing_cell_name,
@@ -1700,8 +1696,8 @@ def main():
             # repacking
             leaf_block_names[dst_path] = repacked_cell.name
 
-            # Update port node map
-            portnode_map.update(node_map)
+            # Store flattened port map
+            flat_port_map[src_block.get_path()] = cell_port_map
 
         # Build a pb routing graph for this CLB
         logging.debug("  Building pb_type routing graph...")
@@ -1743,7 +1739,7 @@ def main():
             blk_index = blk_path[-1].index
 
             # Get port map
-            port_map = rule.get_port_map()
+            port_map = flat_port_map.get(block.get_path(), None)
 
             # Annotate
             annotate_net_endpoints(
