@@ -19,7 +19,7 @@ import os
 import shlex
 import hashlib
 import time
-from collections import namedtuple
+from collections import namedtuple, defaultdict
 
 import json
 import lxml.etree as ET
@@ -69,10 +69,10 @@ class RepackingRule:
 
         return index
 
-    def get_port_map(self, index=0):
+    def get_port_map(self, use_count=None):
         """
-        Given the source pb_type index adjusts indices of mapped physical port
-        pins.
+        Given the destination port pin usage count return the actual port
+        mapping
         """
         port_map = {}
         for src_port, mapping in self.port_map.items():
@@ -85,8 +85,9 @@ class RepackingRule:
             if isinstance(dst_port, str):
                 port_map[src_port] = dst_port
             else:
+                count = 0 if use_count is None else use_count.get(dst_port, 0)
                 port, pin = dst_port
-                port_map[src_port] = (port, pin + pin_base + index * pin_offs)
+                port_map[src_port] = (port, pin + pin_base + count * pin_offs)
 
         return port_map
 
@@ -574,7 +575,6 @@ def annotate_net_endpoints(
                         port, net
                     )
                 )
-
         # Skip unconnected ports
         if not net:
             logging.debug("    Port '{}' is unconnected".format(port))
@@ -726,13 +726,25 @@ def rotate_truth_table(table, rotation_map):
     return new_table
 
 
-def repack_netlist_cell(
-        eblif, cell, block, src_pbtype, model, rule, def_map=None
-):
+def repack_netlist_cell(eblif, cell, existing_cell_name, block, src_pbtype, dst_path, model, rule, port_use_counts, def_map=None):
     """
     This function transforms circuit netlist (BLIF / EBLIF) cells to implement
     re-packing.
     """
+
+    # Update cell attributes / parameters checking for conflicts
+    def update_dict(dst, src, msg):
+        for k, v in src:
+            if k not in dst:
+                dst[k] = v
+            elif dst[k] != v:
+                logging.critical("'{}' conflict: '{}' vs. '{}'".format(
+                    k,
+                    dst[k],
+                    src[k]
+                ))
+                exit(-1)
+        return dst
 
     # Get source block index
     blk_path = block.get_path()
@@ -740,7 +752,8 @@ def repack_netlist_cell(
     blk_index = blk_path[-1].index
 
     # Get port map
-    port_map = rule.get_port_map(blk_index)
+    port_use_count = port_use_counts[dst_path]
+    port_map = rule.get_port_map(port_use_count)
 
     # Build a mini-port map for ports of build-in cells (.names, .latch)
     # this is needed to correlate pb_type ports with model ports.
@@ -749,17 +762,38 @@ def repack_netlist_cell(
         if port.cls is not None:
             class_map[port.cls] = port.name
 
+    # Track port nodes
+    port_node_map = dict()
+
     # Get LUT in port if the cell is a LUT
     lut_in = class_map.get("lut_in", None)
 
-    # Create a new cell
-    repacked_cell = Cell(model.name)
-    repacked_cell.name = cell.name
+    # Create a new cell or get the existing one and rename it
+    if existing_cell_name is None:
+        repacked_cell = Cell(model.name)
+        repacked_cell.name = cell.name
+
+    else:
+        repacked_cell = eblif.cells[existing_cell_name]
+        repacked_cell.name += "_" + cell.name
+        del eblif.cells[existing_cell_name]
+
+    logging.debug("    " + str(repacked_cell.name))
 
     # Copy cell data
     repacked_cell.cname = cell.cname
-    repacked_cell.attributes = cell.attributes
-    repacked_cell.parameters = cell.parameters
+    update_dict(repacked_cell.attributes, cell.attributes, "Cell '{}' ({}) attribute ".format(repacked_cell.name, model.name))
+    update_dict(repacked_cell.parameters, cell.parameters, "Cell '{}' ({}) parameter ".format(repacked_cell.name, model.name))
+
+    # Port connection helper
+    def connect(port, net):
+        org_net = repacked_cell.ports.get(port, None)
+        if org_net is not None and org_net != net:
+            logging.critical("Cell '{}' ({}) port '{}' connection conflict: '{}' vs. '{}'".format(repacked_cell.name, model.name, port, org_net, net))
+            exit(-1)
+
+        logging.debug("     {}={}".format(port, net))
+        repacked_cell.ports[port] = net
 
     # Remap port connections
     lut_rotation = {}
@@ -775,13 +809,15 @@ def repack_netlist_cell(
         if port.index is None:
             port.index = 0
 
-        org_index = port.index
-
         # Undo VPR port rotation
+        org_index = port.index
         blk_port = block.ports[port.name]
         if blk_port.rotation_map:
             inv_rotation_map = {v: k for k, v in blk_port.rotation_map.items()}
             port.index = inv_rotation_map[port.index]
+
+        # Source node path
+        src_node_path = block.get_path() + "." + str(port)
 
         # Remap the port
         if port_map is not None:
@@ -790,12 +826,21 @@ def repack_netlist_cell(
                 name, index = port_map[key]
                 port = PathNode(name, index)
 
+                # Update the use count and re-build port map
+                port_use_count[(name, index,)] += 1
+                port_map = rule.get_port_map(port_use_count)
+
+        # Destination node path, update node map
+        dst_node_path = dst_path + "." + str(port)
+        port_node_map[dst_node_path] = src_node_path
+
         # Remove port index for 1-bit ports
         width = model.ports[port.name].width
         if width == 1:
             port.index = None
 
-        repacked_cell.ports[str(port)] = net
+        # Connect the port
+        connect(str(port), net)
 
         # Update LUT rotation if applicable
         if port.name == lut_in:
@@ -858,13 +903,13 @@ def repack_netlist_cell(
         for key, net in def_map.items():
             port = "{}[{}]".format(*key)
             if port not in repacked_cell.ports:
-                repacked_cell.ports[port] = net
+                connect(port, net)
 
     # Remove the old cell and replace it with the new one
     del eblif.cells[cell.name]
     eblif.cells[repacked_cell.name] = repacked_cell
 
-    return repacked_cell
+    return repacked_cell, port_node_map
 
 
 def syncrhonize_attributes_and_parameters(eblif, packed_netlist):
@@ -1573,7 +1618,7 @@ def main():
             )
             assert candidates, (block, arch_path)
 
-            logging.debug("   {} ({})".format(str(block), rule.src))
+            logging.debug("   {} ({})".format(str(block), str(blk_path)))
             for path, pbtype_xml in candidates:
                 logging.debug("    " + str(path))
 
@@ -1597,16 +1642,12 @@ def main():
         if not blocks_to_repack:
             continue
 
-        # Check for conflicts
-        repack_targets = set()
+        # Initialize counters for repack target ports
+        port_use_counts = dict()
         for block, rule, (path, pbtype) in blocks_to_repack:
+            port_use_counts[path] = defaultdict(lambda: 0)
 
-            if path in repack_targets:
-                logging.error(
-                    "ERROR: Multiple blocks are to be repacked into '{}'".
-                    format(path)
-                )
-            repack_targets.add(path)
+        port_node_map = dict()
 
         # Stats
         repacked_clb_count += 1
@@ -1637,19 +1678,30 @@ def main():
             assert src_block.name in eblif.cells, src_block.name
             cell = eblif.cells[src_block.name]
 
-            # Store the leaf block name so that it can be restored after
-            # repacking
-            leaf_block_names[dst_path] = cell.name
+            # If the destination block is being targeted multiple times
+            # then get the name of the already repacked cell to append
+            # the new cell's name to it
+            existing_cell_name = leaf_block_names.get(dst_path, None)
 
             # Repack it
-            repack_netlist_cell(
+            repacked_cell, node_map = repack_netlist_cell(
                 eblif,
                 cell,
+                existing_cell_name,
                 src_block,
                 src_pbtype,
+                dst_path,
                 model,
                 rule,
+                port_use_counts,
             )
+
+            # Store the leaf block name so that it can be restored after
+            # repacking
+            leaf_block_names[dst_path] = repacked_cell.name
+
+            # Update port node map
+            portnode_map.update(node_map)
 
         # Build a pb routing graph for this CLB
         logging.debug("  Building pb_type routing graph...")
@@ -1691,7 +1743,7 @@ def main():
             blk_index = blk_path[-1].index
 
             # Get port map
-            port_map = rule.get_port_map(blk_index)
+            port_map = rule.get_port_map()
 
             # Annotate
             annotate_net_endpoints(
