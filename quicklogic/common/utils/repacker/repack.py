@@ -1093,7 +1093,10 @@ def expand_port_maps(rules, clb_pbtypes):
             src_pins = list(src_pbtype.yield_port_pins(src_port))
             dst_pins = list(dst_pbtype.yield_port_pins(dst_port))
 
-            assert len(src_pins) == len(dst_pins), (src_pins, dst_pins)
+            # Number of source pins can be lower than destination pins but
+            # not vice-versa.
+            assert len(src_pins) <= len(dst_pins), (src_pins, dst_pins)
+            dst_pins = dst_pins[:len(src_pins)]
 
             # Update port map
             for src_pin, dst_pin in zip(src_pins, dst_pins):
