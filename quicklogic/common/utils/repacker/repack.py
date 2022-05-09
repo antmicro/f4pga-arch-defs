@@ -60,14 +60,7 @@ class RepackingRule:
         Remaps the given source pb_type index to the destination pb_type index
         """
         index = index * self.index_map[0] + self.index_map[1]
-
-        # Ensure that even in case of floating point index_map coeffs the
-        # calculated index is integer.
-        if isinstance(index, float):
-            assert index.is_integer(), index
-            index = int(index)
-
-        return index
+        return int(index) # Truncate fraction
 
     def get_port_map(self, use_count=None):
         """
@@ -1200,7 +1193,14 @@ def write_packed_netlist(fname, netlist):
     Writes the given packed netlist to an XML file
     """
 
+    # Convert the packed netlist to ElementTree hierarchy
     xml_tree = ET.ElementTree(netlist.to_etree())
+
+    # Update file name
+    xml_root = xml_tree.getroot()
+    xml_root.set("name", os.path.basename(fname))
+
+    # Convert to string and write
     xml_data = '<?xml version="1.0"?>\n' \
              + ET.tostring(xml_tree, pretty_print=True).decode("utf-8")  # noqa: E127
 
