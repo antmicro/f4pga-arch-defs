@@ -19,7 +19,7 @@ import os
 import shlex
 import hashlib
 import time
-from collections import namedtuple, defaultdict
+from collections import namedtuple
 
 import json
 import lxml.etree as ET
@@ -60,7 +60,7 @@ class RepackingRule:
         Remaps the given source pb_type index to the destination pb_type index
         """
         index = index * self.index_map[0] + self.index_map[1]
-        return int(index) # Truncate fraction
+        return int(index)  # Truncate fraction
 
     def get_port_map(self, index):
         """
@@ -85,6 +85,7 @@ class RepackingRule:
                 port_map[src_port] = (port, pin)
 
         return port_map
+
 
 class RepackingConstraint:
     """
@@ -551,7 +552,10 @@ def get_cumulative_index(block, pb_type, dst_path):
             assert pb_type is not None, pb_path
 
         num_pb = pb_type.num_pb
-        pb_indices.append((index, num_pb,))
+        pb_indices.append((
+            index,
+            num_pb,
+        ))
 
     # Assemble the final index
     cumulative_index = 0
@@ -559,6 +563,7 @@ def get_cumulative_index(block, pb_type, dst_path):
         cumulative_index = cumulative_index * cnt + idx
 
     return cumulative_index
+
 
 # =============================================================================
 
@@ -789,7 +794,17 @@ def rotate_truth_table(table, rotation_map):
     return new_table
 
 
-def repack_netlist_cell(eblif, cell, existing_cell_name, block, src_pbtype, dst_path, model, rule, def_map=None):
+def repack_netlist_cell(
+        eblif,
+        cell,
+        existing_cell_name,
+        block,
+        src_pbtype,
+        dst_path,
+        model,
+        rule,
+        def_map=None
+):
     """
     This function transforms circuit netlist (BLIF / EBLIF) cells to implement
     re-packing.
@@ -801,11 +816,9 @@ def repack_netlist_cell(eblif, cell, existing_cell_name, block, src_pbtype, dst_
             if k not in dst:
                 dst[k] = v
             elif dst[k] != v:
-                logging.critical("'{}' conflict: '{}' vs. '{}'".format(
-                    k,
-                    dst[k],
-                    src[k]
-                ))
+                logging.critical(
+                    "'{}' conflict: '{}' vs. '{}'".format(k, dst[k], src[k])
+                )
                 exit(-1)
         return dst
 
@@ -842,15 +855,26 @@ def repack_netlist_cell(eblif, cell, existing_cell_name, block, src_pbtype, dst_
     logging.debug("    " + str(repacked_cell.name))
 
     # Merge attributes and parameters
-    update_dict(repacked_cell.attributes, cell.attributes, "Cell '{}' ({}) attribute ".format(repacked_cell.name, model.name))
-    update_dict(repacked_cell.parameters, cell.parameters, "Cell '{}' ({}) parameter ".format(repacked_cell.name, model.name))
+    update_dict(
+        repacked_cell.attributes, cell.attributes,
+        "Cell '{}' ({}) attribute ".format(repacked_cell.name, model.name)
+    )
+    update_dict(
+        repacked_cell.parameters, cell.parameters,
+        "Cell '{}' ({}) parameter ".format(repacked_cell.name, model.name)
+    )
 
     # Port connection helper
     def connect(port, net):
 
         org_net = repacked_cell.ports.get(str(port), None)
         if org_net is not None and org_net != net:
-            logging.critical("Cell '{}' ({}) port '{}' connection conflict: '{}' vs. '{}'".format(repacked_cell.name, model.name, str(port), org_net, net))
+            logging.critical(
+                "Cell '{}' ({}) port '{}' connection conflict: '{}' vs. '{}'".
+                format(
+                    repacked_cell.name, model.name, str(port), org_net, net
+                )
+            )
             exit(-1)
 
         logging.debug("     {}={}".format(str(port), net))
@@ -885,7 +909,13 @@ def repack_netlist_cell(eblif, cell, existing_cell_name, block, src_pbtype, dst_
                 port = PathNode(name, index)
 
         # Update the flattened port map
-        flat_port_map[(org_port.name, org_port.index,)] = (port.name, port.index,)
+        flat_port_map[(
+            org_port.name,
+            org_port.index,
+        )] = (
+            port.name,
+            port.index,
+        )
 
         # Remove port index for 1-bit ports
         width = model.ports[port.name].width
@@ -905,17 +935,17 @@ def repack_netlist_cell(eblif, cell, existing_cell_name, block, src_pbtype, dst_
     # truth table as a parameter to the repacked cell.
     if cell.type == "$lut":
 
-#        # Build the init parameter
-#        init = rotate_truth_table(cell.init, lut_rotation)
-#        init = "".join(["1" if x else "0" for x in init][::-1])
-#
-#        # Expand the truth table to match the physical LUT width. Do that by
-#        # repeating the lower part of it until the desired length is attained.
-#        while (len(init).bit_length() - 1) < lut_width:
-#            init = init + init
-#
-#        # Reverse LUT bit order
-#        init = init[::-1]
+        #        # Build the init parameter
+        #        init = rotate_truth_table(cell.init, lut_rotation)
+        #        init = "".join(["1" if x else "0" for x in init][::-1])
+        #
+        #        # Expand the truth table to match the physical LUT width. Do that by
+        #        # repeating the lower part of it until the desired length is attained.
+        #        while (len(init).bit_length() - 1) < lut_width:
+        #            init = init + init
+        #
+        #        # Reverse LUT bit order
+        #        init = init[::-1]
         init = "0"
 
         repacked_cell.parameters["LUT"] = init
@@ -1167,10 +1197,7 @@ def expand_port_maps(rules, clb_pbtypes):
 
             # Update port map
             for src_pin, dst_pin in zip(src_pins, dst_pins):
-                port_map[src_pin] = {
-                    "port": dst_pin,
-                    **attrib
-                }
+                port_map[src_pin] = {"port": dst_pin, **attrib}
 
         rule.port_map = port_map
 
@@ -1747,14 +1774,8 @@ def main():
 
             # Repack it
             repacked_cell, cell_port_map = repack_netlist_cell(
-                eblif,
-                cell,
-                existing_cell_name,
-                src_block,
-                src_pbtype,
-                dst_path,
-                model,
-                rule
+                eblif, cell, existing_cell_name, src_block, src_pbtype,
+                dst_path, model, rule
             )
 
             # Store the leaf block name so that it can be restored after
@@ -1798,11 +1819,6 @@ def main():
             assert dst_pbtype.blif_model is not None, dst_pbtype.name
             dst_blif_model = dst_pbtype.blif_model.split(maxsplit=1)[-1]
 
-            # Get source block index
-            blk_path = block.get_path()
-            blk_path = [PathNode.from_string(p) for p in blk_path.split(".")]
-            blk_index = blk_path[-1].index
-
             # Get port map
             port_map = flat_port_map.get(block.get_path(), None)
 
@@ -1841,7 +1857,9 @@ def main():
                 name = leaf_block_names[dst_path]
                 if dst_block.name != name:
                     logging.debug(
-                        "   renaming leaf block {} to {}".format(dst_block, name)
+                        "   renaming leaf block {} to {}".format(
+                            dst_block, name
+                        )
                     )
                     dst_block.name = name
 

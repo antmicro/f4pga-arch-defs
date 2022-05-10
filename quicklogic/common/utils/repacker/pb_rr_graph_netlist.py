@@ -4,8 +4,6 @@ A set of utility functions responsible for loading a packed netlist into a
 complex block routing graph and creating a packed netlist from a graph with
 routing information.
 """
-import logging
-
 from block_path import PathNode
 
 import packed_netlist

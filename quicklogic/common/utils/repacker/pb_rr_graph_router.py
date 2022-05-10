@@ -199,9 +199,13 @@ class Router:
                         )
 
                 # Log endpoints
-                for node in [self.graph.nodes[node_id] for node_id in net.sources]:
+                for node in [
+                        self.graph.nodes[node_id] for node_id in net.sources
+                ]:
                     logging.critical("     from {}".format(str(node)))
-                logging.critical("     to   {}".format(str(self.graph.nodes[sink])))
+                logging.critical(
+                    "     to   {}".format(str(self.graph.nodes[sink]))
+                )
 
                 # Raise an exception
                 raise RuntimeError("Unroutable net '{}'".format(net.name))
