@@ -37,7 +37,7 @@ from pb_rr_graph_router import Router
 from pb_rr_graph_netlist import load_clb_nets_into_pb_graph
 from pb_rr_graph_netlist import build_packed_netlist_from_pb_graph
 
-from pb_type import PbType, Model, PortType
+from pb_type import PbType, Mode, Model, PortType
 from lib.parse_pcf import parse_simple_pcf
 
 # =============================================================================
@@ -62,14 +62,14 @@ class RepackingRule:
         index = index * self.index_map[0] + self.index_map[1]
         return int(index) # Truncate fraction
 
-    def get_port_map(self, use_count=None):
+    def get_port_map(self, index):
         """
-        Given the destination port pin usage count return the actual port
-        mapping
+        Builds final port pin map given the pb_type index in the hierarchy
         """
         port_map = {}
         for src_port, mapping in self.port_map.items():
             dst_port = mapping["port"]
+            dst_width = mapping.get("$width", 1)
 
             pin_base = int(mapping.get("pin_initial_offset", "0"))
             pin_offs = int(mapping.get("pin_rotate_offset", "0"))
@@ -77,10 +77,12 @@ class RepackingRule:
 
             if isinstance(dst_port, str):
                 port_map[src_port] = dst_port
+
             else:
-                count = 0 if use_count is None else use_count.get(dst_port, 0)
                 port, pin = dst_port
-                port_map[src_port] = (port, pin + pin_base + count * pin_offs)
+                pin = pin + pin_base + index * pin_offs
+                pin = pin % dst_width
+                port_map[src_port] = (port, pin)
 
         return port_map
 
@@ -490,6 +492,74 @@ def identify_repack_target_candidates(clb_pbtype, path):
     return candidates
 
 
+def get_cumulative_index(block, pb_type, dst_path):
+    """
+    Computes a "cumulative" pb_type instance index. This is the index of the
+    instance in the whole hierarchy below the physical mode.
+    """
+
+    # Get the CLB pb_type
+    clb_pbtype = pb_type
+    while clb_pbtype.parent is not None:
+        clb_pbtype = clb_pbtype.parent
+
+    # Get source block path
+    src_path = block.get_path()
+    src_path = [PathNode.from_string(p) for p in src_path.split(".")]
+
+    # Get dst block path
+    dst_path = [PathNode.from_string(p) for p in dst_path.split(".")]
+
+    # Must be the same CLB
+    assert str(src_path[0]) == str(dst_path[0])
+
+    # Find the divergence point of the paths. This is the pb_type in physical
+    # mode.
+    for i in range(min(len(src_path), len(dst_path))):
+        src_node = src_path[i]
+        dst_node = dst_path[i]
+        if str(src_node) != str(dst_node):
+            phy_node = i
+            break
+    else:
+        assert False
+
+    # Collect pb_type instance indices and num_pb values
+    pb_path = ""
+    pb_indices = []
+
+    for i, node in enumerate(src_path):
+
+        # Assemble pb_type path
+        index = node.index
+        node.index = None
+
+        if not pb_path:
+            pb_path = str(node)
+        else:
+            pb_path = pb_path + "." + str(node)
+
+        # Skip counting indices in hierarchy above the physical mode
+        if i <= phy_node:
+            continue
+
+        # Get pb_type
+        pb_type = clb_pbtype.find(pb_path)
+        assert pb_type is not None, pb_path
+        if isinstance(pb_type, Mode):
+            pb_type = pb_type.parent
+            assert pb_type is not None, pb_path
+
+        num_pb = pb_type.num_pb
+        pb_indices.append((index, num_pb,))
+
+    # Assemble the final index
+    cumulative_index = 0
+    for idx, cnt in reversed(pb_indices):
+        cumulative_index = cumulative_index * cnt + idx
+
+    return cumulative_index
+
 # =============================================================================
 
 
@@ -719,7 +789,7 @@ def rotate_truth_table(table, rotation_map):
     return new_table
 
 
-def repack_netlist_cell(eblif, cell, existing_cell_name, block, src_pbtype, dst_path, model, rule, port_use_counts, def_map=None):
+def repack_netlist_cell(eblif, cell, existing_cell_name, block, src_pbtype, dst_path, model, rule, def_map=None):
     """
     This function transforms circuit netlist (BLIF / EBLIF) cells to implement
     re-packing.
@@ -739,14 +809,11 @@ def repack_netlist_cell(eblif, cell, existing_cell_name, block, src_pbtype, dst_
                 exit(-1)
         return dst
 
-    # Get source block index
-    blk_path = block.get_path()
-    blk_path = [PathNode.from_string(p) for p in blk_path.split(".")]
-    blk_index = blk_path[-1].index
+    # Get source block cumulative index
+    cumulative_index = get_cumulative_index(block, src_pbtype, dst_path)
 
     # Get port map
-    port_use_count = port_use_counts[dst_path]
-    port_map = rule.get_port_map(port_use_count)
+    port_map = rule.get_port_map(cumulative_index)
 
     # Build a mini-port map for ports of build-in cells (.names, .latch)
     # this is needed to correlate pb_type ports with model ports.
@@ -780,13 +847,14 @@ def repack_netlist_cell(eblif, cell, existing_cell_name, block, src_pbtype, dst_
 
     # Port connection helper
     def connect(port, net):
-        org_net = repacked_cell.ports.get(port, None)
+
+        org_net = repacked_cell.ports.get(str(port), None)
         if org_net is not None and org_net != net:
-            logging.critical("Cell '{}' ({}) port '{}' connection conflict: '{}' vs. '{}'".format(repacked_cell.name, model.name, port, org_net, net))
+            logging.critical("Cell '{}' ({}) port '{}' connection conflict: '{}' vs. '{}'".format(repacked_cell.name, model.name, str(port), org_net, net))
             exit(-1)
 
-        logging.debug("     {}={}".format(port, net))
-        repacked_cell.ports[port] = net
+        logging.debug("     {}={}".format(str(port), net))
+        repacked_cell.ports[str(port)] = net
 
     # Remap port connections
     lut_rotation = {}
@@ -816,10 +884,6 @@ def repack_netlist_cell(eblif, cell, existing_cell_name, block, src_pbtype, dst_
                 name, index = port_map[key]
                 port = PathNode(name, index)
 
-                # Update the use count and re-build port map
-                port_use_count[(name, index,)] += 1
-                port_map = rule.get_port_map(port_use_count)
-
         # Update the flattened port map
         flat_port_map[(org_port.name, org_port.index,)] = (port.name, port.index,)
 
@@ -829,7 +893,7 @@ def repack_netlist_cell(eblif, cell, existing_cell_name, block, src_pbtype, dst_
             port.index = None
 
         # Connect the port
-        connect(str(port), net)
+        connect(port, net)
 
         # Update LUT rotation if applicable
         if port.name == lut_in:
@@ -888,7 +952,7 @@ def repack_netlist_cell(eblif, cell, existing_cell_name, block, src_pbtype, dst_
     if rule.mode_bits:
         repacked_cell.parameters["MODE"] = rule.mode_bits
 
-    # Check for unconnected ports that should be tied to some default nets
+    # Check for unconnected ports that should be pin_rotate_offsettied to some default nets
     if def_map:
         for key, net in def_map.items():
             port = "{}[{}]".format(*key)
@@ -1097,6 +1161,9 @@ def expand_port_maps(rules, clb_pbtypes):
             # not vice-versa.
             assert len(src_pins) <= len(dst_pins), (src_pins, dst_pins)
             dst_pins = dst_pins[:len(src_pins)]
+
+            # Store destination port width
+            attrib["$width"] = dst_pbtype.ports[dst_pins[0][0]].width
 
             # Update port map
             for src_pin, dst_pin in zip(src_pins, dst_pins):
@@ -1642,11 +1709,6 @@ def main():
         if not blocks_to_repack:
             continue
 
-        # Initialize counters for repack target ports
-        port_use_counts = dict()
-        for block, rule, (path, pbtype) in blocks_to_repack:
-            port_use_counts[path] = defaultdict(lambda: 0)
-
         flat_port_map = dict()
 
         # Stats
@@ -1692,8 +1754,7 @@ def main():
                 src_pbtype,
                 dst_path,
                 model,
-                rule,
-                port_use_counts,
+                rule
             )
 
             # Store the leaf block name so that it can be restored after
