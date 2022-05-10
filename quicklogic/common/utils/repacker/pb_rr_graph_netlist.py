@@ -4,6 +4,7 @@ A set of utility functions responsible for loading a packed netlist into a
 complex block routing graph and creating a packed netlist from a graph with
 routing information.
 """
+import logging
 
 from block_path import PathNode
 
@@ -295,16 +296,21 @@ def build_packed_netlist_from_pb_graph(clb_graph):
                         if isinstance(net, str):
                             nets.append(net)
 
-            # No nets driven, this is an output pad
+            # No nets driven
             if not nets:
-                assert "outpad" in block.ports
+                # This is an output pad
+                if "outpad" in block.ports:
+                    port = block.ports["outpad"]
+                    assert port.type == "input", port
+                    assert port.width == 1, port
 
-                port = block.ports["outpad"]
-                assert port.type == "input", port
-                assert port.width == 1, port
+                    net = block.find_net_for_port("outpad", 0)
+                    nets = ["out:" + net]
 
-                net = block.find_net_for_port("outpad", 0)
-                nets = ["out:" + net]
+                # A route-thru leaf pb-type
+                else:
+                    block.name = "open"
+                    block.mode = "default"
 
             # Build block name and assign it
             if nets:

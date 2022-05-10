@@ -284,22 +284,25 @@ class Block:
         representation.
         """
 
+        # Unused means open but not route-throu either as LUT or non-LUT
+        is_unused = self.is_open and not self.is_route_throu \
+            and not self.is_route_throu_lut
+
         # Base block element
         attrib = {
             "name": self.name,
             "instance": self.instance,
         }
-        if not self.is_leaf:
+        if not self.is_leaf or not is_unused:
             attrib["mode"] = self.mode if self.mode is not None else "default"
 
         elem = ET.Element("block", attrib)
 
-        # If this is an "open" block then skip the remaining tags
-        if self.name == "open":
+        if is_unused:
             return elem
 
         # Attributes / parameters
-        if self.is_leaf:
+        if self.is_leaf and not self.is_open:
             for tag, data in zip(["attributes", "parameters"],
                                  [self.attributes, self.parameters]):
 
@@ -370,6 +373,17 @@ class Block:
 
     @property
     def is_route_throu(self):
+        """
+        Returns True when the block is a leaf route-throu without any child
+        block representing cells
+        """
+
+        # VPR stores route-throu blocks as "open" blocks with mode set to
+        # "default".
+        return self.is_leaf and self.name == "open" and self.mode == "default"
+
+    @property
+    def is_route_throu_lut(self):
         """
         Returns True when the block is a route-throu native LUT
         """

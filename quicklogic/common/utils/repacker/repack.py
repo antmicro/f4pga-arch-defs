@@ -122,7 +122,7 @@ def fixup_route_throu_luts(clb_block, new_net_ids):
 
         # This is a leaf block
         if block.is_leaf:
-            if block.is_route_throu:
+            if block.is_route_throu_lut:
                 blocks.append(block)
 
         # Recurse for all children
@@ -1839,10 +1839,11 @@ def main():
                 assert dst_block is not None, dst_path
 
                 name = leaf_block_names[dst_path]
-                logging.debug(
-                    "   renaming leaf block {} to {}".format(dst_block, name)
-                )
-                dst_block.name = name
+                if dst_block.name != name:
+                    logging.debug(
+                        "   renaming leaf block {} to {}".format(dst_block, name)
+                    )
+                    dst_block.name = name
 
         # Replace the CLB
         packed_netlist.blocks[clb_block.instance] = repacked_clb_block
