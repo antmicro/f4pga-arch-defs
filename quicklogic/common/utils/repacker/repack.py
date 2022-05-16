@@ -896,13 +896,16 @@ def repack_netlist_cell(
         # Add port index for 1-bit ports
         if port.index is None:
             port.index = 0
-        org_port = port
 
-        # Undo VPR port rotation
+        org_index = port.index
+
+        # Apply VPR port rotation
         blk_port = block.ports[port.name]
         if blk_port.rotation_map:
             inv_rotation_map = {v: k for k, v in blk_port.rotation_map.items()}
             port.index = inv_rotation_map[port.index]
+
+        org_port = PathNode(port.name, port.index)
 
         # Remap the port
         if port_map is not None:
@@ -929,9 +932,9 @@ def repack_netlist_cell(
         connect(port, net)
 
         # Update LUT rotation if applicable
-        if port.name == lut_in:
+        if org_port.name == lut_in:
             assert port.index not in lut_rotation
-            lut_rotation[port.index] = org_port.index
+            lut_rotation[port.index] = org_index
             lut_width = width
 
     # If the cell is a LUT then rotate its truth table. Append the rotated
