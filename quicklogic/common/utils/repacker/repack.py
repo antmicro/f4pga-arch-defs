@@ -512,7 +512,10 @@ def get_cumulative_index(block, pb_type, dst_path):
     dst_path = [PathNode.from_string(p) for p in dst_path.split(".")]
 
     # Must be the same CLB
-    assert str(src_path[0]) == str(dst_path[0])
+    assert src_path[0].name == dst_path[0].name and \
+           src_path[0].index == dst_path[0].index, \
+           (".".join(src_path),
+            ".".join(dst_path))
 
     # Find the divergence point of the paths. This is the pb_type in physical
     # mode.
