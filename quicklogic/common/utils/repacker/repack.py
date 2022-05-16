@@ -812,7 +812,7 @@ def repack_netlist_cell(
 
     # Update cell attributes / parameters checking for conflicts
     def update_dict(dst, src, msg):
-        for k, v in src:
+        for k, v in src.items():
             if k not in dst:
                 dst[k] = v
             elif dst[k] != v:
@@ -935,18 +935,29 @@ def repack_netlist_cell(
     # truth table as a parameter to the repacked cell.
     if cell.type == "$lut":
 
-        #        # Build the init parameter
-        #        init = rotate_truth_table(cell.init, lut_rotation)
-        #        init = "".join(["1" if x else "0" for x in init][::-1])
-        #
-        #        # Expand the truth table to match the physical LUT width. Do that by
-        #        # repeating the lower part of it until the desired length is attained.
-        #        while (len(init).bit_length() - 1) < lut_width:
-        #            init = init + init
-        #
-        #        # Reverse LUT bit order
-        #        init = init[::-1]
-        init = "0"
+        # FIXME: Try handling LUTs. Should work for one-to-one repacking
+        # will fail on many-to-one repacking.
+        try:
+
+            # Build the init parameter
+            init = rotate_truth_table(cell.init, lut_rotation)
+            init = "".join(["1" if x else "0" for x in init][::-1])
+
+            # Expand the truth table to match the physical LUT width. Do that by
+            # repeating the lower part of it until the desired length is attained.
+            while (len(init).bit_length() - 1) < lut_width:
+                init = init + init
+
+            # Reverse LUT bit order
+            init = init[::-1]
+
+        except Exception as ex:
+            init = "0" * (1 << lut_width)
+            logging.error(
+                "FIXME: Cannot handle LUT equation for '{}', {}".format(
+                    cell.name, repr(ex)
+                )
+            )
 
         repacked_cell.parameters["LUT"] = init
 
