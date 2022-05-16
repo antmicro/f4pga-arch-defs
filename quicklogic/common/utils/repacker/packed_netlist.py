@@ -285,15 +285,14 @@ class Block:
         """
 
         # Unused means open but not route-throu either as LUT or non-LUT
-        is_unused = self.is_open and not self.is_route_throu \
-            and not self.is_route_throu_lut
+        is_unused = self.is_open and not self.is_route_throu
 
         # Base block element
         attrib = {
             "name": self.name,
             "instance": self.instance,
         }
-        if not self.is_leaf or not is_unused:
+        if not self.is_leaf or self.is_route_throu:
             attrib["mode"] = self.mode if self.mode is not None else "default"
 
         elem = ET.Element("block", attrib)
@@ -317,37 +316,38 @@ class Block:
                 elem.append(xml_list)
 
         # Ports
-        for tag in ["inputs", "outputs", "clocks"]:
-            xml_ports = ET.Element(tag)
-            port_type = tag[:-1]
+        if self.ports:
+            for tag in ["inputs", "outputs", "clocks"]:
+                xml_ports = ET.Element(tag)
+                port_type = tag[:-1]
 
-            keys = self.ports.keys()
-            for key in keys:
-                port = self.ports[key]
-                if port.type == port_type:
+                keys = self.ports.keys()
+                for key in keys:
+                    port = self.ports[key]
+                    if port.type == port_type:
 
-                    # Encode port
-                    xml_port = port.to_etree()
-                    xml_ports.append(xml_port)
+                        # Encode port
+                        xml_port = port.to_etree()
+                        xml_ports.append(xml_port)
 
-                    # Rotation map
-                    if port.rotation_map:
+                        # Rotation map
+                        if port.rotation_map:
 
-                        # Encode
-                        rotation = []
-                        for i in range(port.width):
-                            rotation.append(
-                                str(port.rotation_map.get(i, "open"))
+                            # Encode
+                            rotation = []
+                            for i in range(port.width):
+                                rotation.append(
+                                    str(port.rotation_map.get(i, "open"))
+                                )
+
+                            # Make an element
+                            xml_rotation_map = ET.Element(
+                                "port_rotation_map", {"name": port.name}
                             )
+                            xml_rotation_map.text = " ".join(rotation)
+                            xml_ports.append(xml_rotation_map)
 
-                        # Make an element
-                        xml_rotation_map = ET.Element(
-                            "port_rotation_map", {"name": port.name}
-                        )
-                        xml_rotation_map.text = " ".join(rotation)
-                        xml_ports.append(xml_rotation_map)
-
-            elem.append(xml_ports)
+                elem.append(xml_ports)
 
         # Recurse
         keys = self.blocks.keys()
@@ -379,8 +379,9 @@ class Block:
         """
 
         # VPR stores route-throu blocks as "open" blocks with mode set to
-        # "default".
-        return self.is_leaf and self.name == "open" and self.mode == "default"
+        # "default". Route-throu blocks have ports.
+        return self.is_leaf and self.ports and \
+            self.name == "open" and self.mode == "default"
 
     @property
     def is_route_throu_lut(self):
