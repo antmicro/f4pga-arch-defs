@@ -1192,11 +1192,9 @@ def expand_port_maps(rules, clb_pbtypes):
             assert len(src_pins) <= len(dst_pins), (src_pins, dst_pins)
             dst_pins = dst_pins[:len(src_pins)]
 
-            # Store destination port width
-            attrib["$width"] = dst_pbtype.ports[dst_pins[0][0]].width
-
             # Update port map
             for src_pin, dst_pin in zip(src_pins, dst_pins):
+                attrib["$width"] = dst_pbtype.ports[dst_pin[0]].width
                 port_map[src_pin] = {"port": dst_pin, **attrib}
 
         rule.port_map = port_map
