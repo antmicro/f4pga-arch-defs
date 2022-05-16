@@ -226,6 +226,8 @@ class PbType:
 
         # Ports (indexed by name)
         self.ports = {}
+        # Metadata
+        self.metadata = {}
 
     @property
     def is_leaf(self):
@@ -295,6 +297,13 @@ class PbType:
 
             # Copy ports from the current pb_type
             child.ports = deepcopy(pb_type.ports)
+
+        # Get metadata
+        xml_metadata = elem.find("metadata")
+        if xml_metadata is not None:
+            for xml_meta in xml_metadata.findall("meta"):
+                name = xml_meta.attrib["name"]
+                pb_type.metadata[name] = xml_meta.text
 
         return pb_type
 

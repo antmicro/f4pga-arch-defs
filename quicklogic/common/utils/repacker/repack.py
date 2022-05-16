@@ -769,18 +769,15 @@ def annotate_global_routes(clb_graph, global_routes):
             global_routes[port] = node.net
 
 
-def rotate_truth_table(table, rotation_map):
+def rotate_truth_table(table, width, rotation_map):
     """
     Rotates address bits of the truth table of a LUT given a bit map.
     Rotation map key refers to the "new" address while its value to the
     "old" one.
     """
 
-    # Get LUT width, possibly different than the current
-    width = max(rotation_map.keys()) + 1
-
     # Rotate
-    new_table = [0 for i in range(2**width)]
+    new_table = ["0" for i in range(2**width)]
     for daddr in range(2**width):
 
         # Remap address bits
@@ -792,9 +789,44 @@ def rotate_truth_table(table, rotation_map):
                     saddr |= 1 << j
 
         assert saddr < len(table), (saddr, len(table))
-        new_table[daddr] = table[saddr]
+        new_table[daddr] = str(table[saddr])
 
     return new_table
+
+
+def merge_truth_table(init, chunk, out_port, dst_pbtype):
+
+    # Get LUT metadata
+    lut_ports = dst_pbtype.metadata["lut_ports"]
+    lut_ports = json.loads(lut_ports)
+
+    # Get LUT input port
+    for port, data in lut_ports.items():
+        if data["type"] == "input":
+            in_port = port
+            break
+    else:
+        raise RuntimeError("Destination LUT pb_type '{}' does not define a LUT input port".format(dst_pbtype.name))
+
+    # Get LUT width
+    lut_width = dst_pbtype.ports[in_port].width
+    # Get mapped output port metadata
+    port_data = lut_ports[out_port.name]
+
+    frac_lvl  = int(port_data["lut_frac_level"])
+    frac_mask = [int(i) for i in port_data["lut_output_mask"].split(",")]
+
+    # Build LUT init mask
+    mask_len = 1 << frac_lvl
+    mask_ofs = mask_len * frac_mask[out_port.index]
+
+    # Merge inits
+    for i in range(mask_len):
+        j = mask_ofs + i
+        assert init[j] == "x", ("".join(init), j)
+        init[j] = chunk[j]
+
+    return init
 
 
 def repack_netlist_cell(
@@ -804,6 +836,7 @@ def repack_netlist_cell(
         block,
         src_pbtype,
         dst_path,
+        dst_pbtype,
         model,
         rule,
         def_map=None
@@ -840,8 +873,9 @@ def repack_netlist_cell(
 
     flat_port_map = dict()
 
-    # Get LUT in port if the cell is a LUT
+    # Get LUT in and out ports if the cell is a LUT
     lut_in = class_map.get("lut_in", None)
+    lut_out = class_map.get("lut_out", None)
 
     # Create a new cell or get the existing one and rename it
     if existing_cell_name is None:
@@ -886,6 +920,7 @@ def repack_netlist_cell(
     # Remap port connections
     lut_rotation = {}
     lut_width = 0
+    dst_out = None
 
     for port, net in cell.ports.items():
         port = PathNode.from_string(port)
@@ -937,35 +972,26 @@ def repack_netlist_cell(
             lut_rotation[port.index] = org_index
             lut_width = width
 
+        # Store the mapped output port name
+        if org_port.name == lut_out:
+            dst_out = port
+
     # If the cell is a LUT then rotate its truth table. Append the rotated
     # truth table as a parameter to the repacked cell.
     if cell.type == "$lut":
 
-        # FIXME: Try handling LUTs. Should work for one-to-one repacking
-        # will fail on many-to-one repacking.
-        try:
+        # Get or initialize the LUT init parameter for the destination cell
+        # When initializing mark all bits as "x"
+        lut_init = list(repacked_cell.parameters.get("LUT", ["x"] * (1 << lut_width)))
 
-            # Build the init parameter
-            init = rotate_truth_table(cell.init, lut_rotation)
-            init = "".join(["1" if x else "0" for x in init][::-1])
+        # Rotate the source cell LUT init data
+        init = rotate_truth_table(cell.init, lut_width, lut_rotation)
+        # Merge it with the whole init vector of the destination cell
+        lut_init = merge_truth_table(lut_init, init, dst_out, dst_pbtype)
 
-            # Expand the truth table to match the physical LUT width. Do that by
-            # repeating the lower part of it until the desired length is attained.
-            while (len(init).bit_length() - 1) < lut_width:
-                init = init + init
-
-            # Reverse LUT bit order
-            init = init[::-1]
-
-        except Exception as ex:
-            init = "0" * (1 << lut_width)
-            logging.error(
-                "FIXME: Cannot handle LUT equation for '{}', {}".format(
-                    cell.name, repr(ex)
-                )
-            )
-
-        repacked_cell.parameters["LUT"] = init
+        # Store parameter
+        repacked_cell.parameters["LUT"] = "".join(lut_init)
+        logging.debug("     LUT={}'b{}".format(1 << lut_width, repacked_cell.parameters["LUT"]))
 
     # If the cell is a LUT-based const generator append the LUT parameter as
     # well.
@@ -1790,7 +1816,7 @@ def main():
             # Repack it
             repacked_cell, cell_port_map = repack_netlist_cell(
                 eblif, cell, existing_cell_name, src_block, src_pbtype,
-                dst_path, model, rule
+                dst_path, dst_pbtype, model, rule
             )
 
             # Store the leaf block name so that it can be restored after
