@@ -834,11 +834,26 @@ def merge_truth_table(init, chunk, out_port, dst_pbtype):
         mask_len = 1 << frac_lvl
         mask_ofs = mask_len * frac_mask[out_port.index]
 
+    # Check and report LUT init conflicts
+    conflict = False
+    patch = ["x"] * len(init)
+    for i in range(mask_len):
+        j = mask_ofs + i
+        patch[j] = chunk[j]
+
+        if init[j] != "x" and init[j] != chunk[j]:
+            conflict = True
+
+    if conflict:
+        logging.critical("ERROR: LUT table conflict:")
+        logging.critical(" current: {}'b{}".format(len(init), "".join(init)))
+        logging.critical(" patch:   {}'b{}".format(len(patch), "".join(patch)))
+        exit(-1)
+
     # Merge inits
     for i in range(mask_len):
         j = mask_ofs + i
-        assert init[j] == "x", ("".join(init), j)
-        init[j] = chunk[j]
+        init[j] = patch[j]
 
     return init
 
@@ -992,37 +1007,36 @@ def repack_netlist_cell(
 
     # If the cell is a LUT then rotate its truth table. Append the rotated
     # truth table as a parameter to the repacked cell.
-    if cell.type == "$lut":
+    if cell.type == "$lut" or cell.type == "$const":
+
+        # Determine LUT width for a constant generator
+        if cell.type == "$const":
+            assert lut_width == 0, (cell, lut_width)
+
+            # Assume that the model is a LUT. Take its widest input port and use
+            # its width as LUT size.
+            lut_width = 0
+            for port in dst_pbtype.ports.values():
+                if port.type == PortType.INPUT:
+                    lut_width = max(lut_width, port.width)
 
         # Get or initialize the LUT init parameter for the destination cell
         # When initializing mark all bits as "x"
         lut_init = list(repacked_cell.parameters.get("LUT", ["x"] * (1 << lut_width)))
 
+        # Create an init vector for a constant generator
+        if cell.type == "$const":
+            init = [str(cell.init)] * (1 << lut_width)
         # Rotate the source cell LUT init data
-        init = rotate_truth_table(cell.init, lut_width, lut_rotation)
+        else:
+            init = rotate_truth_table(cell.init, lut_width, lut_rotation)
+
         # Merge it with the whole init vector of the destination cell
         lut_init = merge_truth_table(lut_init, init, dst_out, dst_pbtype)
 
         # Store parameter
         repacked_cell.parameters["LUT"] = "".join(lut_init)
         logging.debug("     LUT={}'b{}".format(1 << lut_width, repacked_cell.parameters["LUT"]))
-
-    # If the cell is a LUT-based const generator append the LUT parameter as
-    # well.
-    if cell.type == "$const":
-
-        assert lut_width == 0, (cell, lut_width)
-
-        # Assume that the model is a LUT. Take its widest input port and use
-        # its width as LUT size.
-        max_width = -1
-        for port in model.ports.values():
-            if port.type == PortType.INPUT:
-                if port.width > max_width:
-                    max_width = port.width
-
-        init = str(cell.init) * (1 << max_width)
-        repacked_cell.parameters["LUT"] = init
 
     # Process parameters for "adder_lut4"
     if cell.type == "adder_lut4":
