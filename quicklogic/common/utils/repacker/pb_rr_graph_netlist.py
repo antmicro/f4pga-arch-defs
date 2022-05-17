@@ -27,7 +27,8 @@ def get_block_by_path(block, path):
 
         # Check operating mode
         if path[0].mode is not None:
-            if block.mode != path[0].mode:
+            block_mode = "default" if block.mode is None else block.mode
+            if block_mode != path[0].mode:
                 return None
 
         # Recurse
@@ -191,7 +192,8 @@ def build_packed_netlist_from_pb_graph(clb_graph):
             continue
 
         # Operating mode of the parent must match
-        if parent.mode != parts[-3].mode:
+        parent_mode = "default" if parent.mode is None else parent.mode
+        if parent_mode != parts[-3].mode:
             continue
 
         # Check if the parent contains an open block correesponding to this
