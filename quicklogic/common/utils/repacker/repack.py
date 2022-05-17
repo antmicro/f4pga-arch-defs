@@ -795,30 +795,44 @@ def rotate_truth_table(table, width, rotation_map):
 
 
 def merge_truth_table(init, chunk, out_port, dst_pbtype):
+    """
+    Merges a chunk of LUT init table into the given init vector. Does that
+    according to fracturable LUT metadata of the destination pb_type.
+    """
 
-    # Get LUT metadata
-    lut_ports = dst_pbtype.metadata["lut_ports"]
-    lut_ports = json.loads(lut_ports)
+    # If there is no LUT metadata assume that the LUT is not fracturable
+    if "lut_ports" not in dst_pbtype.metadata:
+        mask_ofs = 0
+        mask_len = len(init)
 
-    # Get LUT input port
-    for port, data in lut_ports.items():
-        if data["type"] == "input":
-            in_port = port
-            break
+        logging.warning("WARNING: no LUT metadata 'lut_ports' for LUT pb_type '{}', assuming non-fracturable LUT".format(dst_pbtype.name))
+
+    # A fracturable LUT
     else:
-        raise RuntimeError("Destination LUT pb_type '{}' does not define a LUT input port".format(dst_pbtype.name))
 
-    # Get LUT width
-    lut_width = dst_pbtype.ports[in_port].width
-    # Get mapped output port metadata
-    port_data = lut_ports[out_port.name]
+        # Get LUT metadata
+        lut_ports = dst_pbtype.metadata["lut_ports"]
+        lut_ports = json.loads(lut_ports)
 
-    frac_lvl  = int(port_data["lut_frac_level"])
-    frac_mask = [int(i) for i in port_data["lut_output_mask"].split(",")]
+        # Get LUT input port
+        for port, data in lut_ports.items():
+            if data["type"] == "input":
+                in_port = port
+                break
+        else:
+            raise RuntimeError("Destination LUT pb_type '{}' does not define a LUT input port".format(dst_pbtype.name))
 
-    # Build LUT init mask
-    mask_len = 1 << frac_lvl
-    mask_ofs = mask_len * frac_mask[out_port.index]
+        # Get LUT width
+        lut_width = dst_pbtype.ports[in_port].width
+        # Get mapped output port metadata
+        port_data = lut_ports[out_port.name]
+
+        frac_lvl  = int(port_data["lut_frac_level"])
+        frac_mask = [int(i) for i in port_data["lut_output_mask"].split(",")]
+
+        # Build LUT init mask
+        mask_len = 1 << frac_lvl
+        mask_ofs = mask_len * frac_mask[out_port.index]
 
     # Merge inits
     for i in range(mask_len):
