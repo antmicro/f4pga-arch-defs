@@ -493,7 +493,7 @@ def identify_repack_target_candidates(clb_pbtype, path):
     return candidates
 
 
-def get_cumulative_index(block, pb_type, dst_path):
+def get_cumulative_index(pb_type, src_path, dst_path):
     """
     Computes a "cumulative" pb_type instance index. This is the index of the
     instance in the whole hierarchy below the physical mode.
@@ -505,17 +505,17 @@ def get_cumulative_index(block, pb_type, dst_path):
         clb_pbtype = clb_pbtype.parent
 
     # Get source block path
-    src_path = block.get_path()
-    src_path = [PathNode.from_string(p) for p in src_path.split(".")]
-
+    if not isinstance(src_path, list):
+        src_path = [PathNode.from_string(p) for p in src_path.split(".")]
     # Get dst block path
-    dst_path = [PathNode.from_string(p) for p in dst_path.split(".")]
+    if not isinstance(dst_path, list):
+        dst_path = [PathNode.from_string(p) for p in dst_path.split(".")]
 
     # Must be the same CLB
     assert src_path[0].name == dst_path[0].name and \
            src_path[0].index == dst_path[0].index, \
-           (".".join(src_path),
-            ".".join(dst_path))
+           (".".join([str(s) for s in src_path]),
+            ".".join([str(s) for s in dst_path]))
 
     # Find the divergence point of the paths. This is the pb_type in physical
     # mode.
@@ -888,7 +888,7 @@ def repack_netlist_cell(
         return dst
 
     # Get source block cumulative index
-    cumulative_index = get_cumulative_index(block, src_pbtype, dst_path)
+    cumulative_index = get_cumulative_index(src_pbtype, block.get_path(), dst_path)
 
     # Get port map
     port_map = rule.get_port_map(cumulative_index)
@@ -1756,24 +1756,28 @@ def main():
         blocks_to_repack = []
         for block, rule in iter_list:
 
-            # Remap index of the destination block pointed by the path of the
-            # rule.
+            # Get paths
             blk_path = block.get_path()
-            blk_path = [PathNode.from_string(p) for p in blk_path.split(".")]
             dst_path = rule.dst
-            dst_path = [PathNode.from_string(p) for p in dst_path.split(".")]
-
-            if dst_path[-1].index is None:
-                dst_path[-1].index = rule.remap_pb_type_index(
-                    blk_path[-1].index
-                )
-
-            blk_path = ".".join([str(p) for p in blk_path])
-            dst_path = ".".join([str(p) for p in dst_path])
 
             # Fix the part of the destination block path so that it matches the
             # path of the block to be remapped
             arch_path = fix_block_path(blk_path, dst_path)
+
+            # Remap destination path leaf pb_type index if needed
+            arch_path = [PathNode.from_string(p) for p in arch_path.split(".")]
+            if arch_path[-1].index is None:
+
+                # Get source pb_type
+                pb_path = block.get_path(with_indices=False)
+                pb_type = clb_pbtype.find(pb_path)
+                assert pb_type is not None, pb_path
+
+                # Compute and remap cumulative index
+                cumulative_index = get_cumulative_index(pb_type, blk_path, arch_path)
+                arch_path[-1].index = rule.remap_pb_type_index(cumulative_index)
+
+            arch_path = ".".join([str(p) for p in arch_path])
 
             # Identify target candidates
             candidates = identify_repack_target_candidates(
