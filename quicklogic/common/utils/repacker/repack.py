@@ -19,6 +19,7 @@ import os
 import shlex
 import hashlib
 import time
+import itertools
 from collections import namedtuple, defaultdict
 
 import json
@@ -1083,6 +1084,93 @@ def repack_netlist_cell(
     return repacked_cell, flat_port_map
 
 
+def fixup_lut_inits(lut_cells, clb_pbtype):
+    """
+    Fixup LUT init vectors so that the state of unused inputs does not affect
+    the output(s).
+    """
+
+    logging.debug("  Fixing up LUT init vectors...")
+    for path, cell in lut_cells.items():
+
+        # Get the LUT init table
+        assert "LUT" in cell.parameters, (cell.name, cell.type)
+        init = cell.parameters["LUT"]
+
+        # No unknown values, skip the cell
+        if "x" not in init:
+            continue
+
+        # Remove indices from the path
+        path = [PathNode.from_string(s) for s in path.split(".")]
+        path = [PathNode(p.name, None, p.mode) for p in path]
+        path = ".".join([str(p) for p in path])
+
+        # Get pb_type
+        pb_type = clb_pbtype.find(path)
+        assert pb_type is not None, (path, cell.name, cell.type)
+
+        # Find the LUT input port.
+        # FIXME: Take the widest one for now
+        lut_in = None
+        for port in pb_type.ports.values():
+            if port.type == PortType.INPUT:
+                if lut_in is None or lut_in.width < port.width:
+                    lut_in = port
+
+        assert lut_in is not None, (cell.name, cell.type)
+
+        # Identify unconnected address bits
+        unconnected = []
+        for i in range(lut_in.width):
+            port = "{}[{}]".format(lut_in.name, i)
+            if port not in cell.ports:
+                unconnected.append(i)
+
+        init = list(init)
+        for address in range(len(init)):
+
+            if init[address] != "x":
+                continue
+
+            # Build combination of addresses which reflects the current address
+            # and all combinations of unconnected pins
+            iters = []
+            for bit in range(lut_in.width):
+                if bit in unconnected:
+                    iters.append([0, 1])
+                else:
+                    iters.append([int((address & (1 << bit)) != 0)])
+
+            adrs = list(itertools.product(*iters))
+            adrs = list(
+                map(
+                    lambda a: int("".join([str(b) for b in a[::-1]]), base=2),
+                    adrs
+                )
+            )
+
+            # Get all possible output values of the LUT for these addresses
+            # There can be only one
+            vals = set([init[a] for a in adrs]) - set("x")
+            assert len(vals
+                       ) == 1, (cell.name, cell.type, (address, unconnected))
+
+            # Store the value
+            value = next(iter(vals))
+            init[address] = str(value)
+
+        # Store the new LUT init
+        init = "".join(init)
+
+        logging.debug(
+            "   {}.LUT={}'b{} -> {}'b{}".format(
+                cell.name, len(init), cell.parameters["LUT"], len(init), init
+            )
+        )
+        cell.parameters["LUT"] = init
+
+
 def syncrhonize_attributes_and_parameters(eblif, packed_netlist):
     """
     Syncrhonizes EBLIF cells attributes and parameters with the packed netlist
@@ -1846,6 +1934,7 @@ def main():
             continue
 
         flat_port_map = dict()
+        lut_cells = dict()
 
         # Stats
         repacked_clb_count += 1
@@ -1893,6 +1982,13 @@ def main():
 
             # Store flattened port map
             flat_port_map[src_block.get_path()] = cell_port_map
+
+            # Store the cell if it is a LUT
+            if cell.type in ["$lut", "$const"]:
+                lut_cells[dst_path] = repacked_cell
+
+        # Fixup LUT init vectors
+        fixup_lut_inits(lut_cells, clb_pbtype)
 
         # Build a pb routing graph for this CLB
         logging.debug("  Building pb_type routing graph...")
