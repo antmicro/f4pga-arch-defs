@@ -19,7 +19,7 @@ import os
 import shlex
 import hashlib
 import time
-from collections import namedtuple
+from collections import namedtuple, defaultdict
 
 import json
 import lxml.etree as ET
@@ -1515,7 +1515,7 @@ def main():
 
     # Identify global routes
     global_routes = {}
-    global_clock_routes = set()
+    global_clock_routes = defaultdict(set)
 
     for pb_type in clb_pbtypes.values():
         for port in pb_type.ports.values():
@@ -1531,7 +1531,7 @@ def main():
                 global_routes[name] = None
 
                 if port.type == PortType.CLOCK:
-                    global_clock_routes.add(name)
+                    global_clock_routes[name].add(pb_type.name)
 
     # DEBUG
     logging.debug(" global routes:")
@@ -1612,7 +1612,7 @@ def main():
     logging.debug(" {} leaf blocks".format(total_blocks))
 
     # Identify global clock nets
-    global_clock_nets = set()
+    global_clock_nets = defaultdict(set)
     for clb_block in packed_netlist.blocks.values():
         for port in clb_block.ports.values():
             for pin in range(port.width):
@@ -1629,11 +1629,11 @@ def main():
                 if net is None:
                     continue
 
-                global_clock_nets.add(net)
+                global_clock_nets[net].add(clb_block.type)
 
     logging.info(" {} global clocks".format(len(global_clock_nets)))
-    for net in global_clock_nets:
-        logging.debug("  {}".format(net))
+    for net, pb_types in global_clock_nets.items():
+        logging.debug("  {} (pb_types: {})".format(net, ", ".join(pb_types)))
 
     # Too many clocks, throw an error
     if len(global_clock_nets) > len(global_clock_routes):
@@ -1655,17 +1655,18 @@ def main():
         logging.info("Constraining unconstrained global clock nets...")
 
         # Identify unconstrainted global clock nets and routes
-        free_clock_nets = set(global_clock_nets)
-        free_clock_routes = set(global_clock_routes)
+        free_clock_nets = dict(global_clock_nets)
+        free_clock_routes = dict(global_clock_routes)
 
         for constraint in repacking_constraints:
 
             if constraint.net in global_clock_nets:
-                free_clock_nets.discard(constraint.net)
+                if constraint.net in free_clock_nets:
+                    del free_clock_nets[constraint.net]
 
             name = "{}[{}]".format(constraint.port, constraint.pin)
             if name in free_clock_routes:
-                free_clock_routes.discard(name)
+                del free_clock_routes[name]
 
         # Cannot constrain all
         if len(free_clock_routes) < len(free_clock_nets):
@@ -1678,9 +1679,25 @@ def main():
             exit(-1)
 
         # Make the constraints
-        block_types = set([b.type for b in packed_netlist.blocks.values()])
-        for net, port in zip(free_clock_nets, free_clock_routes):
-            for block_type in block_types:
+        for (net, net_pbtypes), (port, arch_pbtypes) in \
+            zip(free_clock_nets.items(), free_clock_routes.items()):
+
+            # Some CLBs that have global clocks connected do not have the
+            # require port. Report an error.
+            missing = net_pbtypes - arch_pbtypes
+            if missing:
+                logging.critical(
+                    " ERROR: Cannot constrain global clock net '{}' as the "
+                    "block types {} requiring it do not have the port "
+                    "'{}'".format(
+                        net,
+                        ", ".join(["'{}'".format(b) for b in missing]),
+                        port
+                    )
+                )
+                exit(-1)
+
+            for block_type in arch_pbtypes:
                 constraint = RepackingConstraint(
                     net=net, block_type=block_type, port_spec=port
                 )
