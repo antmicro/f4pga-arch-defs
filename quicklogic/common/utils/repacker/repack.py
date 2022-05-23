@@ -805,7 +805,10 @@ def merge_truth_table(init, chunk, out_port, dst_pbtype):
         mask_ofs = 0
         mask_len = len(init)
 
-        logging.warning("WARNING: no LUT metadata 'lut_ports' for LUT pb_type '{}', assuming non-fracturable LUT".format(dst_pbtype.name))
+        logging.warning(
+            "WARNING: no LUT metadata 'lut_ports' for LUT pb_type '{}', "
+            "assuming non-fracturable LUT".format(dst_pbtype.name)
+        )
 
     # A fracturable LUT
     else:
@@ -817,17 +820,22 @@ def merge_truth_table(init, chunk, out_port, dst_pbtype):
         # Get LUT input port
         for port, data in lut_ports.items():
             if data["type"] == "input":
-                in_port = port
+                #               in_port = port
                 break
         else:
-            raise RuntimeError("Destination LUT pb_type '{}' does not define a LUT input port".format(dst_pbtype.name))
+            raise RuntimeError(
+                "Destination LUT pb_type '{}' does not define a LUT input port"
+                .format(dst_pbtype.name)
+            )
 
         # Get LUT width
-        lut_width = dst_pbtype.ports[in_port].width
-        # Get mapped output port metadata
+
+
+#       lut_width = dst_pbtype.ports[in_port].width
+# Get mapped output port metadata
         port_data = lut_ports[out_port.name]
 
-        frac_lvl  = int(port_data["lut_frac_level"])
+        frac_lvl = int(port_data["lut_frac_level"])
         frac_mask = [int(i) for i in port_data["lut_output_mask"].split(",")]
 
         # Build LUT init mask
@@ -888,7 +896,9 @@ def repack_netlist_cell(
         return dst
 
     # Get source block cumulative index
-    cumulative_index = get_cumulative_index(src_pbtype, block.get_path(), dst_path)
+    cumulative_index = get_cumulative_index(
+        src_pbtype, block.get_path(), dst_path
+    )
 
     # Get port map
     port_map = rule.get_port_map(cumulative_index)
@@ -1022,7 +1032,9 @@ def repack_netlist_cell(
 
         # Get or initialize the LUT init parameter for the destination cell
         # When initializing mark all bits as "x"
-        lut_init = list(repacked_cell.parameters.get("LUT", ["x"] * (1 << lut_width)))
+        lut_init = list(
+            repacked_cell.parameters.get("LUT", ["x"] * (1 << lut_width))
+        )
 
         # Create an init vector for a constant generator
         if cell.type == "$const":
@@ -1036,7 +1048,11 @@ def repack_netlist_cell(
 
         # Store parameter
         repacked_cell.parameters["LUT"] = "".join(lut_init)
-        logging.debug("     LUT={}'b{}".format(1 << lut_width, repacked_cell.parameters["LUT"]))
+        logging.debug(
+            "     LUT={}'b{}".format(
+                1 << lut_width, repacked_cell.parameters["LUT"]
+            )
+        )
 
     # Process parameters for "adder_lut4"
     if cell.type == "adder_lut4":
@@ -1679,8 +1695,8 @@ def main():
             exit(-1)
 
         # Make the constraints
-        for (net, net_pbtypes), (port, arch_pbtypes) in \
-            zip(free_clock_nets.items(), free_clock_routes.items()):
+        for (net, net_pbtypes), (port, arch_pbtypes) in zip(
+                free_clock_nets.items(), free_clock_routes.items()):
 
             # Some CLBs that have global clocks connected do not have the
             # require port. Report an error.
@@ -1690,8 +1706,7 @@ def main():
                     " ERROR: Cannot constrain global clock net '{}' as the "
                     "block types {} requiring it do not have the port "
                     "'{}'".format(
-                        net,
-                        ", ".join(["'{}'".format(b) for b in missing]),
+                        net, ", ".join(["'{}'".format(b) for b in missing]),
                         port
                     )
                 )
@@ -1791,8 +1806,12 @@ def main():
                 assert pb_type is not None, pb_path
 
                 # Compute and remap cumulative index
-                cumulative_index = get_cumulative_index(pb_type, blk_path, arch_path)
-                arch_path[-1].index = rule.remap_pb_type_index(cumulative_index)
+                cumulative_index = get_cumulative_index(
+                    pb_type, blk_path, arch_path
+                )
+                arch_path[-1].index = rule.remap_pb_type_index(
+                    cumulative_index
+                )
 
             arch_path = ".".join([str(p) for p in arch_path])
 

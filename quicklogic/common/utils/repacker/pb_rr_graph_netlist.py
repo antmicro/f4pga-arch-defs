@@ -258,7 +258,8 @@ def build_packed_netlist_from_pb_graph(clb_graph):
 
             # In case of multiple possibilities prefer SOURCE nodes over PORT
             # ones.
-            drivers = sorted(nodes_up[node.id],
+            drivers = sorted(
+                nodes_up[node.id],
                 key=lambda d: clb_graph.nodes[d[0]].type != NodeType.SOURCE
             )
             driver_node, driver_conn = next(iter(drivers))
