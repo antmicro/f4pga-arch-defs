@@ -5,6 +5,7 @@ complex block routing graph and creating a packed netlist from a graph with
 routing information.
 """
 from block_path import PathNode
+from pb_rr_graph import NodeType
 
 import packed_netlist
 
@@ -254,8 +255,13 @@ def build_packed_netlist_from_pb_graph(clb_graph):
         driver_node = None
         driver_conn = None
         if node.id in nodes_up:
-            assert len(nodes_up[node.id]) <= 1, node.path
-            driver_node, driver_conn = next(iter(nodes_up[node.id]))
+
+            # In case of multiple possibilities prefer SOURCE nodes over PORT
+            # ones.
+            drivers = sorted(nodes_up[node.id],
+                key=lambda d: clb_graph.nodes[d[0]].type != NodeType.SOURCE
+            )
+            driver_node, driver_conn = next(iter(drivers))
 
         # Got a driver, this is an intermediate port
         if driver_node is not None:
