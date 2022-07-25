@@ -108,13 +108,13 @@ set(CELLS_SIM_FILE ${INSTALLATION_DIR}/share/symbiflow/techmaps/${ARCH}/cells_si
 set(YOSYS_CELLS_SIM_FILE ${INSTALLATION_DIR}/share/symbiflow/techmaps/${ARCH}/yosys_cells_sim.v)
 
 if (NOT "${SIMULATION_TEST}" STREQUAL "")
-  # Post implementation simulation - merged multi-bit ports
-  run("iverilog -v -gspecify -DVCD=\"${MERGED_POST_IMPL_OUT_VCD}\" -DSDF=${SPLIT_POST_IMPL_SDF} -DCLK_MHZ=0.001 -o ${MERGED_POST_IMPL_OUT_VVP} ${CELLS_SIM_FILE} ${MERGED_POST_IMPL_VERILOG} ${BUILD_DIR}/../${SIMULATION_TEST}")
+  #Post implementation simulation - merged multi-bit ports
+  run("iverilog -v -gspecify -DVCD=\"${MERGED_POST_IMPL_OUT_VCD}\" -DCLK_MHZ=0.001 -o ${MERGED_POST_IMPL_OUT_VVP} ${CELLS_SIM_FILE} ${MERGED_POST_IMPL_VERILOG} ${BUILD_DIR}/../${SIMULATION_TEST}")
   run("vvp -v -N ${MERGED_POST_IMPL_OUT_VVP} -sdf-verbose")
 
   # Optional post implementation simulation - split multi-bit ports
   if (EXISTS "${SPLIT_POST_IMPL_VERILOG}")
-    run("iverilog -v -gspecify -DSPLIT -DVCD=\"${SPLIT_POST_IMPL_OUT_VCD}\" -DSDF=${SPLIT_POST_IMPL_SDF} -DCLK_MHZ=0.001 -o ${SPLIT_POST_IMPL_OUT_VVP} ${CELLS_SIM_FILE} ${SPLIT_POST_IMPL_VERILOG} ${BUILD_DIR}/../${SIMULATION_TEST}")
+    run("iverilog -v -gspecify -DSPLIT -DVCD=\"${SPLIT_POST_IMPL_OUT_VCD}\" -DCLK_MHZ=0.001 -o ${SPLIT_POST_IMPL_OUT_VVP} ${CELLS_SIM_FILE} ${SPLIT_POST_IMPL_VERILOG} ${BUILD_DIR}/../${SIMULATION_TEST}")
     run("vvp -v -N ${SPLIT_POST_IMPL_OUT_VVP} -sdf-verbose")
   endif()
 
