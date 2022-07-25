@@ -15,6 +15,25 @@ file(COPY "techmap/lut2tomux2.v" DESTINATION ${CELLS_MAP_DEST_DIR})
 file(COPY "techmap/lut3tomux2.v" DESTINATION ${CELLS_MAP_DEST_DIR})
 file(COPY "techmap/mux4tomux2.v" DESTINATION ${CELLS_MAP_DEST_DIR})
 
+# copy yosys cells_sim.v to techmap directory and comment out includes
+set(YOSYS_CELLS_SIM ${YOSYS_DATADIR}/quicklogic/${FAMILY_NAME}/cells_sim.v)
+set(YOSYS_CELLS_SIM_LOCAL techmap/yosys_cells_sim.v)
+get_file_target(YOSYS_CELLS_SIM_TARGET ${YOSYS_CELLS_SIM})
+if (NOT TARGET ${YOSYS_CELLS_SIM_TARGET})
+  add_file_target(FILE ${YOSYS_CELLS_SIM} ABSOLUTE)
+endif ()
+
+SET(SED_ARGS -i \"s\/\^\\\`include\/\\\/\\\/\\\`include\/\" ${YOSYS_CELLS_SIM_LOCAL})
+add_custom_command(
+  OUTPUT ${YOSYS_CELLS_SIM_LOCAL}
+  COMMAND ${CMAKE_COMMAND} -E copy
+	  ${YOSYS_CELLS_SIM}
+	  ${YOSYS_CELLS_SIM_LOCAL}
+  COMMAND sed ${SED_ARGS}
+  DEPENDS ${YOSYS_CELLS_SIM_TARGET}
+)
+add_file_target(FILE ${YOSYS_CELLS_SIM_LOCAL} GENERATED)
+
 add_cells_sim_target(${CELLS_SIM_FILE} ${FAMILY_NAME})
 
 set(SDF_TIMING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/timings)
