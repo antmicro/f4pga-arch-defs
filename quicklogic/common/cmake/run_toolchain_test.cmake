@@ -86,3 +86,39 @@ if (EXISTS "${MERGED_POST_VERILOG}")
         MESSAGE(FATAL_ERROR "Found illegal escaped identifiers in ${MERGED_POST_VERILOG}: ${MERGED_VAL_OUT}")
     endif()
 endif()
+
+
+set(MERGED_POST_IMPL_PREFIX         top_merged_post_implementation)
+set(MERGED_POST_IMPL_VERILOG        ${BUILD_DIR}/${MERGED_POST_IMPL_PREFIX}.v)
+set(MERGED_POST_IMPL_OUT_VVP        ${BUILD_DIR}/${MERGED_POST_IMPL_PREFIX}.vvp)
+set(MERGED_POST_IMPL_OUT_VCD        ${BUILD_DIR}/${MERGED_POST_IMPL_PREFIX}.vcd)
+
+set(FASM2BELS_PREFIX    top.bit.v)
+set(FASM2BELS_VERILOG   ${BUILD_DIR}/${FASM2BELS_PREFIX})
+set(FASM2BELS_OUT_VVP   ${BUILD_DIR}/${FASM2BELS_PREFIX}.vvp)
+set(FASM2BELS_OUT_VCD   ${BUILD_DIR}/${FASM2BELS_PREFIX}.vcd)
+
+set(SPLIT_POST_IMPL_PREFIX    top_post_synthesis)
+set(SPLIT_POST_IMPL_VERILOG   ${BUILD_DIR}/${SPLIT_POST_IMPL_SPLIT_PREFIX}.v)
+set(SPLIT_POST_IMPL_SDF       ${BUILD_DIR}/${SPLIT_POST_IMPL_PREFIX}.sdf)
+set(SPLIT_POST_IMPL_OUT_VVP   ${BUILD_DIR}/${SPLIT_POST_IMPL_SPLIT_PREFIX}.vvp)
+set(SPLIT_POST_IMPL_OUT_VCD   ${BUILD_DIR}/${SPLIT_POST_IMPL_SPLIT_PREFIX}.vcd)
+
+set(CELLS_SIM_FILE ${INSTALLATION_DIR}/share/symbiflow/techmaps/${ARCH}/cells_sim.v)
+set(YOSYS_CELLS_SIM_FILE ${INSTALLATION_DIR}/share/symbiflow/techmaps/${ARCH}/yosys_cells_sim.v)
+
+if (NOT "${SIMULATION_TEST}" STREQUAL "")
+  # Post implementation simulation - merged multi-bit ports
+  run("iverilog -v -gspecify -DVCD=\"${MERGED_POST_IMPL_OUT_VCD}\" -DSDF=${SPLIT_POST_IMPL_SDF} -DCLK_MHZ=0.001 -o ${MERGED_POST_IMPL_OUT_VVP} ${CELLS_SIM_FILE} ${MERGED_POST_IMPL_VERILOG} ${BUILD_DIR}/../${SIMULATION_TEST}")
+  run("vvp -v -N ${MERGED_POST_IMPL_OUT_VVP} -sdf-verbose")
+
+  # Optional post implementation simulation - split multi-bit ports
+  if (EXISTS "${SPLIT_POST_IMPL_VERILOG}")
+    run("iverilog -v -gspecify -DSPLIT -DVCD=\"${SPLIT_POST_IMPL_OUT_VCD}\" -DSDF=${SPLIT_POST_IMPL_SDF} -DCLK_MHZ=0.001 -o ${SPLIT_POST_IMPL_OUT_VVP} ${CELLS_SIM_FILE} ${SPLIT_POST_IMPL_VERILOG} ${BUILD_DIR}/../${SIMULATION_TEST}")
+    run("vvp -v -N ${SPLIT_POST_IMPL_OUT_VVP} -sdf-verbose")
+  endif()
+
+  # Fasm2bels verilog simulation
+  run("iverilog -v -gspecify -DF2B -DVCD=\"${FASM2BELS_OUT_VCD}\" -o ${FASM2BELS_OUT_VVP} ${YOSYS_CELLS_SIM_FILE} ${FASM2BELS_VERILOG} ${BUILD_DIR}/../${SIMULATION_TEST}")
+  run("vvp -v -N ${FASM2BELS_OUT_VVP} -sdf-verbose")
+endif()
