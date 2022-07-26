@@ -1,10 +1,10 @@
 module top(
-  input  wire [3:0] I,
+  input  wire I,
   output wire O
 );
 
   LUT1 #(.INIT(2'b01)) the_lut (
-    .I0(I[0]),
+    .I0(I),
     .O(O)
   );
 
