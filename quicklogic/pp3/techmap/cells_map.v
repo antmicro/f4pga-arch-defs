@@ -365,7 +365,7 @@ endmodule
 
 module inv (
   output Q,
-  input A,
+  input A
 );
 
   // The F-Frag
@@ -450,7 +450,7 @@ module mux8x0 (
   .BAS1(1'b0),
   .BAS2(1'b0),
   .BBS1(1'b0),
-  .BBS2(1'b0),
+  .BBS2(1'b0)
   )
   c_frag (
   .TBS(S2),
@@ -918,7 +918,7 @@ module dffsc(
   output Q,
   input  D,
   input  CLK,
-  input  CLR,
+  input  CLR
 );
 
   parameter [0:0] INIT = 1'b0;
