@@ -48,29 +48,14 @@ function(ADD_BINARY_TOOLCHAIN_TEST)
     set(DIRECTIVE "compile")
   endif()
 
+  set(FLOW_CONFIG ${CMAKE_CURRENT_SOURCE_DIR}/flow.json)
+
   set(TOOLCHAIN_COMMAND "\
-    ql_symbiflow \
-    -${DIRECTIVE} \
-    -src ${CMAKE_CURRENT_SOURCE_DIR} \
-    -d ${DEVICE} \
-    -t top \
-    -v ${SOURCES} \
-    -P ${PINMAP} "
+  cd ${CMAKE_CURRENT_SOURCE_DIR} && \
+  f4pga -vvv build --flow ${FLOW_CONFIG} -t fasm2bels_verilog"
   )
 
-  set(REF_PCF "")
-  if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${PCF}")
-    set(TOOLCHAIN_COMMAND "${TOOLCHAIN_COMMAND} -p \"${PCF}\"")
-    if(${ADD_BINARY_TOOLCHAIN_TEST_CHECK_CONSTRAINTS})
-        file(REAL_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${PCF}" REF_PCF)
-    endif()
-  endif()
-  if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${SDC}")
-    set(TOOLCHAIN_COMMAND "${TOOLCHAIN_COMMAND} -s \"${SDC}\"")
-  endif()
-
   set(BUILD_DIR_REL "build.${DEVICE}.${PINMAP}.${TEST_NAME}")
-  set(TOOLCHAIN_COMMAND "${TOOLCHAIN_COMMAND} -build_dir \"${BUILD_DIR_REL}\"")
 
   set(BUILD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${BUILD_DIR_REL})
 
@@ -106,7 +91,6 @@ function(ADD_BINARY_TOOLCHAIN_TEST)
   endif()
 
   # Add the test
-  set(TOOLCHAIN_COMMAND "${TOOLCHAIN_COMMAND} ${EXTRA_ARGS}")
   add_test(NAME quicklogic_toolchain_test_${TEST_NAME}_${PINMAP}_${DEVICE}
     COMMAND
       ${CMAKE_COMMAND}

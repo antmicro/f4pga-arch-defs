@@ -17,7 +17,7 @@ endmacro()
 file(REMOVE_RECURSE ${BUILD_DIR})
 
 # Run the toolchain
-set(TOOLCHAIN_COMMAND "PATH=${INSTALLATION_DIR}/bin:$ENV{PATH} ${TOOLCHAIN_COMMAND}")
+set(TOOLCHAIN_COMMAND "PATH=/home/korzen/opt/f4pga/eos-s3/conda/envs/eos-s3/bin/:${INSTALLATION_DIR}/bin:$ENV{PATH} ${TOOLCHAIN_COMMAND}")
 run(${TOOLCHAIN_COMMAND} "")
 
 # Verify that all required output files are generated
