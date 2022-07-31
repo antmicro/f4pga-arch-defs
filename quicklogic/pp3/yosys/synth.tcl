@@ -48,7 +48,7 @@ stat
 
 # Write output JSON, fixup cell names using an external Python script
 write_json $::env(OUT_JSON).org.json
-exec $::env(PYTHON3) $::env(UTILS_PATH)/yosys_fixup_cell_names.py $::env(OUT_JSON).org.json $::env(OUT_JSON)
+exec $::env(PYTHON3) f4pga utils yosys_fixup_cell_names $::env(OUT_JSON).org.json $::env(OUT_JSON)
 
 # Read the fixed JSON back and write verilog
 design -reset

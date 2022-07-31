@@ -35,8 +35,6 @@ function(QUICKLOGIC_DEFINE_QLF_ARCH)
     set(REPACKER_PATH )
   endif()
 
-  set(SDC_PATCH_TOOL ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/common/utils/process_sdc_constraints.py)
-
   set(ARCH_DIR ${QLF_FPGA_PLUGINS_DIR}/${ARCH})
   set(ARCH_DIR_REL ${QLF_FPGA_DATABASE_DIR}/${ARCH})
   set(QLFPGA_FASM_DATABASE_LOC ${ARCH_DIR}/fasm_database)
