@@ -17,8 +17,8 @@ from data_structs import Pin, PinDirection, Quadrant, ClockCell, Cell, CellType,
     Tile, TileType, Loc, SwitchboxPinLoc, SwitchboxPinType, Switchbox, SwitchboxPin, \
     SwitchConnection, SwitchPin, PackagePin, OPPOSITE_DIRECTION
 from utils import yield_muxes, get_loc_of_cell, find_cell_in_tile, natural_keys
-from connections import build_connections, check_connections
-from connections import hop_to_str, get_name_and_hop, is_regular_hop_wire
+from f4pga.utils.ql.connections import build_connections, check_connections
+from f4pga.utils.ql.connections import hop_to_str, get_name_and_hop, is_regular_hop_wire
 
 # =============================================================================
 
