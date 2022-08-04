@@ -9,10 +9,10 @@ import re
 from collections import defaultdict
 
 import vpr_io_place
-from f4pga.utils.ql.pinmap_parse import read_pinmapfile_data
-from f4pga.utils.ql.pinmap_parse import vec_to_scalar
+from f4pga.utils.quicklogic.pinmap_parse import read_pinmapfile_data
+from f4pga.utils.quicklogic.pinmap_parse import vec_to_scalar
 
-from lib.parse_pcf import parse_simple_pcf
+from f4pga.utils.lib.parse_pcf import parse_simple_pcf
 
 # =============================================================================
 

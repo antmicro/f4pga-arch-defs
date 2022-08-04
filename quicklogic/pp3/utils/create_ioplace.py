@@ -6,7 +6,7 @@ import re
 from collections import defaultdict
 
 import vpr_io_place
-from lib.parse_pcf import parse_simple_pcf
+from f4pga.utils.lib.parse_pcf import parse_simple_pcf
 
 # =============================================================================
 
