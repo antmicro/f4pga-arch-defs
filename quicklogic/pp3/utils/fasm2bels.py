@@ -4,7 +4,7 @@ import re
 from collections import defaultdict, namedtuple
 import fasm
 
-from connections import get_name_and_hop
+from f4pga.aux.utils.quicklogic.connections import get_name_and_hop
 
 from pathlib import Path
 from data_structs import Loc, SwitchboxPinLoc, PinDirection, ConnectionType

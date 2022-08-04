@@ -11,8 +11,8 @@ import argparse
 import re
 import csv
 
-from f4pga.utils.lib.parse_pcf import parse_simple_pcf, PcfIoConstraint
-from f4pga.utils.eblif import parse_blif
+from f4pga.aux.utils.lib.parse_pcf import parse_simple_pcf, PcfIoConstraint
+from f4pga.aux.utils.eblif import parse_blif
 
 # =============================================================================
 
