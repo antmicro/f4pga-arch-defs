@@ -57,10 +57,6 @@ function(DEFINE_QL_TOOLCHAIN_TARGET)
 
   # install python scripts
 
-  install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/utils/split_inouts.py
-          DESTINATION share/f4pga/scripts
-          PERMISSIONS WORLD_EXECUTE WORLD_READ OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE)
-
   install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/utils/vpr_io_place.py
           DESTINATION share/f4pga/scripts
           PERMISSIONS WORLD_READ OWNER_WRITE OWNER_READ GROUP_READ)

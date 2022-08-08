@@ -27,7 +27,6 @@ function(DEFINE_XC_TOOLCHAIN_TARGET)
 
   # install python scripts
   install(FILES
-            ${symbiflow-arch-defs_SOURCE_DIR}/utils/split_inouts.py
             ${symbiflow-arch-defs_SOURCE_DIR}/utils/fix_xc7_carry.py
             ${symbiflow-arch-defs_SOURCE_DIR}/xc/common/utils/prjxray_create_ioplace.py
             ${symbiflow-arch-defs_SOURCE_DIR}/xc/common/utils/prjxray_create_place_constraints.py
