@@ -16,7 +16,7 @@ import lxml.etree as ET
 from data_structs import Pin, PinDirection, Quadrant, ClockCell, Cell, CellType, \
     Tile, TileType, Loc, SwitchboxPinLoc, SwitchboxPinType, Switchbox, SwitchboxPin, \
     SwitchConnection, SwitchPin, PackagePin, OPPOSITE_DIRECTION
-from utils import yield_muxes, get_loc_of_cell, find_cell_in_tile, natural_keys
+from f4pga.aux.utils.quicklogic.pp3.utils import yield_muxes, get_loc_of_cell, find_cell_in_tile, natural_keys
 from f4pga.aux.utils.quicklogic.connections import build_connections, check_connections
 from f4pga.aux.utils.quicklogic.connections import hop_to_str, get_name_and_hop, is_regular_hop_wire
 

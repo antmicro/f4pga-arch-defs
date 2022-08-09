@@ -30,7 +30,7 @@ function(QUICKLOGIC_DEFINE_QLF_ARCH)
   get_target_property_required(QLF_FASM env QLF_FASM)
 
   if("${FAMILY}" STREQUAL "qlf_k4n8")
-    set(REPACKER_PATH ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/common/utils/repacker/repack.py)
+    set(REPACKER_PATH "f4pga utils repack")
   else()
     set(REPACKER_PATH )
   endif()
@@ -85,7 +85,7 @@ function(QUICKLOGIC_DEFINE_QLF_ARCH)
       ${REPACKER_PATH}
     NET_PATCH_TOOL_CMD "${CMAKE_COMMAND} -E env \
       PYTHONPATH=${symbiflow-arch-defs_SOURCE_DIR}/utils \
-      \${QUIET_CMD} \${PYTHON3} \${NET_PATCH_TOOL} \
+      \${QUIET_CMD} \${NET_PATCH_TOOL} \
          --net-in \${IN_NET} \
          --eblif-in \${IN_EBLIF} \
          --place-in \${IN_PLACE} \

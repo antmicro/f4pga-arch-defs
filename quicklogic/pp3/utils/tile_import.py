@@ -7,7 +7,7 @@ from collections import defaultdict
 import lxml.etree as ET
 
 from data_structs import PinDirection
-from utils import fixup_pin_name, get_pin_name
+from f4pga.aux.utils.quicklogic.pp3.utils import fixup_pin_name, get_pin_name
 
 # =============================================================================
 

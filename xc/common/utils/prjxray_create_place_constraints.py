@@ -5,7 +5,7 @@ import eblif
 import sys
 import csv
 import os
-import vpr_place_constraints
+import f4pga.aux.utils.vpr_place_constraints
 import lxml.etree as ET
 import constraint
 import prjxray.db

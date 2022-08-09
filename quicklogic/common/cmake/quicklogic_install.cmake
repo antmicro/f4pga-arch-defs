@@ -57,60 +57,12 @@ function(DEFINE_QL_TOOLCHAIN_TARGET)
 
   # install python scripts
 
-  install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/utils/vpr_io_place.py
-          DESTINATION share/f4pga/scripts
-          PERMISSIONS WORLD_READ OWNER_WRITE OWNER_READ GROUP_READ)
-
-  install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/utils/vpr_place_constraints.py
-          DESTINATION share/f4pga/scripts
-          PERMISSIONS WORLD_READ OWNER_WRITE OWNER_READ GROUP_READ)
-
-  install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/utils/eblif.py
-          DESTINATION share/f4pga/scripts
-          PERMISSIONS WORLD_READ OWNER_WRITE OWNER_READ GROUP_READ)
-
-  install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/utils/lib/parse_pcf.py
-          DESTINATION share/f4pga/scripts/lib
-          PERMISSIONS WORLD_READ OWNER_WRITE OWNER_READ GROUP_READ)
-
   if("${FAMILY}" STREQUAL "pp3")
-
-    install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/pp3/utils/fasm2bels.py
-      DESTINATION share/f4pga/scripts
-      PERMISSIONS WORLD_EXECUTE WORLD_READ OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ)
-
-    install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/pp3/utils/verilogmodule.py
-      DESTINATION share/f4pga/scripts
-      PERMISSIONS WORLD_READ OWNER_WRITE OWNER_READ GROUP_READ)
 
     install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/pp3/utils/data_structs.py
       DESTINATION share/f4pga/scripts
       PERMISSIONS WORLD_READ OWNER_WRITE OWNER_READ GROUP_READ)
-
-    install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/pp3/utils/utils.py
-      DESTINATION share/f4pga/scripts
-      PERMISSIONS WORLD_READ OWNER_WRITE OWNER_READ GROUP_READ)
-
   endif()
-
-  # install the repacker
-  set(REPACKER_FILES
-    arch_xml_utils.py
-    block_path.py
-    eblif_netlist.py
-    netlist_cleaning.py
-    packed_netlist.py
-    pb_rr_graph_netlist.py
-    pb_rr_graph.py
-    pb_rr_graph_router.py
-    pb_type.py
-    repack.py
-  )
-  foreach(NAME ${REPACKER_FILES})
-    install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/common/utils/repacker/${NAME}
-            DESTINATION share/f4pga/scripts/repacker
-            PERMISSIONS WORLD_READ OWNER_WRITE OWNER_READ GROUP_READ)
-  endforeach()
 
   # install techmap
   install(DIRECTORY ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/${FAMILY}/techmap/.
@@ -139,23 +91,6 @@ function(DEFINE_QL_TOOLCHAIN_TARGET)
 		  DESTINATION share/f4pga/scripts/${FAMILY})
 	  message(STATUS "Installing pack.tcl for ${FAMILY}")
   endif()
-
-  # Install helper scripts
-  set(SCRIPTS
-    create_ioplace.py
-    create_place_constraints.py
-    eos_s3_iomux_config.py
-  )
-
-  foreach(NAME ${SCRIPTS})
-    set(FILE ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/${FAMILY}/utils/${NAME})
-    if(EXISTS "${FILE}")
-      install(FILES ${FILE}
-              DESTINATION share/f4pga/scripts
-              RENAME ${FAMILY}_${NAME}
-              PERMISSIONS WORLD_EXECUTE WORLD_READ OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE)
-    endif()
-  endforeach()
 
   # Install FASM database
   set(FASM_DATABASE_DIR "${QLF_FPGA_DATABASE_DIR}/${FAMILY}/fasm_database/")

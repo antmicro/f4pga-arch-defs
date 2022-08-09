@@ -1,7 +1,7 @@
 from collections import defaultdict
 
 from data_structs import PinDirection, ConnectionType
-from utils import yield_muxes
+from f4pga.aux.utils.quicklogic.pp3.utils import yield_muxes
 from rr_utils import add_node, connect
 
 # =============================================================================

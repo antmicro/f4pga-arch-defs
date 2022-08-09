@@ -5,7 +5,7 @@ import csv
 import json
 import sys
 import os
-import vpr_io_place
+import f4pga.aux.utils.vpr_io_place as vpr_io_place
 from lib.parse_pcf import parse_simple_pcf
 
 

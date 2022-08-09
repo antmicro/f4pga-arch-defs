@@ -2155,7 +2155,7 @@ function(ADD_FPGA_TARGET)
     # Add targets for patched EBLIF and .net
     add_custom_command(
       OUTPUT ${OUT_NET} ${OUT_EBLIF} ${OUT_PLACE}
-      DEPENDS ${IN_NET} ${IN_EBLIF} ${IN_PLACE} ${NET_PATCH_TOOL} ${NET_PATCH_DEPS}
+      DEPENDS ${IN_NET} ${IN_EBLIF} ${IN_PLACE} ${NET_PATCH_DEPS}
       COMMAND
         ${NET_PATCH_TOOL_CMD_FOR_TARGET_LIST}
         ${NET_PATCH_EXTRA_ARGS_FOR_TARGET_LIST}
@@ -2377,7 +2377,7 @@ function(ADD_FPGA_TARGET)
         add_custom_command(
         OUTPUT ${OUT_BIT_VERILOG}
         COMMAND ${BIT_TO_V_CMD_FOR_TARGET_LIST}
-        DEPENDS ${BIT_TO_V} ${OUT_BITSTREAM} ${OUT_BIN}
+        DEPENDS ${OUT_BITSTREAM} ${OUT_BIN}
         )
 
         add_output_to_fpga_target(${NAME} BIT_V ${OUT_LOCAL_REL}/${TOP}_bit.v)

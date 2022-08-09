@@ -12,7 +12,7 @@ import lxml.etree as ET
 from data_structs import PinDirection, SwitchboxPinType
 from data_import import import_data
 
-from utils import yield_muxes
+from f4pga.aux.utils.quicklogic.pp3.utils import yield_muxes
 
 from switchbox_model import SwitchboxModel
 

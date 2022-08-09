@@ -96,10 +96,10 @@ define_arch(
 
   NO_BIT_TO_BIN
   BIT_TO_V
-    ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/pp3/utils/fasm2bels.py
+    "f4pga utils fasm2bels"
   BIT_TO_V_CMD
     "${CMAKE_COMMAND} -E env PYTHONPATH=${symbiflow-arch-defs_SOURCE_DIR}/utils:$PYTHONPATH \
-    \${PYTHON3} \${BIT_TO_V} \${OUT_BITSTREAM}
+    \${BIT_TO_V} \${OUT_BITSTREAM}
       --phy-db ${CMAKE_CURRENT_BINARY_DIR}/devices/\${DEVICE_TYPE}/db_phy.pickle
       --input-type bitstream
       --output-verilog \${OUT_BIT_VERILOG}

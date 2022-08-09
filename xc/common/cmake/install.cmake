@@ -30,9 +30,6 @@ function(DEFINE_XC_TOOLCHAIN_TARGET)
             ${symbiflow-arch-defs_SOURCE_DIR}/utils/fix_xc7_carry.py
             ${symbiflow-arch-defs_SOURCE_DIR}/xc/common/utils/prjxray_create_ioplace.py
             ${symbiflow-arch-defs_SOURCE_DIR}/xc/common/utils/prjxray_create_place_constraints.py
-            ${symbiflow-arch-defs_SOURCE_DIR}/utils/vpr_io_place.py
-            ${symbiflow-arch-defs_SOURCE_DIR}/utils/vpr_place_constraints.py
-            ${symbiflow-arch-defs_SOURCE_DIR}/utils/eblif.py
           DESTINATION share/f4pga/scripts
           PERMISSIONS WORLD_EXECUTE WORLD_READ OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE)
 

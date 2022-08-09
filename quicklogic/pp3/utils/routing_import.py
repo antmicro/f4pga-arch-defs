@@ -9,7 +9,7 @@ import lib.rr_graph_xml.graph2 as rr_xml
 from lib import progressbar_utils
 
 from data_structs import Loc, ConnectionType
-from utils import fixup_pin_name
+from f4pga.aux.utils.quicklogic.pp3.utils import fixup_pin_name
 
 from rr_utils import add_node, add_track, add_edge, connect
 from switchbox_model import SwitchboxModel, QmuxSwitchboxModel
