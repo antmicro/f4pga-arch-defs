@@ -55,14 +55,14 @@ function(QUICKLOGIC_DEFINE_DEVICE_TYPE)
   set(ROUTING_TIMING "${symbiflow-arch-defs_SOURCE_DIR}/third_party/${DEVICE_DIR_DATA}/Timing Data Files/${ROUTING_TIMING_FILE_NAME}")
 
   # Import data from the techfile
-  set(DATA_IMPORT ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/${FAMILY}/utils/data_import.py)
+  set(DATA_IMPORT "data_import")
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${PHY_DB_FILE}
-    COMMAND ${PYTHON3} ${DATA_IMPORT}
+    COMMAND f4pga utils ${DATA_IMPORT}
       --techfile ${TECHFILE}
       --routing-timing ${ROUTING_TIMING}
       --db ${PHY_DB_FILE}
-    DEPENDS ${TECHFILE} ${ROUTING_TIMING} ${DATA_IMPORT}
+    DEPENDS ${TECHFILE} ${ROUTING_TIMING}
   )
   add_file_target(FILE ${PHY_DB_FILE} GENERATED)
 
@@ -118,7 +118,7 @@ function(QUICKLOGIC_DEFINE_DEVICE_TYPE)
 
 
   # Process the database, create the VPR database
-  set(PREPARE_VPR_DATABASE ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/${FAMILY}/utils/prepare_vpr_database.py)
+  set(PREPARE_VPR_DATABASE "prepare_vpr_database")
   get_file_target(PHY_DB_TARGET ${PHY_DB_FILE})
 
   if(NOT "${GRID_LIMIT}" STREQUAL "")
@@ -129,12 +129,12 @@ function(QUICKLOGIC_DEFINE_DEVICE_TYPE)
 
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${VPR_DB_FILE}
-    COMMAND ${PYTHON3} ${PREPARE_VPR_DATABASE}
+    COMMAND f4pga utils ${PREPARE_VPR_DATABASE}
       --phy-db ${PHY_DB_FILE}
       --vpr-db ${VPR_DB_FILE}
       --sdf-dir ${SDF_TIMING_DIR}
       ${GRID_LIMIT_ARGS}
-    DEPENDS ${PHY_DB_TARGET} ${SDF_FILE_TARGETS} ${PREPARE_VPR_DATABASE}
+    DEPENDS ${PHY_DB_TARGET} ${SDF_FILE_TARGETS}
   )
   add_file_target(FILE ${VPR_DB_FILE} GENERATED)
 
@@ -183,18 +183,18 @@ function(QUICKLOGIC_DEFINE_DEVICE_TYPE)
   add_file_target(FILE ${RAM_CELLS_MAP} GENERATED)
 
   # Generate the arch.xml
-  set(ARCH_IMPORT ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/${FAMILY}/utils/arch_import.py)
+  set(ARCH_IMPORT "arch_import")
   get_file_target(RAM_MODEL_XML_TARGET ${RAM_MODEL_XML})
   get_file_target(RAM_PBTYPE_XML_TARGET ${RAM_PBTYPE_XML})
 
   get_file_target(VPR_DB_TARGET ${VPR_DB_FILE})
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${ARCH_XML}
-    COMMAND ${PYTHON3} ${ARCH_IMPORT}
+    COMMAND f4pga utils ${ARCH_IMPORT}
       --vpr-db ${VPR_DB_FILE}
       --arch-out ${ARCH_XML}
       --device ${DEVICE}
-    DEPENDS ${VPR_DB_TARGET} ${XML_DEPS} ${ARCH_IMPORT} ${RAM_MODEL_XML_TARGET} ${RAM_PBTYPE_XML_TARGET}
+    DEPENDS ${VPR_DB_TARGET} ${XML_DEPS} ${RAM_MODEL_XML_TARGET} ${RAM_PBTYPE_XML_TARGET}
   )
   add_file_target(FILE ${ARCH_XML} GENERATED)
 

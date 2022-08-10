@@ -52,10 +52,10 @@ define_arch(
   VPR_ARCH_ARGS ${VPR_ARCH_ARGS}
 
   RR_PATCH_TOOL
-    ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/pp3/utils/routing_import.py
+    "routing_import"
   RR_PATCH_CMD "\${CMAKE_COMMAND} -E env \
     PYTHONPATH=${symbiflow-arch-defs_SOURCE_DIR}/utils:$PYTHONPATH \
-    \${PYTHON3} \${RR_PATCH_TOOL} \
+    f4pga utils \${RR_PATCH_TOOL} \
         --vpr-db ${CMAKE_CURRENT_BINARY_DIR}/devices/\${DEVICE_TYPE}/db_vpr.pickle \
         --rr-graph-in \${OUT_RRXML_VIRT} \
         --rr-graph-out \${OUT_RRXML_REAL}"
