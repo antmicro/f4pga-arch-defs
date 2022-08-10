@@ -4,7 +4,7 @@ from copy import deepcopy
 from collections import defaultdict, namedtuple
 
 from data_structs import VprSwitch, MuxEdgeTiming, DriverTiming, SinkTiming
-from f4pga.aux.utils.quicklogic.pp3.utils import yield_muxes, add_named_item
+from utils import yield_muxes, add_named_item
 
 # =============================================================================
 

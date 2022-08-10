@@ -40,7 +40,7 @@ function(ADD_JLINK_OUTPUT)
   get_file_location(PINMAP_LOC ${PINMAP})
 
   # Generate a JLINK script that sets IOMUX configuration.
-  set(IOMUX_CONFIG_GEN "f4pga utils iomux_config")
+  set(IOMUX_CONFIG_GEN "iomux_config")
   set(IOMUX_CONFIG "${TOP}_iomux.jlink")
 
   set(IOMUX_CONFIG_DEPS)
@@ -58,7 +58,7 @@ function(ADD_JLINK_OUTPUT)
   add_custom_command(
     OUTPUT ${WORK_DIR}/${IOMUX_CONFIG}
     COMMAND ${CMAKE_COMMAND} -E env PYTHONPATH=${symbiflow-arch-defs_SOURCE_DIR}/utils:$PYTHONPATH
-      ${IOMUX_CONFIG_GEN}
+      f4pga utils ${IOMUX_CONFIG_GEN}
         ${IOMUX_CONFIG_ARGS}
         --map ${PINMAP_LOC}
         --output-format jlink

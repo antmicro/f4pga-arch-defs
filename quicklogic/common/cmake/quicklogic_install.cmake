@@ -62,6 +62,11 @@ function(DEFINE_QL_TOOLCHAIN_TARGET)
     install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/pp3/utils/data_structs.py
       DESTINATION share/f4pga/scripts
       PERMISSIONS WORLD_READ OWNER_WRITE OWNER_READ GROUP_READ)
+
+    install(FILES ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/pp3/utils/utils.py
+      DESTINATION share/f4pga/scripts
+      PERMISSIONS WORLD_READ OWNER_WRITE OWNER_READ GROUP_READ)
+
   endif()
 
   # install techmap

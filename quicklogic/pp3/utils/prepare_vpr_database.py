@@ -11,8 +11,8 @@ from sdf_timing.utils import get_scale_seconds
 from data_structs import Pin, PinDirection, Cell, CellType, ClockCell, Loc, LocMap, \
     Tile, TileType, Connection, ConnectionLoc, ConnectionType, PackagePin, VprSwitch, \
     VprSegment, Quadrant
-from f4pga.aux.utils.quicklogic.pp3.utils import get_loc_of_cell, find_cell_in_tile
-from f4pga.aux.utils.quicklogic.pp3.utils import get_pin_name
+from utils import get_loc_of_cell, find_cell_in_tile
+from utils import get_pin_name
 
 from timing import compute_switchbox_timing_model
 from timing import populate_switchbox_timing, copy_switchbox_timing

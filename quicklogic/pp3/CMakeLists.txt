@@ -61,20 +61,20 @@ define_arch(
         --rr-graph-out \${OUT_RRXML_REAL}"
 
   PLACE_TOOL
-    ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/pp3/utils/create_ioplace.py
+    "create_ioplace"
   PLACE_TOOL_CMD "${CMAKE_COMMAND} -E env \
     PYTHONPATH=${symbiflow-arch-defs_SOURCE_DIR}/utils:$PYTHONPATH \
-    ${PYTHON3} \${PLACE_TOOL} \
+    f4pga utils \${PLACE_TOOL} \
         --map \${PINMAP} \
         --blif \${OUT_EBLIF} \
         --pcf \${INPUT_IO_FILE} \
         --net \${OUT_NET}"
 
   PLACE_CONSTR_TOOL
-    ${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/pp3/utils/create_place_constraints.py
+    "create_place_constraints"
   PLACE_CONSTR_TOOL_CMD "${CMAKE_COMMAND} -E env \
     PYTHONPATH=${symbiflow-arch-defs_SOURCE_DIR}/utils \
-    \${PYTHON3} \${PLACE_CONSTR_TOOL} \
+    f4pga utils \${PLACE_CONSTR_TOOL} \
         --map ${symbiflow-arch-defs_BINARY_DIR}/quicklogic/${FAMILY_NAME}/\${BOARD}_clkmap.csv \
         --blif \${OUT_EBLIF} \
         --i /dev/stdin \
@@ -96,10 +96,10 @@ define_arch(
 
   NO_BIT_TO_BIN
   BIT_TO_V
-    "f4pga utils fasm2bels"
+    "fasm2bels"
   BIT_TO_V_CMD
-    "${CMAKE_COMMAND} -E env PYTHONPATH=${symbiflow-arch-defs_SOURCE_DIR}/utils:$PYTHONPATH \
-    \${BIT_TO_V} \${OUT_BITSTREAM}
+    "${CMAKE_COMMAND} -E env PYTHONPATH=${symbiflow-arch-defs_SOURCE_DIR}/utils:${symbiflow-arch-defs_SOURCE_DIR}/quicklogic/${FAMILY_NAME}/utils:$PYTHONPATH \
+    f4pga utils \${BIT_TO_V} \${OUT_BITSTREAM}
       --phy-db ${CMAKE_CURRENT_BINARY_DIR}/devices/\${DEVICE_TYPE}/db_phy.pickle
       --input-type bitstream
       --output-verilog \${OUT_BIT_VERILOG}
