@@ -34,9 +34,6 @@ heading "Running installed toolchain tests"
   pushd build
   export VPR_NUM_WORKERS=${MAX_CORES}
   export CTEST_OUTPUT_ON_FAILURE=1
-  heading "Testing installed toolchain on qlf_k4n8"
-  ctest -j${MAX_CORES} -R "quicklogic_toolchain_test_.*_qlf_k4n8" -VV
-  echo "----------------------------------------"
   heading "Testing installed toolchain on ql_eos_s3"
   ctest -j${MAX_CORES} -R "quicklogic_toolchain_test_.*_ql-eos-s3" -VV
   echo "----------------------------------------"
