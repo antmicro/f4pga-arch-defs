@@ -63,6 +63,7 @@ add_env_executable(EXE quicklogic_timings_importer REQUIRED)
 add_env_executable(EXE xc7frames2bit REQUIRED)
 add_env_executable(EXE bitread REQUIRED)
 add_env_executable(EXE prjxray-config)
+add_env_executable(EXE f4pga)
 
 get_target_property_required(PYTHON3 env PYTHON3)
 
@@ -163,7 +164,7 @@ if (NOT LIGHT_BUILD)
 add_dependencies(all_xc7_route_tests
     all_dummy_artix7_xc7a50t-arty-swbut_test_route
     all_dummy_artix7_xc7a50t-arty-uart_test_route
-    all_dummy_artix7_xc7a50t-basys3_test_route
+    all_dummy_artix7_xc7a50t-basys3_test-tcpg236_route
     )
 endif()
 

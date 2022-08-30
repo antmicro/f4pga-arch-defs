@@ -15,6 +15,8 @@ add_xc_arch_define(
   PRJRAY_DB_DIR ${PRJXRAY_DB_DIR}
   PRJRAY_NAME prjxray
   PROTOTYPE_PART xc7s50fgga484-1
+  YOSYS_SYNTH_SCRIPT ${f4pga-arch-defs_SOURCE_DIR}/xc7/yosys/synth.tcl
+  YOSYS_CONV_SCRIPT ${f4pga-arch-defs_SOURCE_DIR}/xc7/yosys/conv.tcl
 )
 
 add_subdirectory(tiles)

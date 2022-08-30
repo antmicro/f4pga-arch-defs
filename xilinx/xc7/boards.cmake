@@ -3,112 +3,126 @@ get_target_property_required(OPENOCD env OPENOCD)
 add_xc_board(
   BOARD basys3
   DEVICE xc7a50t-basys3
-  PACKAGE test
+  PACKAGE test-tcpg236
   PROG_CMD "${OPENOCD} -f ${PRJXRAY_DIR}/utils/openocd/board-digilent-basys3.cfg -c \\\"init $<SEMICOLON> pld load 0 \${OUT_BIN} $<SEMICOLON> exit\\\""
   PART xc7a35tcpg236-1
+  USE_F4PGA_BUILD
 )
 
 add_xc_board(
   BOARD basys3-full
   DEVICE xc7a50t
-  PACKAGE test
+  PACKAGE test-tcpg236
   PROG_CMD "${OPENOCD} -f ${PRJXRAY_DIR}/utils/openocd/board-digilent-basys3.cfg -c \\\"init $<SEMICOLON> pld load 0 \${OUT_BIN} $<SEMICOLON> exit\\\""
   PART xc7a35tcpg236-1
+  USE_F4PGA_BUILD
 )
 
 add_xc_board(
   BOARD basys3-bottom
   DEVICE xc7a50t-bottom
-  PACKAGE test
+  PACKAGE test-tcpg236
   PROG_CMD "${OPENOCD} -f ${PRJXRAY_DIR}/utils/openocd/board-digilent-basys3.cfg -c \\\"init $<SEMICOLON> pld load 0 \${OUT_BIN} $<SEMICOLON> exit\\\""
   PART xc7a35tcpg236-1
+  USE_F4PGA_BUILD
 )
 
 add_xc_board(
   BOARD arty-swbut
   DEVICE xc7a50t-arty-swbut
-  PACKAGE test
+  PACKAGE test-tcsg324
   PROG_CMD "${OPENOCD} -f ${PRJXRAY_DIR}/utils/openocd/board-digilent-basys3.cfg -c \\\"init $<SEMICOLON> pld load 0 \${OUT_BIN} $<SEMICOLON> exit\\\""
   PART xc7a35tcsg324-1
+  USE_F4PGA_BUILD
 )
 
 add_xc_board(
   BOARD arty-swbut-pr
   DEVICE xc7a50t-arty-swbut-pr1
-  PACKAGE test
+  PACKAGE test-tcsg324
   PROG_CMD "${OPENOCD} -f ${PRJXRAY_DIR}/utils/openocd/board-digilent-basys3.cfg -c \\\"init $<SEMICOLON> pld load 0 \${OUT_BIN} $<SEMICOLON> exit\\\""
   PART xc7a35tcsg324-1
+  USE_F4PGA_BUILD
 )
 
 add_xc_board(
   BOARD arty-swbut-overlay
   DEVICE xc7a50t-arty-swbut-overlay
-  PACKAGE test
+  PACKAGE test-tcsg324
   PROG_CMD "${OPENOCD} -f ${PRJXRAY_DIR}/utils/openocd/board-digilent-basys3.cfg -c \\\"init $<SEMICOLON> pld load 0 \${OUT_BIN} $<SEMICOLON> exit\\\""
   PART xc7a35tcsg324-1
+  USE_F4PGA_BUILD
 )
 
 add_xc_board(
   BOARD arty-switch-processing-pr1
   DEVICE xc7a50t-arty-switch-processing-pr1
-  PACKAGE test
+  PACKAGE test-tcsg324
   PROG_CMD "${OPENOCD} -f ${PRJXRAY_DIR}/utils/openocd/board-digilent-basys3.cfg -c \\\"init $<SEMICOLON> pld load 0 \${OUT_BIN} $<SEMICOLON> exit\\\""
   PART xc7a35tcsg324-1
+  USE_F4PGA_BUILD
 )
 
 add_xc_board(
   BOARD arty-switch-processing-pr2
   DEVICE xc7a50t-arty-switch-processing-pr2
-  PACKAGE test
+  PACKAGE test-tcsg324
   PROG_CMD "${OPENOCD} -f ${PRJXRAY_DIR}/utils/openocd/board-digilent-basys3.cfg -c \\\"init $<SEMICOLON> pld load 0 \${OUT_BIN} $<SEMICOLON> exit\\\""
   PART xc7a35tcsg324-1
+  USE_F4PGA_BUILD
 )
 
 add_xc_board(
   BOARD arty-switch-processing-overlay
   DEVICE xc7a50t-arty-switch-processing-overlay
-  PACKAGE test
+  PACKAGE test-tcsg324
   PROG_CMD "${OPENOCD} -f ${PRJXRAY_DIR}/utils/openocd/board-digilent-basys3.cfg -c \\\"init $<SEMICOLON> pld load 0 \${OUT_BIN} $<SEMICOLON> exit\\\""
   PART xc7a35tcsg324-1
+  USE_F4PGA_BUILD
 )
 
 add_xc_board(
   BOARD arty-uart
   DEVICE xc7a50t-arty-uart
-  PACKAGE test
+  PACKAGE test-tcsg324
   PROG_CMD "${OPENOCD} -f ${PRJXRAY_DIR}/utils/openocd/board-digilent-basys3.cfg -c \\\"init $<SEMICOLON> pld load 0 \${OUT_BIN} $<SEMICOLON> exit\\\""
   PART xc7a35tcsg324-1
+  USE_F4PGA_BUILD
 )
 
 add_xc_board(
   BOARD arty-full
   DEVICE xc7a50t
-  PACKAGE test
+  PACKAGE test-tcsg324
   PROG_CMD "${OPENOCD} -f ${PRJXRAY_DIR}/utils/openocd/board-digilent-basys3.cfg -c \\\"init $<SEMICOLON> pld load 0 \${OUT_BIN} $<SEMICOLON> exit\\\""
   PART xc7a35tcsg324-1
+  USE_F4PGA_BUILD
 )
 
 add_xc_board(
   BOARD arty100t-full
   DEVICE xc7a100t
-  PACKAGE test
+  PACKAGE test-tcsg324
   PROG_CMD "${OPENOCD} -f ${PRJXRAY_DIR}/utils/openocd/board-digilent-basys3.cfg -c \\\"init $<SEMICOLON> pld load 0 \${OUT_BIN} $<SEMICOLON> exit\\\""
   PART xc7a100tcsg324-1
+  USE_F4PGA_BUILD
 )
 
 add_xc_board(
   BOARD nexys
   DEVICE xc7a50t
-  PACKAGE test
+  PACKAGE test-tcsg324
   PROG_CMD "${OPENOCD} -f ${PRJXRAY_DIR}/utils/openocd/board-digilent-basys3.cfg -c \\\"init $<SEMICOLON> pld load 0 \${OUT_BIN} $<SEMICOLON> exit\\\""
   PART xc7a50tcsg324-1
+  USE_F4PGA_BUILD
 )
 
 add_xc_board(
   BOARD netv2-a100t
   DEVICE xc7a100t
-  PACKAGE test
+  PACKAGE test-tfgg484
   PART xc7a100tfgg484-2
+  USE_F4PGA_BUILD
 )
 
 # TODO: https://github.com/SymbiFlow/f4pga-arch-defs/issues/344
@@ -129,19 +143,21 @@ add_xc_board(
 add_xc_board(
   BOARD nexys_video
   DEVICE xc7a200t
-  PACKAGE test
+  PACKAGE test-tsbg484
   PART xc7a200tsbg484-1
   PROG_CMD "${OPENOCD} -f board/digilent_nexys_video.cfg -c \\\"init $<SEMICOLON> pld load 0 \${OUT_BIN} $<SEMICOLON> exit\\\""
-)
+  USE_F4PGA_BUILD
+  )
 
 add_xc_board(
   BOARD nexys_video-mid
   DEVICE xc7a200t-mid
-  PACKAGE test
+  PACKAGE test-tsbg484
   PART xc7a200tsbg484-1
   PROG_TOOL ${OPENOCD_TARGET}
   PROG_CMD "${OPENOCD} -f board/digilent_nexys_video.cfg -c \\\"init $<SEMICOLON> pld load 0 \${OUT_BIN} $<SEMICOLON> exit\\\""
-)
+  USE_F4PGA_BUILD
+  )
 
 #add_xc_board(
 #  BOARD zedboard-full

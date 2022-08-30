@@ -1,6 +1,6 @@
 function(ADD_QUICKLOGIC_BOARD)
 
-  set(options)
+  set(options USE_F4PGA_BUILD)
   set(oneValueArgs BOARD DEVICE PACKAGE FABRIC_PACKAGE PINMAP_XML PINMAP BIT_TO_V_EXTRA_ARGS)
   set(multiValueArgs)
   cmake_parse_arguments(
@@ -13,6 +13,15 @@ function(ADD_QUICKLOGIC_BOARD)
 
   get_target_property_required(PYTHON3 env PYTHON3)
 
+  set(define_board_extra_opts)
+
+  if(${ADD_QUICKLOGIC_BOARD_USE_F4PGA_BUILD})
+    list(APPEND define_board_extra_opts USE_F4PGA_BUILD)
+  endif()
+
+  # Hack for two values being used to describe packaging
+  get_part_name(PART_NAME ${DEVICE} ${ADD_QUICKLOGIC_BOARD_PACKAGE}-${ADD_QUICKLOGIC_BOARD_FABRIC_PACKAGE})
+
   # Define the board
   define_board(
     BOARD ${ADD_QUICKLOGIC_BOARD_BOARD}
@@ -20,6 +29,8 @@ function(ADD_QUICKLOGIC_BOARD)
     PACKAGE ${ADD_QUICKLOGIC_BOARD_PACKAGE}
     PINMAP ${ADD_QUICKLOGIC_BOARD_PINMAP}
     PINMAP_XML ${ADD_QUICKLOGIC_BOARD_PINMAP_XML}
+    PART_NAME ${PART_NAME}
+    ${define_board_extra_opts}
     )
 
   set(DEVICE ${ADD_QUICKLOGIC_BOARD_DEVICE})

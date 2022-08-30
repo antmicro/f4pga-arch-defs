@@ -22,7 +22,7 @@ function(ADD_XC_BOARD)
   # specified board. PROG_CMD is an optional command string.  If PROG_CMD is not
   # provided, PROG_CMD will simply be ${PROG_TOOL}.
   #
-  set(options)
+  set(options USE_F4PGA_BUILD)
   set(oneValueArgs BOARD DEVICE PACKAGE PROG_TOOL PROG_CMD PART)
   set(multiValueArgs)
   cmake_parse_arguments(
@@ -32,6 +32,14 @@ function(ADD_XC_BOARD)
      "${multiValueArgs}"
      ${ARGN}
     )
+  
+  set(define_board_extra_opts)
+
+  if(${ADD_XC_BOARD_USE_F4PGA_BUILD})
+    list(APPEND define_board_extra_opts USE_F4PGA_BUILD)
+  endif()
+
+  get_part_name(PART_NAME ${ADD_XC_BOARD_DEVICE} ${ADD_XC_BOARD_PACKAGE})
 
   define_board(
     BOARD ${ADD_XC_BOARD_BOARD}
@@ -39,6 +47,8 @@ function(ADD_XC_BOARD)
     PACKAGE ${ADD_XC_BOARD_PACKAGE}
     PROG_TOOL ${ADD_XC_BOARD_PROG_TOOL}
     PROG_CMD ${ADD_XC_BOARD_PROG_CMD}
+    PART_NAME ${PART_NAME}
+    ${define_board_extra_opts}
     )
 
   set(DEVICE ${ADD_XC_BOARD_DEVICE})

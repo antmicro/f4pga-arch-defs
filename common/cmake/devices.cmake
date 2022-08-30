@@ -16,8 +16,6 @@ function(DEFINE_ARCH)
   #    DOC_PRJ <documentation_project>
   #    DOC_PRJ_DB <documentation_database>
   #    PROTOTYPE_PART <prototype_part>
-  #    [YOSYS_SYNTH_SCRIPT <yosys_script>]
-  #    [YOSYS_CONV_SCRIPT <yosys_script>]
   #    [SDC_PATCH_TOOL <path to a SDC file patching utility>]
   #    [SDC_PATCH_TOOL_CMD <command to run SDC_PATCH_TOOL>]
   #    BITSTREAM_EXTENSION <ext>
@@ -80,7 +78,7 @@ function(DEFINE_ARCH)
   #
   # if NO_BIT_TO_BIN is given then there will be no BIT to BIN stage.
   #
-  # YOSYS_SYNTH_SCRIPT - The main design synthesis script. It needs to write
+  # YOSYS_SYNTH_SCRIPT - The main design synthesis script. It should write
   #  the synthesized design in JSON format to a file name pointed by the
   #  OUT_JSON env. variable.
   #
@@ -903,12 +901,17 @@ function(DEFINE_DEVICE)
       )
     endif()
 
+    get_part_name(PART_NAME ${DEFINE_DEVICE_DEVICE} ${PACKAGE})
+
+    message("Defining dummy board: dummy_${DEFINE_DEVICE_ARCH}_${DEFINE_DEVICE_DEVICE}_${PACKAGE}")
+
     # Define dummy boards.  PROG_TOOL is set to false to disallow programming.
     define_board(
       BOARD dummy_${DEFINE_DEVICE_ARCH}_${DEFINE_DEVICE_DEVICE}_${PACKAGE}
       DEVICE ${DEFINE_DEVICE_DEVICE}
       PACKAGE ${PACKAGE}
       PROG_TOOL false
+      PART_NAME ${PART_NAME}
       )
 
     # Append the device to the device list of the arch. This is currently used
@@ -947,6 +950,44 @@ function(DEFINE_DEVICE)
 
 endfunction()
 
+# Define a part name for a given device and package
+function(DEFINE_PART_NAME)
+  set(options)
+  set(oneValueArgs PACKAGE PART_NAME)
+  set(multiValueArgs DEVICES)
+  cmake_parse_arguments(
+    DEFINE_PART_NAME
+    "${options}"
+    "${oneValueArgs}"
+    "${multiValueArgs}"
+    ${ARGN}
+  )
+
+  
+  foreach(device ${DEFINE_PART_NAME_DEVICES})
+    set(target_name partname_${device}__${DEFINE_PART_NAME_PACKAGE})
+    add_custom_target(${target_name})
+
+    set_target_properties(
+      ${target_name}
+      PROPERTIES
+        PART_NAME ${DEFINE_PART_NAME_PART_NAME}
+    )
+  endforeach()
+endfunction()
+
+function(GET_PART_NAME part_name device package)
+  if(TARGET partname_${device}__${package})
+    get_target_property(${part_name} partname_${device}__${package} PART_NAME)
+  else()
+    set(${part_name} "")
+  endif()
+endfunction()
+
+function(GET_PART_NAME_REQUIRED part_name device package)
+  get_target_property_required(${part_name} partname_${device}__${package} PART_NAME)
+endfunction()
+
 function(DEFINE_BOARD)
   # ~~~
   # DEFINE_BOARD(
@@ -954,7 +995,9 @@ function(DEFINE_BOARD)
   #   DEVICE <device>
   #   PACKAGE <package>
   #   PROG_TOOL <prog_tool>
-  #   [PROG_CMD <command to use PROG_TOOL>
+  #   PART_NAME <fpga part name>
+  #   [PROG_CMD <command to use PROG_TOOL>]
+  #   [USE_F4PGA_BUILD]
   #   )
   # ~~~
   #
@@ -965,8 +1008,8 @@ function(DEFINE_BOARD)
   # specified board. PROG_CMD is an optional command string.  If PROG_CMD is not
   # provided, PROG_CMD will simply be ${PROG_TOOL}.
   #
-  set(options)
-  set(oneValueArgs BOARD DEVICE PACKAGE PROG_TOOL PROG_CMD)
+  set(options USE_F4PGA_BUILD)
+  set(oneValueArgs BOARD DEVICE PACKAGE PROG_TOOL PROG_CMD PART_NAME)
   set(multiValueArgs)
   cmake_parse_arguments(
     DEFINE_BOARD
@@ -977,12 +1020,20 @@ function(DEFINE_BOARD)
   )
 
   add_custom_target(${DEFINE_BOARD_BOARD})
-  foreach(ARG DEVICE PACKAGE PROG_TOOL PROG_CMD)
+  foreach(ARG DEVICE PACKAGE PROG_TOOL PROG_CMD PART_NAME)
     set_target_properties(
       ${DEFINE_BOARD_BOARD}
       PROPERTIES ${ARG} "${DEFINE_BOARD_${ARG}}"
     )
   endforeach()
+
+  if(USE_F4PGA_BUILD)
+    set_target_properties(
+      ${DEFINE_BOARD_BOARD}
+      PROPERTIES
+        USE_F4PGA_BUILD TRUE
+    )
+  endif()
 
   # Target for gathering all targets for a particular board.
 
@@ -1434,33 +1485,27 @@ function(ADD_FPGA_TARGET)
 
   get_target_property_required(DEVICE ${BOARD} DEVICE)
   get_target_property_required(PACKAGE ${BOARD} PACKAGE)
+  get_target_property_required(USE_F4PGA_BUILD ${BOARD} USE_F4PGA_BUILD)
+  get_part_name(PART_NAME ${DEVICE} ${PACKAGE})
 
   get_target_property_required(ARCH ${DEVICE} ARCH)
   get_target_property_required(DEVICE_TYPE ${DEVICE} DEVICE_TYPE)
 
-  get_target_property_required(YOSYS env YOSYS)
+  get_target_property_required(F4PGA env F4PGA)
   get_target_property_required(QUIET_CMD env QUIET_CMD)
 
   get_target_property(YOSYS_SYNTH_SCRIPT ${ARCH} YOSYS_SYNTH_SCRIPT)
-  if("${YOSYS_SYNTH_SCRIPT}" STREQUAL "")
-    execute_process(
-      COMMAND python3 -m f4pga.wrappers.tcl synth ${ARCH}
-      COMMAND_ERROR_IS_FATAL ANY
-      OUTPUT_VARIABLE YOSYS_SYNTH_SCRIPT
-      OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-    message("YOSYS_SYNTH_SCRIPT is ${YOSYS_SYNTH_SCRIPT}.")
+  if("${YOSYS_SYNTH_SCRIPT}" STREQUAL "" AND NOT "${USE_F4PGA_BUILD}")
+    message(FATAL_ERROR "YOSYS_SYNTH_SCRIPT is required if `f4pga build` is not used. Caused by board ${BOARD}")
   endif()
 
   get_target_property(YOSYS_CONV_SCRIPT ${ARCH} YOSYS_CONV_SCRIPT)
-  if("${YOSYS_CONV_SCRIPT}" STREQUAL "")
-    execute_process(
-      COMMAND python3 -m f4pga.wrappers.tcl conv ${ARCH}
-      COMMAND_ERROR_IS_FATAL ANY
-      OUTPUT_VARIABLE YOSYS_CONV_SCRIPT
-      OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-    message("YOSYS_CONV_SCRIPT is ${YOSYS_CONV_SCRIPT}.")
+  if("${YOSYS_CONV_SCRIPT}" STREQUAL "" AND NOT "${USE_F4PGA_BUILD}")
+    message(FATAL_ERROR "YOSYS_CONV_SCRIPT is required if `f4pga build` is not used. Caused by board ${BOARD}")
+  endif()
+
+  if("${USE_F4PGA_BUILD}" AND PARTNAME STREQUAL "")
+    message(FATAL_ERROR "PART_NAME property is not set for ${BOARD}, but it's required when using USE_F4PGA_BUILD")
   endif()
 
   get_target_property_required(
@@ -1638,11 +1683,42 @@ function(ADD_FPGA_TARGET)
     # Convert list of XDCs to string
     string(REPLACE ";" " " XDC_FILES "${INPUT_XDC_FILES}")
 
+    
+    if(USE_F4PGA_BUILD)
+      # Prepare f4pga CLI-compatible lists
+      list(JOIN "${XDC_FILES}" "," XDC_FILES_COMMA_SEP)
+      list(JOIN "${SOURCE_FILES}" "," SOURCE_FILES_COMMA_SEP)
+      add_custom_command(
+        OUTPUT ${OUT_JSON_SYNTH} ${OUT_SYNTH_V} ${OUT_FASM_EXTRA} ${OUT_SDC}
+        DEPENDS ${SOURCE_FILES} ${SOURCE_FILES_DEPS} ${INPUT_XDC_FILES} ${CELLS_SIM_DEPS}
+                ${F4PGA} ${QUIET_CMD} ${YOSYS_IO_DEPS}
+        COMMAND
+          ${CMAKE_COMMAND} -E env
+            ${ADD_FPGA_TARGET_DEFINES}
+            ${F4PGA} -vv build --nocache -p ${PART_NAME} -t json
+              -Dbuild_dir=${OUT_LOCAL}
+              -Dsources=[${SOURCE_FILES_COMMA_SEP}]
+              -Vextra_techmaps_path=${YOSYS_TECHMAP}
+              -Vsimulation_models=${YOSYS_DEVICE_CELLS_SIM}
+              -Vtechmap=${YOSYS_DEVICE_CELLS_MAP}
+              -Vtop=${TOP}
+              -Djson=${OUT_JSON_SYNTH}
+              -Dfasm_extra=${OUT_FASM_EXTRA}
+              -Vpart_json=${PART_JSON} #optional, provided by db if not specified.
+              -Dxdc=[${XDC_FILES_COMMA_SEP}]
+              -Dsdc=${OUT_SDC}
+              -Vuse_roi=${USE_ROI}
+              -Dpcf=${INPUT_IO_FILE}
+              -Vpinmap=${PINMAP_FILE}
+              -Vpython3=${PYTHON3}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        VERBATIM
+      )
+    else()
     add_custom_command(
       OUTPUT ${OUT_JSON_SYNTH} ${OUT_SYNTH_V} ${OUT_FASM_EXTRA} ${OUT_SDC}
       DEPENDS ${SOURCE_FILES} ${SOURCE_FILES_DEPS} ${INPUT_XDC_FILES} ${CELLS_SIM_DEPS}
-              ${YOSYS} ${QUIET_CMD} ${YOSYS_IO_DEPS}
-              ${YOSYS_SYNTH_SCRIPT}
+              ${F4PGA} ${QUIET_CMD} ${YOSYS_IO_DEPS}
       COMMAND
         ${CMAKE_COMMAND} -E make_directory ${OUT_LOCAL}
       COMMAND
@@ -1670,6 +1746,7 @@ function(ADD_FPGA_TARGET)
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       VERBATIM
     )
+    endif()
 
     set(SPLIT_INOUTS ${f4pga-arch-defs_SOURCE_DIR}/utils/split_inouts.py)
 
@@ -2760,7 +2837,7 @@ function(generate_pinmap)
     ${ARGN}
   )
 
-  get_target_property_required(YOSYS env YOSYS)
+  get_target_property_required(F4PGA env F4PGA)
   get_target_property_required(PYTHON3 env PYTHON3)
   get_target_property_required(QUIET_CMD env QUIET_CMD)
 

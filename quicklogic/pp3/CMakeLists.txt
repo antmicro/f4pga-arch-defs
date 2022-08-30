@@ -43,6 +43,8 @@ define_arch(
   ARCH ql-s3
   FAMILY pp3
   YOSYS_TECHMAP ${f4pga-arch-defs_BINARY_DIR}/quicklogic/${FAMILY_NAME}/techmap
+  YOSYS_SYNTH_SCRIPT ${f4pga-arch-defs_SOURCE_DIR}/quicklogic/pp3/yosys/synth.tcl
+  YOSYS_CONV_SCRIPT ${f4pga-arch-defs_SOURCE_DIR}/quicklogic/pp3/yosys/conv.tcl
   DEVICE_FULL_TEMPLATE \${DEVICE}
   VPR_ARCH_ARGS ${VPR_ARCH_ARGS}
 
@@ -111,6 +113,7 @@ define_arch(
 )
 
 add_subdirectory(devices)
+include(part_names.cmake)
 include(boards.cmake)
 add_subdirectory(tests)
 
